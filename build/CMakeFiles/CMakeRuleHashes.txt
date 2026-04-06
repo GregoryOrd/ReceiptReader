@@ -1,0 +1,4 @@
+# Hashes of file build rules.
+42137375e9aff6c174fd4ca83b95a57e CMakeFiles/ReceiptReader_autogen
+42137375e9aff6c174fd4ca83b95a57e CMakeFiles/ReceiptReader_autogen_timestamp_deps
+a42762158f171fd4e8c1303861baedfa ReceiptReader_autogen/timestamp
