@@ -22,9 +22,8 @@ TEST_F(OCRTest, ExtractTextFromEmptyImagePath) {
     EXPECT_EQ(result, "");
 }
 
-// Note: For a real image test, you would need a sample image file
-// TEST_F(OCRTest, ExtractTextFromValidImage) {
-//     std::string result = extractTextFromImage("test/sample.png");
-//     EXPECT_FALSE(result.empty());
-//     // Add more assertions based on expected content
-// }
+TEST_F(OCRTest, ExtractTextFromValidImagePath) {
+    std::string result = extractTextFromImage("../imgs/Receipt1/IMG_3397.HEIC");
+    std::cout << "Extracted text: " << result << std::endl;
+    EXPECT_EQ(result, "");
+}
