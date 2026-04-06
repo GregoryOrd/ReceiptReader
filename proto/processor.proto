@@ -1,0 +1,58 @@
+syntax = "proto3";
+package receiptreader;
+
+message ReceiptItem {
+  string code = 1;
+  double price = 2;
+  string timestamp = 3;
+}
+
+message QueryItemsRequest {
+  string code = 1;
+  string price_min = 2;
+  string price_max = 3;
+  string date_start = 4;
+  string date_end = 5;
+  bool order_by_timestamp = 6;
+}
+
+message QueryItemsResponse {
+  repeated ReceiptItem items = 1;
+}
+
+message ProcessImagesRequest {
+  string receipt_dir = 1;
+}
+
+message ProcessProgress {
+  int32 processed_images = 1;
+  int32 total_images = 2;
+  string current_image = 3;
+}
+
+message ProcessComplete {
+  int32 total_items = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message StatusResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ServerRequest {
+  oneof request {
+    QueryItemsRequest query_items = 1;
+    ProcessImagesRequest process_images = 2;
+  }
+}
+
+message ServerResponse {
+  oneof response {
+    QueryItemsResponse query_items_response = 1;
+    ProcessProgress progress = 2;
+    ProcessComplete complete = 3;
+    StatusResponse status = 4;
+  }
+}

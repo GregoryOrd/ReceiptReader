@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/greg/RecieptReader
+CMAKE_SOURCE_DIR = /home/greg/ReceiptReader
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/greg/RecieptReader/build
+CMAKE_BINARY_DIR = /home/greg/ReceiptReader/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/greg/RecieptReader/build/CMakeFiles /home/greg/RecieptReader/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/greg/ReceiptReader/build/CMakeFiles /home/greg/ReceiptReader/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/greg/RecieptReader/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/greg/ReceiptReader/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -117,74 +117,114 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named ReceiptReader
+# Target rules for targets named ReceiptReaderGUI
 
 # Build rule for target.
-ReceiptReader: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ReceiptReader
-.PHONY : ReceiptReader
+ReceiptReaderGUI: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ReceiptReaderGUI
+.PHONY : ReceiptReaderGUI
 
 # fast build rule for target.
-ReceiptReader/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/build
-.PHONY : ReceiptReader/fast
+ReceiptReaderGUI/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/build
+.PHONY : ReceiptReaderGUI/fast
 
 #=============================================================================
-# Target rules for targets named ReceiptReader_autogen_timestamp_deps
+# Target rules for targets named ReceiptReaderServer
 
 # Build rule for target.
-ReceiptReader_autogen_timestamp_deps: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ReceiptReader_autogen_timestamp_deps
-.PHONY : ReceiptReader_autogen_timestamp_deps
+ReceiptReaderServer: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ReceiptReaderServer
+.PHONY : ReceiptReaderServer
 
 # fast build rule for target.
-ReceiptReader_autogen_timestamp_deps/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader_autogen_timestamp_deps.dir/build.make CMakeFiles/ReceiptReader_autogen_timestamp_deps.dir/build
-.PHONY : ReceiptReader_autogen_timestamp_deps/fast
+ReceiptReaderServer/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/build
+.PHONY : ReceiptReaderServer/fast
 
 #=============================================================================
-# Target rules for targets named ReceiptReader_autogen
+# Target rules for targets named ReceiptReaderGUI_autogen_timestamp_deps
 
 # Build rule for target.
-ReceiptReader_autogen: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ReceiptReader_autogen
-.PHONY : ReceiptReader_autogen
+ReceiptReaderGUI_autogen_timestamp_deps: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ReceiptReaderGUI_autogen_timestamp_deps
+.PHONY : ReceiptReaderGUI_autogen_timestamp_deps
 
 # fast build rule for target.
-ReceiptReader_autogen/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader_autogen.dir/build.make CMakeFiles/ReceiptReader_autogen.dir/build
-.PHONY : ReceiptReader_autogen/fast
+ReceiptReaderGUI_autogen_timestamp_deps/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI_autogen_timestamp_deps.dir/build.make CMakeFiles/ReceiptReaderGUI_autogen_timestamp_deps.dir/build
+.PHONY : ReceiptReaderGUI_autogen_timestamp_deps/fast
 
-ReceiptReader_autogen/mocs_compilation.o: ReceiptReader_autogen/mocs_compilation.cpp.o
-.PHONY : ReceiptReader_autogen/mocs_compilation.o
+#=============================================================================
+# Target rules for targets named ReceiptReaderGUI_autogen
+
+# Build rule for target.
+ReceiptReaderGUI_autogen: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ReceiptReaderGUI_autogen
+.PHONY : ReceiptReaderGUI_autogen
+
+# fast build rule for target.
+ReceiptReaderGUI_autogen/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI_autogen.dir/build.make CMakeFiles/ReceiptReaderGUI_autogen.dir/build
+.PHONY : ReceiptReaderGUI_autogen/fast
+
+ReceiptReaderGUI_autogen/mocs_compilation.o: ReceiptReaderGUI_autogen/mocs_compilation.cpp.o
+.PHONY : ReceiptReaderGUI_autogen/mocs_compilation.o
 
 # target to build an object file
-ReceiptReader_autogen/mocs_compilation.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/ReceiptReader_autogen/mocs_compilation.cpp.o
-.PHONY : ReceiptReader_autogen/mocs_compilation.cpp.o
+ReceiptReaderGUI_autogen/mocs_compilation.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/ReceiptReaderGUI_autogen/mocs_compilation.cpp.o
+.PHONY : ReceiptReaderGUI_autogen/mocs_compilation.cpp.o
 
-ReceiptReader_autogen/mocs_compilation.i: ReceiptReader_autogen/mocs_compilation.cpp.i
-.PHONY : ReceiptReader_autogen/mocs_compilation.i
+ReceiptReaderGUI_autogen/mocs_compilation.i: ReceiptReaderGUI_autogen/mocs_compilation.cpp.i
+.PHONY : ReceiptReaderGUI_autogen/mocs_compilation.i
 
 # target to preprocess a source file
-ReceiptReader_autogen/mocs_compilation.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/ReceiptReader_autogen/mocs_compilation.cpp.i
-.PHONY : ReceiptReader_autogen/mocs_compilation.cpp.i
+ReceiptReaderGUI_autogen/mocs_compilation.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/ReceiptReaderGUI_autogen/mocs_compilation.cpp.i
+.PHONY : ReceiptReaderGUI_autogen/mocs_compilation.cpp.i
 
-ReceiptReader_autogen/mocs_compilation.s: ReceiptReader_autogen/mocs_compilation.cpp.s
-.PHONY : ReceiptReader_autogen/mocs_compilation.s
+ReceiptReaderGUI_autogen/mocs_compilation.s: ReceiptReaderGUI_autogen/mocs_compilation.cpp.s
+.PHONY : ReceiptReaderGUI_autogen/mocs_compilation.s
 
 # target to generate assembly for a file
-ReceiptReader_autogen/mocs_compilation.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/ReceiptReader_autogen/mocs_compilation.cpp.s
-.PHONY : ReceiptReader_autogen/mocs_compilation.cpp.s
+ReceiptReaderGUI_autogen/mocs_compilation.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/ReceiptReaderGUI_autogen/mocs_compilation.cpp.s
+.PHONY : ReceiptReaderGUI_autogen/mocs_compilation.cpp.s
+
+processor.pb.o: processor.pb.cc.o
+.PHONY : processor.pb.o
+
+# target to build an object file
+processor.pb.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/processor.pb.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/processor.pb.cc.o
+.PHONY : processor.pb.cc.o
+
+processor.pb.i: processor.pb.cc.i
+.PHONY : processor.pb.i
+
+# target to preprocess a source file
+processor.pb.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/processor.pb.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/processor.pb.cc.i
+.PHONY : processor.pb.cc.i
+
+processor.pb.s: processor.pb.cc.s
+.PHONY : processor.pb.s
+
+# target to generate assembly for a file
+processor.pb.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/processor.pb.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/processor.pb.cc.s
+.PHONY : processor.pb.cc.s
 
 src/db/database.o: src/db/database.cpp.o
 .PHONY : src/db/database.o
 
 # target to build an object file
 src/db/database.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/db/database.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/db/database.cpp.o
 .PHONY : src/db/database.cpp.o
 
 src/db/database.i: src/db/database.cpp.i
@@ -192,7 +232,7 @@ src/db/database.i: src/db/database.cpp.i
 
 # target to preprocess a source file
 src/db/database.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/db/database.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/db/database.cpp.i
 .PHONY : src/db/database.cpp.i
 
 src/db/database.s: src/db/database.cpp.s
@@ -200,15 +240,42 @@ src/db/database.s: src/db/database.cpp.s
 
 # target to generate assembly for a file
 src/db/database.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/db/database.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/db/database.cpp.s
 .PHONY : src/db/database.cpp.s
+
+src/ipc/message_io.o: src/ipc/message_io.cpp.o
+.PHONY : src/ipc/message_io.o
+
+# target to build an object file
+src/ipc/message_io.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/src/ipc/message_io.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/ipc/message_io.cpp.o
+.PHONY : src/ipc/message_io.cpp.o
+
+src/ipc/message_io.i: src/ipc/message_io.cpp.i
+.PHONY : src/ipc/message_io.i
+
+# target to preprocess a source file
+src/ipc/message_io.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/src/ipc/message_io.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/ipc/message_io.cpp.i
+.PHONY : src/ipc/message_io.cpp.i
+
+src/ipc/message_io.s: src/ipc/message_io.cpp.s
+.PHONY : src/ipc/message_io.s
+
+# target to generate assembly for a file
+src/ipc/message_io.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/src/ipc/message_io.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/ipc/message_io.cpp.s
+.PHONY : src/ipc/message_io.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -216,7 +283,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -224,7 +291,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 src/ocr/ocr.o: src/ocr/ocr.cpp.o
@@ -232,7 +299,7 @@ src/ocr/ocr.o: src/ocr/ocr.cpp.o
 
 # target to build an object file
 src/ocr/ocr.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/ocr/ocr.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/ocr/ocr.cpp.o
 .PHONY : src/ocr/ocr.cpp.o
 
 src/ocr/ocr.i: src/ocr/ocr.cpp.i
@@ -240,7 +307,7 @@ src/ocr/ocr.i: src/ocr/ocr.cpp.i
 
 # target to preprocess a source file
 src/ocr/ocr.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/ocr/ocr.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/ocr/ocr.cpp.i
 .PHONY : src/ocr/ocr.cpp.i
 
 src/ocr/ocr.s: src/ocr/ocr.cpp.s
@@ -248,7 +315,7 @@ src/ocr/ocr.s: src/ocr/ocr.cpp.s
 
 # target to generate assembly for a file
 src/ocr/ocr.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/ocr/ocr.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/ocr/ocr.cpp.s
 .PHONY : src/ocr/ocr.cpp.s
 
 src/parser/parser.o: src/parser/parser.cpp.o
@@ -256,7 +323,7 @@ src/parser/parser.o: src/parser/parser.cpp.o
 
 # target to build an object file
 src/parser/parser.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/parser/parser.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/parser/parser.cpp.o
 .PHONY : src/parser/parser.cpp.o
 
 src/parser/parser.i: src/parser/parser.cpp.i
@@ -264,7 +331,7 @@ src/parser/parser.i: src/parser/parser.cpp.i
 
 # target to preprocess a source file
 src/parser/parser.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/parser/parser.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/parser/parser.cpp.i
 .PHONY : src/parser/parser.cpp.i
 
 src/parser/parser.s: src/parser/parser.cpp.s
@@ -272,15 +339,63 @@ src/parser/parser.s: src/parser/parser.cpp.s
 
 # target to generate assembly for a file
 src/parser/parser.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/parser/parser.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/parser/parser.cpp.s
 .PHONY : src/parser/parser.cpp.s
+
+src/server/main.o: src/server/main.cpp.o
+.PHONY : src/server/main.o
+
+# target to build an object file
+src/server/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/server/main.cpp.o
+.PHONY : src/server/main.cpp.o
+
+src/server/main.i: src/server/main.cpp.i
+.PHONY : src/server/main.i
+
+# target to preprocess a source file
+src/server/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/server/main.cpp.i
+.PHONY : src/server/main.cpp.i
+
+src/server/main.s: src/server/main.cpp.s
+.PHONY : src/server/main.s
+
+# target to generate assembly for a file
+src/server/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/server/main.cpp.s
+.PHONY : src/server/main.cpp.s
+
+src/server/server.o: src/server/server.cpp.o
+.PHONY : src/server/server.o
+
+# target to build an object file
+src/server/server.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/server/server.cpp.o
+.PHONY : src/server/server.cpp.o
+
+src/server/server.i: src/server/server.cpp.i
+.PHONY : src/server/server.i
+
+# target to preprocess a source file
+src/server/server.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/server/server.cpp.i
+.PHONY : src/server/server.cpp.i
+
+src/server/server.s: src/server/server.cpp.s
+.PHONY : src/server/server.s
+
+# target to generate assembly for a file
+src/server/server.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderServer.dir/build.make CMakeFiles/ReceiptReaderServer.dir/src/server/server.cpp.s
+.PHONY : src/server/server.cpp.s
 
 src/ui/mainwindow.o: src/ui/mainwindow.cpp.o
 .PHONY : src/ui/mainwindow.o
 
 # target to build an object file
 src/ui/mainwindow.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/ui/mainwindow.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/src/ui/mainwindow.cpp.o
 .PHONY : src/ui/mainwindow.cpp.o
 
 src/ui/mainwindow.i: src/ui/mainwindow.cpp.i
@@ -288,7 +403,7 @@ src/ui/mainwindow.i: src/ui/mainwindow.cpp.i
 
 # target to preprocess a source file
 src/ui/mainwindow.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/ui/mainwindow.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/src/ui/mainwindow.cpp.i
 .PHONY : src/ui/mainwindow.cpp.i
 
 src/ui/mainwindow.s: src/ui/mainwindow.cpp.s
@@ -296,8 +411,32 @@ src/ui/mainwindow.s: src/ui/mainwindow.cpp.s
 
 # target to generate assembly for a file
 src/ui/mainwindow.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReader.dir/build.make CMakeFiles/ReceiptReader.dir/src/ui/mainwindow.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/src/ui/mainwindow.cpp.s
 .PHONY : src/ui/mainwindow.cpp.s
+
+src/ui/serverclient.o: src/ui/serverclient.cpp.o
+.PHONY : src/ui/serverclient.o
+
+# target to build an object file
+src/ui/serverclient.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/src/ui/serverclient.cpp.o
+.PHONY : src/ui/serverclient.cpp.o
+
+src/ui/serverclient.i: src/ui/serverclient.cpp.i
+.PHONY : src/ui/serverclient.i
+
+# target to preprocess a source file
+src/ui/serverclient.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/src/ui/serverclient.cpp.i
+.PHONY : src/ui/serverclient.cpp.i
+
+src/ui/serverclient.s: src/ui/serverclient.cpp.s
+.PHONY : src/ui/serverclient.s
+
+# target to generate assembly for a file
+src/ui/serverclient.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderGUI.dir/build.make CMakeFiles/ReceiptReaderGUI.dir/src/ui/serverclient.cpp.s
+.PHONY : src/ui/serverclient.cpp.s
 
 # Help Target
 help:
@@ -307,15 +446,22 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... ReceiptReader_autogen"
-	@echo "... ReceiptReader_autogen_timestamp_deps"
-	@echo "... ReceiptReader"
-	@echo "... ReceiptReader_autogen/mocs_compilation.o"
-	@echo "... ReceiptReader_autogen/mocs_compilation.i"
-	@echo "... ReceiptReader_autogen/mocs_compilation.s"
+	@echo "... ReceiptReaderGUI_autogen"
+	@echo "... ReceiptReaderGUI_autogen_timestamp_deps"
+	@echo "... ReceiptReaderGUI"
+	@echo "... ReceiptReaderServer"
+	@echo "... ReceiptReaderGUI_autogen/mocs_compilation.o"
+	@echo "... ReceiptReaderGUI_autogen/mocs_compilation.i"
+	@echo "... ReceiptReaderGUI_autogen/mocs_compilation.s"
+	@echo "... processor.pb.o"
+	@echo "... processor.pb.i"
+	@echo "... processor.pb.s"
 	@echo "... src/db/database.o"
 	@echo "... src/db/database.i"
 	@echo "... src/db/database.s"
+	@echo "... src/ipc/message_io.o"
+	@echo "... src/ipc/message_io.i"
+	@echo "... src/ipc/message_io.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
@@ -325,9 +471,18 @@ help:
 	@echo "... src/parser/parser.o"
 	@echo "... src/parser/parser.i"
 	@echo "... src/parser/parser.s"
+	@echo "... src/server/main.o"
+	@echo "... src/server/main.i"
+	@echo "... src/server/main.s"
+	@echo "... src/server/server.o"
+	@echo "... src/server/server.i"
+	@echo "... src/server/server.s"
 	@echo "... src/ui/mainwindow.o"
 	@echo "... src/ui/mainwindow.i"
 	@echo "... src/ui/mainwindow.s"
+	@echo "... src/ui/serverclient.o"
+	@echo "... src/ui/serverclient.i"
+	@echo "... src/ui/serverclient.s"
 .PHONY : help
 
 

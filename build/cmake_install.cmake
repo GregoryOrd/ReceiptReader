@@ -1,4 +1,4 @@
-# Install script for directory: /home/greg/RecieptReader
+# Install script for directory: /home/greg/ReceiptReader
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/greg/RecieptReader/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/greg/ReceiptReader/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

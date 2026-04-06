@@ -7,7 +7,7 @@ set(CMAKE_DEPENDS_GENERATOR "Unix Makefiles")
 # The top level Makefile was generated from the following files:
 set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
-  "/home/greg/RecieptReader/CMakeLists.txt"
+  "/home/greg/ReceiptReader/CMakeLists.txt"
   "CMakeFiles/3.28.3/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.28.3/CMakeSystem.cmake"
   "/usr/lib/x86_64-linux-gnu/cmake/Qt6/3rdparty/kwin/FindXKB.cmake"
@@ -151,6 +151,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.28/Modules/FindPackageHandleStandardArgs.cmake"
   "/usr/share/cmake-3.28/Modules/FindPackageMessage.cmake"
   "/usr/share/cmake-3.28/Modules/FindPkgConfig.cmake"
+  "/usr/share/cmake-3.28/Modules/FindProtobuf.cmake"
   "/usr/share/cmake-3.28/Modules/FindThreads.cmake"
   "/usr/share/cmake-3.28/Modules/FindVulkan.cmake"
   "/usr/share/cmake-3.28/Modules/GNUInstallDirs.cmake"
@@ -163,6 +164,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.28/Modules/Platform/Linux-Initialize.cmake"
   "/usr/share/cmake-3.28/Modules/Platform/Linux.cmake"
   "/usr/share/cmake-3.28/Modules/Platform/UnixPaths.cmake"
+  "/usr/share/cmake-3.28/Modules/SelectLibraryConfigurations.cmake"
   )
 
 # The corresponding makefile is:
@@ -173,14 +175,15 @@ set(CMAKE_MAKEFILE_OUTPUTS
 
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
-  "CMakeFiles/ReceiptReader_autogen.dir/AutogenInfo.json"
+  "CMakeFiles/ReceiptReaderGUI_autogen.dir/AutogenInfo.json"
   ".qt/QtDeploySupport.cmake"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/ReceiptReader.dir/DependInfo.cmake"
-  "CMakeFiles/ReceiptReader_autogen_timestamp_deps.dir/DependInfo.cmake"
-  "CMakeFiles/ReceiptReader_autogen.dir/DependInfo.cmake"
+  "CMakeFiles/ReceiptReaderGUI.dir/DependInfo.cmake"
+  "CMakeFiles/ReceiptReaderServer.dir/DependInfo.cmake"
+  "CMakeFiles/ReceiptReaderGUI_autogen_timestamp_deps.dir/DependInfo.cmake"
+  "CMakeFiles/ReceiptReaderGUI_autogen.dir/DependInfo.cmake"
   )

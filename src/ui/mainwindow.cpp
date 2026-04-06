@@ -1,15 +1,25 @@
 #include "mainwindow.h"
-#include <QApplication>
 #include <QMessageBox>
 #include <QDateTime>
 
-MainWindow::MainWindow(Database* db, QWidget* parent) : QMainWindow(parent), m_db(db) {
-    setWindowTitle("Receipt Reader");
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent),
+      m_serverClient(std::make_unique<ServerClient>("127.0.0.1", 52000)) {
+    setWindowTitle("Receipt Reader GUI");
     QWidget* central = new QWidget;
     setCentralWidget(central);
     QVBoxLayout* layout = new QVBoxLayout(central);
 
-    // Search fields
+    QHBoxLayout* connectionLayout = new QHBoxLayout;
+    connectionLayout->addWidget(new QLabel("Server Status:"));
+    m_connectionStatusLabel = new QLabel("Disconnected");
+    connectionLayout->addWidget(m_connectionStatusLabel);
+    m_connectButton = new QPushButton("Connect");
+    connectionLayout->addWidget(m_connectButton);
+    m_processButton = new QPushButton("Process Images");
+    connectionLayout->addWidget(m_processButton);
+    layout->addLayout(connectionLayout);
+
     QHBoxLayout* searchLayout = new QHBoxLayout;
     searchLayout->addWidget(new QLabel("Item Code:"));
     m_codeEdit = new QLineEdit;
@@ -44,36 +54,83 @@ MainWindow::MainWindow(Database* db, QWidget* parent) : QMainWindow(parent), m_d
 
     m_chartView = new QChartView;
     layout->addWidget(m_chartView);
+
+    connect(m_connectButton, &QPushButton::clicked, this, &MainWindow::toggleConnection);
+    connect(m_processButton, &QPushButton::clicked, this, &MainWindow::processImages);
+
+    updateConnectionStatus();
+}
+
+void MainWindow::updateConnectionStatus() {
+    bool connected = m_serverClient->isConnected();
+    m_connectionStatusLabel->setText(connected ? "Connected" : "Disconnected");
+    m_connectButton->setText(connected ? "Disconnect" : "Connect");
+
+    m_searchButton->setEnabled(connected);
+    m_graphButton->setEnabled(connected);
+    m_processButton->setEnabled(connected);
+}
+
+void MainWindow::toggleConnection() {
+    if (m_serverClient->isConnected()) {
+        m_serverClient->disconnect();
+        updateConnectionStatus();
+        return;
+    }
+
+    if (!m_serverClient->connectToServer()) {
+        QMessageBox::warning(this, "Connection Failed", "Could not connect to ReceiptReaderServer.");
+        updateConnectionStatus();
+        return;
+    }
+
+    updateConnectionStatus();
+}
+
+void MainWindow::processImages() {
+    if (!m_serverClient->isConnected()) {
+        QMessageBox::warning(this, "Not Connected", "Please connect to the server before processing images.");
+        return;
+    }
+
+    m_connectionStatusLabel->setText("Processing images...");
+    std::string error;
+    bool success = m_serverClient->processImages("imgs",
+        [this](int processed, int total, const std::string& current) {
+            QString status = QString("Processing %1/%2: %3").arg(processed).arg(total).arg(QString::fromStdString(current));
+            m_connectionStatusLabel->setText(status);
+        },
+        error);
+
+    if (!success) {
+        QMessageBox::warning(this, "Process Failed", QString::fromStdString(error));
+    }
+
+    updateConnectionStatus();
 }
 
 void MainWindow::search() {
-    std::string where = "";
-    if (!m_codeEdit->text().isEmpty()) {
-        where += "code LIKE '%" + m_codeEdit->text().toStdString() + "%'";
+    std::vector<Item> items;
+    std::string error;
+    if (!m_serverClient->queryItems(
+            m_codeEdit->text().toStdString(),
+            m_priceMinEdit->text().toStdString(),
+            m_priceMaxEdit->text().toStdString(),
+            m_dateStartEdit->text().toStdString(),
+            m_dateEndEdit->text().toStdString(),
+            false,
+            items,
+            error)) {
+        QMessageBox::warning(this, "Query Failed", QString::fromStdString(error));
+        return;
     }
-    if (!m_priceMinEdit->text().isEmpty()) {
-        if (!where.empty()) where += " AND ";
-        where += "price >= " + m_priceMinEdit->text().toStdString();
-    }
-    if (!m_priceMaxEdit->text().isEmpty()) {
-        if (!where.empty()) where += " AND ";
-        where += "price <= " + m_priceMaxEdit->text().toStdString();
-    }
-    if (!m_dateStartEdit->text().isEmpty()) {
-        if (!where.empty()) where += " AND ";
-        where += "timestamp >= '" + m_dateStartEdit->text().toStdString() + "'";
-    }
-    if (!m_dateEndEdit->text().isEmpty()) {
-        if (!where.empty()) where += " AND ";
-        where += "timestamp <= '" + m_dateEndEdit->text().toStdString() + " 23:59:59'";
-    }
-    auto items = m_db->queryItems(where);
+
     m_resultsList->clear();
     for (const auto& item : items) {
         QString text = QString("Code: %1, Price: %2, Date: %3")
-                       .arg(QString::fromStdString(item.code))
-                       .arg(item.price)
-                       .arg(QString::fromStdString(item.timestamp));
+                           .arg(QString::fromStdString(item.code))
+                           .arg(item.price)
+                           .arg(QString::fromStdString(item.timestamp));
         m_resultsList->addItem(text);
     }
 }
@@ -84,19 +141,36 @@ void MainWindow::graphSelected() {
         QMessageBox::warning(this, "No Selection", "Please select an item to graph.");
         return;
     }
-    // Get code from selected item
+
     QString text = m_resultsList->item(row)->text();
     QString code = text.split(",")[0].split(":")[1].trimmed();
-    // Query all items with this code, ordered by timestamp
-    std::string where = "code = '" + code.toStdString() + "' ORDER BY timestamp";
-    auto items = m_db->queryItems(where);
-    if (items.empty()) return;
+
+    std::vector<Item> items;
+    std::string error;
+    if (!m_serverClient->queryItems(
+            code.toStdString(),
+            "",
+            "",
+            "",
+            "",
+            true,
+            items,
+            error)) {
+        QMessageBox::warning(this, "Query Failed", QString::fromStdString(error));
+        return;
+    }
+
+    if (items.empty()) {
+        return;
+    }
+
     QLineSeries* series = new QLineSeries;
     series->setName("Price over Time for " + code);
     for (const auto& item : items) {
         QDateTime dt = QDateTime::fromString(QString::fromStdString(item.timestamp), "yyyy-MM-dd hh:mm:ss");
         series->append(dt.toMSecsSinceEpoch(), item.price);
     }
+
     QChart* chart = new QChart;
     chart->addSeries(series);
     chart->createDefaultAxes();

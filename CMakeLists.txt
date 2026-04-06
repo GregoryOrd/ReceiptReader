@@ -10,41 +10,55 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(TESSERACT REQUIRED tesseract)
 pkg_check_modules(LEPTONICA REQUIRED lept)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Charts)
+find_package(Protobuf REQUIRED)
 
 # Include directories
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${TESSERACT_INCLUDE_DIRS})
 include_directories(${LEPTONICA_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-# Source files
-set(SOURCES
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS proto/processor.proto)
+
+set(GUI_SOURCES
     src/main.cpp
+    src/ui/mainwindow.cpp
+    src/ui/serverclient.cpp
+    src/ipc/message_io.cpp
+    ${PROTO_SRCS}
+)
+
+set(SERVER_SOURCES
+    src/server/main.cpp
+    src/server/server.cpp
+    src/ipc/message_io.cpp
     src/ocr/ocr.cpp
     src/parser/parser.cpp
     src/db/database.cpp
-    src/ui/mainwindow.cpp
+    ${PROTO_SRCS}
 )
 
-# Create executable
-add_executable(${PROJECT_NAME} ${SOURCES})
-
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
-
-# Link libraries
-target_link_libraries(${PROJECT_NAME}
-    ${OpenCV_LIBS}
-    ${TESSERACT_LIBRARIES}
-    ${LEPTONICA_LIBRARIES}
+add_executable(ReceiptReaderGUI ${GUI_SOURCES})
+target_include_directories(ReceiptReaderGUI PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(ReceiptReaderGUI
     Qt6::Core
     Qt6::Widgets
     Qt6::Charts
-    sqlite3
+    ${Protobuf_LIBRARIES}
 )
-
-# Qt setup
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_target_properties(ReceiptReaderGUI PROPERTIES
     AUTOMOC ON
     AUTORCC ON
     AUTOUIC ON
+)
+
+add_executable(ReceiptReaderServer ${SERVER_SOURCES})
+target_include_directories(ReceiptReaderServer PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(ReceiptReaderServer
+    ${OpenCV_LIBS}
+    ${TESSERACT_LIBRARIES}
+    ${LEPTONICA_LIBRARIES}
+    ${Protobuf_LIBRARIES}
+    sqlite3
 )

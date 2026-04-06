@@ -1,5 +1,6 @@
-/home/greg/RecieptReader/build/CMakeFiles/ReceiptReader.dir
-/home/greg/RecieptReader/build/CMakeFiles/edit_cache.dir
-/home/greg/RecieptReader/build/CMakeFiles/rebuild_cache.dir
-/home/greg/RecieptReader/build/CMakeFiles/ReceiptReader_autogen_timestamp_deps.dir
-/home/greg/RecieptReader/build/CMakeFiles/ReceiptReader_autogen.dir
+/home/greg/ReceiptReader/build/CMakeFiles/ReceiptReaderGUI.dir
+/home/greg/ReceiptReader/build/CMakeFiles/ReceiptReaderServer.dir
+/home/greg/ReceiptReader/build/CMakeFiles/edit_cache.dir
+/home/greg/ReceiptReader/build/CMakeFiles/rebuild_cache.dir
+/home/greg/ReceiptReader/build/CMakeFiles/ReceiptReaderGUI_autogen_timestamp_deps.dir
+/home/greg/ReceiptReader/build/CMakeFiles/ReceiptReaderGUI_autogen.dir

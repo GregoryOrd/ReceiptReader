@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <memory>
 #include <QMainWindow>
 #include <QLineEdit>
 #include <QPushButton>
@@ -11,17 +12,27 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QChart>
 #include <QtCharts/QLineSeries>
-#include "db/database.h"
+#include "ui/serverclient.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    MainWindow(Database* db, QWidget* parent = nullptr);
+    explicit MainWindow(QWidget* parent = nullptr);
+
 private slots:
+    void toggleConnection();
+    void processImages();
     void search();
     void graphSelected();
+
 private:
-    Database* m_db;
+    void updateConnectionStatus();
+
+    std::unique_ptr<ServerClient> m_serverClient;
+    QLabel* m_connectionStatusLabel;
+    QPushButton* m_connectButton;
+    QPushButton* m_processButton;
+
     QLineEdit* m_codeEdit;
     QLineEdit* m_priceMinEdit;
     QLineEdit* m_priceMaxEdit;
@@ -33,4 +44,4 @@ private:
     QChartView* m_chartView;
 };
 
-#endif
+#endif // MAINWINDOW_H

@@ -1,0 +1,166 @@
+#include "server/server.h"
+#include "processor.pb.h"
+#include "ipc/message_io.h"
+#include "ocr/ocr.h"
+#include "parser/parser.h"
+#include <arpa/inet.h>
+#include <cerrno>
+#include <cstring>
+#include <filesystem>
+#include <iostream>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+namespace fs = std::filesystem;
+
+ReceiptReaderServer::ReceiptReaderServer(int port, const std::string& dbPath)
+    : m_port(port), m_db(dbPath) {
+}
+
+bool ReceiptReaderServer::run() {
+    m_db.createTable();
+
+    int serverSock = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSock < 0) {
+        std::cerr << "Failed to create server socket: " << strerror(errno) << std::endl;
+        return false;
+    }
+
+    int opt = 1;
+    setsockopt(serverSock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_port = htons(m_port);
+
+    if (bind(serverSock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0) {
+        std::cerr << "Failed to bind server socket: " << strerror(errno) << std::endl;
+        close(serverSock);
+        return false;
+    }
+
+    if (listen(serverSock, 5) < 0) {
+        std::cerr << "Server failed to listen: " << strerror(errno) << std::endl;
+        close(serverSock);
+        return false;
+    }
+
+    std::cout << "ReceiptReaderServer listening on port " << m_port << std::endl;
+
+    while (true) {
+        sockaddr_in clientAddr{};
+        socklen_t clientAddrLen = sizeof(clientAddr);
+        int clientSock = accept(serverSock, reinterpret_cast<sockaddr*>(&clientAddr), &clientAddrLen);
+        if (clientSock < 0) {
+            std::cerr << "Failed to accept connection: " << strerror(errno) << std::endl;
+            continue;
+        }
+
+        handleClient(clientSock);
+        close(clientSock);
+    }
+
+    close(serverSock);
+    return true;
+}
+
+bool ReceiptReaderServer::handleClient(int clientSock) {
+    receiptreader::ServerRequest request;
+    if (!ipc::receiveProtobufMessage(clientSock, &request)) {
+        std::cerr << "Failed to receive request from client." << std::endl;
+        return false;
+    }
+
+    if (request.has_query_items()) {
+        return queryItemsRequest(clientSock, request.query_items());
+    }
+    if (request.has_process_images()) {
+        return processImagesRequest(clientSock, request.process_images());
+    }
+
+    return sendStatus(clientSock, false, "Unsupported request type.");
+}
+
+bool ReceiptReaderServer::queryItemsRequest(int clientSock, const receiptreader::QueryItemsRequest& request) {
+    std::lock_guard<std::mutex> lock(m_dbMutex);
+    auto items = m_db.queryItemsFiltered(request.code(), request.price_min(), request.price_max(), request.date_start(), request.date_end(), request.order_by_timestamp());
+
+    receiptreader::ServerResponse response;
+    auto* queryResponse = response.mutable_query_items_response();
+    for (const auto& item : items) {
+        auto* entry = queryResponse->add_items();
+        entry->set_code(item.code);
+        entry->set_price(item.price);
+        entry->set_timestamp(item.timestamp);
+    }
+
+    return ipc::sendProtobufMessage(clientSock, response);
+}
+
+bool ReceiptReaderServer::processImagesRequest(int clientSock, const receiptreader::ProcessImagesRequest& request) {
+    return processImagesDirectory(request.receipt_dir(), clientSock);
+}
+
+bool ReceiptReaderServer::processImagesDirectory(const std::string& receiptDir, int clientSock) {
+    fs::path directory(receiptDir);
+    if (!fs::exists(directory) || !fs::is_directory(directory)) {
+        return sendStatus(clientSock, false, "Receipt directory does not exist: " + receiptDir);
+    }
+
+    std::vector<fs::path> imagePaths;
+    for (const auto& entry : fs::recursive_directory_iterator(directory)) {
+        if (!entry.is_regular_file()) {
+            continue;
+        }
+        const auto path = entry.path();
+        const auto ext = path.extension().string();
+        if (ext == ".jpg" || ext == ".png" || ext == ".HEIC" || ext == ".heic") {
+            imagePaths.push_back(path);
+        }
+    }
+
+    int totalImages = static_cast<int>(imagePaths.size());
+    int totalItems = 0;
+    int processedImages = 0;
+
+    for (const auto& path : imagePaths) {
+        const auto pathString = path.string();
+        std::string text = extractTextFromImage(pathString);
+        auto items = parseReceiptText(text);
+
+        {
+            std::lock_guard<std::mutex> lock(m_dbMutex);
+            for (const auto& item : items) {
+                m_db.insertItem(item);
+                totalItems += 1;
+            }
+        }
+
+        processedImages += 1;
+        receiptreader::ServerResponse progressResponse;
+        auto* progress = progressResponse.mutable_progress();
+        progress->set_processed_images(processedImages);
+        progress->set_total_images(totalImages);
+        progress->set_current_image(pathString);
+        if (!ipc::sendProtobufMessage(clientSock, progressResponse)) {
+            return false;
+        }
+    }
+
+    receiptreader::ServerResponse completeResponse;
+    auto* complete = completeResponse.mutable_complete();
+    complete->set_total_items(totalItems);
+    complete->set_success(true);
+    complete->set_message("Processing complete.");
+    return ipc::sendProtobufMessage(clientSock, completeResponse);
+}
+
+bool ReceiptReaderServer::sendStatus(int clientSock, bool success, const std::string& message) {
+    receiptreader::ServerResponse response;
+    auto* status = response.mutable_status();
+    status->set_success(success);
+    status->set_message(message);
+    return ipc::sendProtobufMessage(clientSock, response);
+}
