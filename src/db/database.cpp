@@ -5,18 +5,24 @@
 Database::Database(const std::string& dbPath) {
     if (sqlite3_open(dbPath.c_str(), &db)) {
         std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
+        db = nullptr;
+        return;
     }
+
+    createTable();
 }
 
 Database::~Database() {
-    sqlite3_close(db);
+    if (db) {
+        sqlite3_close(db);
+    }
 }
 
 void Database::createTable() {
     const char* sql = "CREATE TABLE IF NOT EXISTS items ("
-                      "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                      "code TEXT NOT NULL,"
-                      "price REAL NOT NULL,"
+                      "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "code TEXT NOT NULL, "
+                      "price REAL NOT NULL, "
                       "timestamp DATETIME NOT NULL);";
     char* errMsg = nullptr;
     if (sqlite3_exec(db, sql, nullptr, nullptr, &errMsg) != SQLITE_OK) {

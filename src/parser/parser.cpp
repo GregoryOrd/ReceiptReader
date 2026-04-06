@@ -13,7 +13,7 @@ std::vector<Item> parseReceiptText(const std::string& text) {
     std::string line;
     std::string timestamp = "";
     std::regex dateRegex(R"(\b(\d{1,2})/(\d{1,2})/(\d{2})\s+(\d{1,2}):(\d{2}):(\d{2})\b)");
-    std::regex itemRegex(R"(\b(\d+)\s+(.+?)\s+(\d+\.\d{2})\b)");
+    std::regex itemRegex(R"(\b(\d+)\s+(.+?)\s+\$?(\d+\.\d{2})\b)");
 
     while (std::getline(iss, line)) {
         std::smatch match;

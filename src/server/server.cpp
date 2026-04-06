@@ -73,10 +73,12 @@ bool ReceiptReaderServer::handleClient(int clientSock) {
         return false;
     }
 
+    std::cout << "Received request from client." << std::endl;
     if (request.has_query_items()) {
         return queryItemsRequest(clientSock, request.query_items());
     }
     if (request.has_process_images()) {
+        std::cout << "Received process images request for directory: " << request.process_images().receipt_dir() << std::endl;
         return processImagesRequest(clientSock, request.process_images());
     }
 
@@ -100,11 +102,13 @@ bool ReceiptReaderServer::queryItemsRequest(int clientSock, const receiptreader:
 }
 
 bool ReceiptReaderServer::processImagesRequest(int clientSock, const receiptreader::ProcessImagesRequest& request) {
+    std::cout << "Processing receipt images in directory." << std::endl;
     return processImagesDirectory(request.receipt_dir(), clientSock);
 }
 
 bool ReceiptReaderServer::processImagesDirectory(const std::string& receiptDir, int clientSock) {
     fs::path directory(receiptDir);
+    std::cout << "Processing receipt images in directory: " << receiptDir << std::endl;
     if (!fs::exists(directory) || !fs::is_directory(directory)) {
         return sendStatus(clientSock, false, "Receipt directory does not exist: " + receiptDir);
     }
@@ -127,12 +131,15 @@ bool ReceiptReaderServer::processImagesDirectory(const std::string& receiptDir, 
 
     for (const auto& path : imagePaths) {
         const auto pathString = path.string();
+        std::cout << "Processing image: " << pathString << std::endl;
         std::string text = extractTextFromImage(pathString);
+        std::cout << "Extracted text from image: " << text.substr(0, 100) << "..." << std::endl;
         auto items = parseReceiptText(text);
 
         {
             std::lock_guard<std::mutex> lock(m_dbMutex);
             for (const auto& item : items) {
+                std::cout << "Inserting item into database: code=" << item.code << ", price=" << item.price << ", timestamp=" << item.timestamp << std::endl;
                 m_db.insertItem(item);
                 totalItems += 1;
             }

@@ -11,6 +11,10 @@ pkg_check_modules(TESSERACT REQUIRED tesseract)
 pkg_check_modules(LEPTONICA REQUIRED lept)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Charts)
 find_package(Protobuf REQUIRED)
+find_package(GTest REQUIRED)
+
+# Enable testing
+enable_testing()
 
 # Include directories
 include_directories(${OpenCV_INCLUDE_DIRS})
@@ -62,3 +66,27 @@ target_link_libraries(ReceiptReaderServer
     ${Protobuf_LIBRARIES}
     sqlite3
 )
+
+# Add test executable
+add_executable(ReceiptReaderTests
+    test/ocr_test.cpp
+    test/parser_test.cpp
+    test/database_test.cpp
+    src/ocr/ocr.cpp
+    src/parser/parser.cpp
+    src/db/database.cpp
+    ${PROTO_SRCS}
+)
+
+target_include_directories(ReceiptReaderTests PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(ReceiptReaderTests
+    GTest::gtest_main
+    GTest::gmock
+    ${OpenCV_LIBS}
+    ${TESSERACT_LIBRARIES}
+    ${LEPTONICA_LIBRARIES}
+    ${Protobuf_LIBRARIES}
+    sqlite3
+)
+
+add_test(NAME ReceiptReaderTests COMMAND ReceiptReaderTests)
