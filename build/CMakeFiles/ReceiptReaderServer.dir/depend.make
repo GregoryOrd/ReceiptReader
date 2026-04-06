@@ -1,2 +1,0 @@
-# Empty dependencies file for ReceiptReaderServer.
-# This may be replaced when dependencies are built.
