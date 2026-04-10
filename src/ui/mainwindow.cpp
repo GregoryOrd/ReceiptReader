@@ -127,8 +127,9 @@ void MainWindow::search() {
 
     m_resultsList->clear();
     for (const auto& item : items) {
-        QString text = QString("Code: %1, Price: %2, Date: %3")
+        QString text = QString("Code: %1, Desc: %2, Price: %3, Date: %4")
                            .arg(QString::fromStdString(item.code))
+                           .arg(QString::fromStdString(item.description))
                            .arg(item.price)
                            .arg(QString::fromStdString(item.timestamp));
         m_resultsList->addItem(text);
@@ -167,7 +168,7 @@ void MainWindow::graphSelected() {
     QLineSeries* series = new QLineSeries;
     series->setName("Price over Time for " + code);
     for (const auto& item : items) {
-        QDateTime dt = QDateTime::fromString(QString::fromStdString(item.timestamp), "yyyy-MM-dd hh:mm:ss");
+        QDateTime dt = QDateTime::fromString(QString::fromStdString(item.timestamp), "yyyy-MM-dd");
         series->append(dt.toMSecsSinceEpoch(), item.price);
     }
 

@@ -115,6 +115,7 @@ bool ServerClient::queryItems(const std::string& code,
     items.clear();
     for (const auto& entry : response.query_items_response().items()) {
         Item item;
+        item.description = entry.description();
         item.code = entry.code();
         item.price = entry.price();
         item.timestamp = entry.timestamp();

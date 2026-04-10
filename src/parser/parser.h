@@ -5,6 +5,7 @@
 #include <vector>
 
 struct Item {
+    std::string description;
     std::string code;
     double price;
     std::string timestamp;

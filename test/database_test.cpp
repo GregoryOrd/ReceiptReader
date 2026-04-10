@@ -23,26 +23,28 @@ TEST_F(DatabaseTest, CreateTable) {
     SUCCEED(); // If no exception, it's good
 }
 
-TEST_F(DatabaseTest, InsertAndQueryItem) {
+TEST_F(DatabaseTest, InsertAndQueryItemWithDescription) {
     Database db(testDbPath);
-    Item item{"001", 19.99, "2025-01-15 10:30:45"};
+    Item item{"Bananas", "001", 19.99, "2025-01-15"};
     db.insertItem(item);
 
     auto items = db.queryItems();
     ASSERT_EQ(items.size(), 1);
+    EXPECT_EQ(items[0].description, "Bananas");
     EXPECT_EQ(items[0].code, "001");
     EXPECT_DOUBLE_EQ(items[0].price, 19.99);
-    EXPECT_EQ(items[0].timestamp, "2025-01-15 10:30:45");
+    EXPECT_EQ(items[0].timestamp, "2025-01-15");
 }
 
-TEST_F(DatabaseTest, QueryFilteredItems) {
+TEST_F(DatabaseTest, DuplicateItemKeepsHighestPrice) {
     Database db(testDbPath);
-    Item item1{"001", 19.99, "2025-01-15 10:30:45"};
-    Item item2{"002", 29.50, "2025-01-16 11:00:00"};
-    db.insertItem(item1);
-    db.insertItem(item2);
+    Item first{"Bananas", "001", 19.99, "2025-01-15"};
+    Item second{"Bananas", "001", 20.50, "2025-01-15"};
+    db.insertItem(first);
+    db.insertItem(second);
 
-    auto items = db.queryItemsFiltered("001", "", "", "", "", false);
+    auto items = db.queryItems();
     ASSERT_EQ(items.size(), 1);
     EXPECT_EQ(items[0].code, "001");
+    EXPECT_DOUBLE_EQ(items[0].price, 20.50);
 }

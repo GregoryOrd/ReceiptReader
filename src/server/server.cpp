@@ -94,6 +94,7 @@ bool ReceiptReaderServer::queryItemsRequest(int clientSock, const receiptreader:
     for (const auto& item : items) {
         auto* entry = queryResponse->add_items();
         entry->set_code(item.code);
+        entry->set_description(item.description);
         entry->set_price(item.price);
         entry->set_timestamp(item.timestamp);
     }
@@ -120,7 +121,7 @@ bool ReceiptReaderServer::processImagesDirectory(const std::string& receiptDir, 
         }
         const auto path = entry.path();
         const auto ext = path.extension().string();
-        if (ext == ".jpg" || ext == ".png" || ext == ".HEIC" || ext == ".heic") {
+        if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".HEIC" || ext == ".heic") {
             imagePaths.push_back(path);
         }
     }
@@ -129,6 +130,7 @@ bool ReceiptReaderServer::processImagesDirectory(const std::string& receiptDir, 
     int totalItems = 0;
     int processedImages = 0;
 
+    std::cout << "Found " << totalImages << " receipt images to process." << std::endl;
     for (const auto& path : imagePaths) {
         const auto pathString = path.string();
         std::cout << "Processing image: " << pathString << std::endl;

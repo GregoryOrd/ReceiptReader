@@ -82,15 +82,13 @@ std::vector<Item> parseReceiptText(const std::string& text) {
             std::ostringstream oss;
             oss << std::setfill('0') << std::setw(4) << year << "-"
                 << std::setw(2) << month << "-"
-                << std::setw(2) << day << " "
-                << std::setw(2) << hour << ":"
-                << std::setw(2) << min << ":"
-                << std::setw(2) << sec;
+                << std::setw(2) << day;
             timestamp = oss.str();
         } else if (std::regex_search(currentLine, match, itemRegex)) {
             double priceValue;
             if (normalizePrice(match[3].str(), priceValue)) {
                 Item item;
+                item.description = match[1];
                 item.code = match[2];
                 item.price = priceValue;
                 item.timestamp = timestamp.empty() ? getCurrentTimestamp() : timestamp;
@@ -108,6 +106,7 @@ std::vector<Item> parseReceiptText(const std::string& text) {
                 double priceValue;
                 if (normalizePrice(lastPrice, priceValue)) {
                     Item item;
+                    item.description = match[1];
                     item.code = match[2];
                     item.price = priceValue;
                     item.timestamp = timestamp.empty() ? getCurrentTimestamp() : timestamp;
@@ -131,6 +130,6 @@ std::string getCurrentTimestamp() {
     auto time = std::chrono::system_clock::to_time_t(now);
     std::tm tm = *std::localtime(&time);
     std::ostringstream oss;
-    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+    oss << std::put_time(&tm, "%Y-%m-%d");
     return oss.str();
 }

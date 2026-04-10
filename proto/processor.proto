@@ -3,8 +3,9 @@ package receiptreader;
 
 message ReceiptItem {
   string code = 1;
-  double price = 2;
-  string timestamp = 3;
+  string description = 2;
+  double price = 3;
+  string timestamp = 4;
 }
 
 message QueryItemsRequest {

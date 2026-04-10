@@ -19,11 +19,50 @@ Database::~Database() {
 }
 
 void Database::createTable() {
+    bool shouldRecreateItems = false;
+    sqlite3_stmt* stmt = nullptr;
+    if (sqlite3_prepare_v2(db, "PRAGMA table_info(items);", -1, &stmt, nullptr) == SQLITE_OK) {
+        bool hasDescription = false;
+        bool timestampIsDate = false;
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            std::string columnName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+            std::string columnType = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+            if (columnName == "description") {
+                hasDescription = true;
+            }
+            if (columnName == "timestamp" && columnType == "DATE") {
+                timestampIsDate = true;
+            }
+        }
+        sqlite3_finalize(stmt);
+        if (!hasDescription || !timestampIsDate) {
+            shouldRecreateItems = true;
+        }
+    }
+
+    if (shouldRecreateItems) {
+        char* errMsg = nullptr;
+        if (sqlite3_exec(db, "DROP TABLE IF EXISTS items;", nullptr, nullptr, &errMsg) != SQLITE_OK) {
+            std::cerr << "SQL error while dropping old items table: " << errMsg << std::endl;
+            sqlite3_free(errMsg);
+        }
+    }
+
     const char* sql = "CREATE TABLE IF NOT EXISTS items ("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "description TEXT, "
                       "code TEXT NOT NULL, "
                       "price REAL NOT NULL, "
-                      "timestamp DATETIME NOT NULL);";
+                      "timestamp DATE NOT NULL);"
+                      "CREATE UNIQUE INDEX IF NOT EXISTS idx_items_code_timestamp ON items(code, timestamp);"
+                      "CREATE INDEX IF NOT EXISTS idx_items_code ON items(code);"
+                      "CREATE TABLE IF NOT EXISTS warnings ("
+                      "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                      "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+                      "type TEXT NOT NULL, "
+                      "code TEXT, "
+                      "description TEXT, "
+                      "message TEXT NOT NULL);";
     char* errMsg = nullptr;
     if (sqlite3_exec(db, sql, nullptr, nullptr, &errMsg) != SQLITE_OK) {
         std::cerr << "SQL error: " << errMsg << std::endl;
@@ -31,16 +70,72 @@ void Database::createTable() {
     }
 }
 
-void Database::insertItem(const Item& item) {
-    const char* sql = "INSERT INTO items (code, price, timestamp) VALUES (?, ?, ?);";
+void Database::insertWarning(const std::string& type, const std::string& code, const std::string& description, const std::string& message) {
+    const char* sql = "INSERT INTO warnings (type, code, description, message) VALUES (?, ?, ?, ?);";
     sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare warning statement: " << sqlite3_errmsg(db) << std::endl;
+        return;
+    }
+    sqlite3_bind_text(stmt, 1, type.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, code.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, description.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, message.c_str(), -1, SQLITE_STATIC);
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        std::cerr << "Failed to execute warning statement: " << sqlite3_errmsg(db) << std::endl;
+    }
+    sqlite3_finalize(stmt);
+}
+
+void Database::insertItem(const Item& item) {
+    const char* selectSql = "SELECT price FROM items WHERE code = ? AND timestamp = ?;";
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(db, selectSql, -1, &stmt, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare select statement: " << sqlite3_errmsg(db) << std::endl;
+        return;
+    }
+    sqlite3_bind_text(stmt, 1, item.code.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, item.timestamp.c_str(), -1, SQLITE_STATIC);
+    int rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW) {
+        double existingPrice = sqlite3_column_double(stmt, 0);
+        sqlite3_finalize(stmt);
+        if (item.price > existingPrice) {
+            const char* updateSql = "UPDATE items SET price = ?, description = ? WHERE code = ? AND timestamp = ?;";
+            if (sqlite3_prepare_v2(db, updateSql, -1, &stmt, nullptr) != SQLITE_OK) {
+                std::cerr << "Failed to prepare update statement: " << sqlite3_errmsg(db) << std::endl;
+                return;
+            }
+            sqlite3_bind_double(stmt, 1, item.price);
+            sqlite3_bind_text(stmt, 2, item.description.c_str(), -1, SQLITE_STATIC);
+            sqlite3_bind_text(stmt, 3, item.code.c_str(), -1, SQLITE_STATIC);
+            sqlite3_bind_text(stmt, 4, item.timestamp.c_str(), -1, SQLITE_STATIC);
+            if (sqlite3_step(stmt) != SQLITE_DONE) {
+                std::cerr << "Failed to execute update statement: " << sqlite3_errmsg(db) << std::endl;
+            } else {
+                std::string warning = "Duplicate item for code " + item.code + " on " + item.timestamp + "; updated to higher price.";
+                std::cerr << warning << std::endl;
+                insertWarning("duplicate", item.code, item.description, warning);
+            }
+            sqlite3_finalize(stmt);
+        } else {
+            std::string warning = "Duplicate item for code " + item.code + " on " + item.timestamp + "; existing price kept.";
+            std::cerr << warning << std::endl;
+            insertWarning("duplicate", item.code, item.description, warning);
+        }
+        return;
+    }
+    sqlite3_finalize(stmt);
+
+    const char* sql = "INSERT INTO items (description, code, price, timestamp) VALUES (?, ?, ?, ?);";
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
         std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;
         return;
     }
-    sqlite3_bind_text(stmt, 1, item.code.c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_double(stmt, 2, item.price);
-    sqlite3_bind_text(stmt, 3, item.timestamp.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 1, item.description.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, item.code.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 3, item.price);
+    sqlite3_bind_text(stmt, 4, item.timestamp.c_str(), -1, SQLITE_STATIC);
     if (sqlite3_step(stmt) != SQLITE_DONE) {
         std::cerr << "Failed to execute statement: " << sqlite3_errmsg(db) << std::endl;
     }
@@ -49,7 +144,7 @@ void Database::insertItem(const Item& item) {
 
 std::vector<Item> Database::queryItems(const std::string& whereClause) {
     std::vector<Item> items;
-    std::string sql = "SELECT code, price, timestamp FROM items";
+    std::string sql = "SELECT description, code, price, timestamp FROM items";
     if (!whereClause.empty()) {
         sql += " WHERE " + whereClause;
     }
@@ -61,9 +156,10 @@ std::vector<Item> Database::queryItems(const std::string& whereClause) {
     }
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         Item item;
-        item.code = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-        item.price = sqlite3_column_double(stmt, 1);
-        item.timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+        item.description = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+        item.code = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        item.price = sqlite3_column_double(stmt, 2);
+        item.timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
         items.push_back(item);
     }
     sqlite3_finalize(stmt);
@@ -77,7 +173,7 @@ std::vector<Item> Database::queryItemsFiltered(const std::string& code,
                                                const std::string& dateEnd,
                                                bool orderByTimestamp) {
     std::vector<Item> items;
-    std::string sql = "SELECT code, price, timestamp FROM items";
+    std::string sql = "SELECT description, code, price, timestamp FROM items";
     std::vector<std::string> conditions;
     std::vector<std::string> arguments;
 
@@ -128,9 +224,10 @@ std::vector<Item> Database::queryItemsFiltered(const std::string& code,
 
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         Item item;
-        item.code = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-        item.price = sqlite3_column_double(stmt, 1);
-        item.timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+        item.description = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+        item.code = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        item.price = sqlite3_column_double(stmt, 2);
+        item.timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
         items.push_back(item);
     }
     sqlite3_finalize(stmt);
