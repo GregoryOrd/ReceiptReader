@@ -69,6 +69,22 @@ std::vector<Item> parseReceiptText(const std::string& text) {
         }
     };
 
+    auto findUnitPriceToken = [&](const std::string& line, const std::vector<std::string>& tokens) {
+        auto atPos = line.find('@');
+        if (atPos != std::string::npos) {
+            for (const auto& token : tokens) {
+                auto tokenPos = line.find(token);
+                if (tokenPos != std::string::npos && tokenPos > atPos) {
+                    return token;
+                }
+            }
+        }
+        if (!tokens.empty()) {
+            return tokens.front();
+        }
+        return std::string();
+    };
+
     std::vector<std::string> lines;
     while (std::getline(iss, line)) {
         lines.push_back(line);
@@ -117,22 +133,24 @@ std::vector<Item> parseReceiptText(const std::string& text) {
             }
         } else if (std::regex_search(currentLine, match, itemLine1Regex) && i + 1 < lines.size()) {
             std::string nextLine = normalizeLine(lines[i + 1]);
-            std::string lastPrice;
+            std::vector<std::string> priceTokens;
             for (std::sregex_iterator iter(nextLine.begin(), nextLine.end(), priceRegex), end; iter != end; ++iter) {
-                lastPrice = iter->str();
+                priceTokens.push_back(iter->str());
             }
-            if (!lastPrice.empty()) {
+            if (!priceTokens.empty()) {
+                std::string priceToken = findUnitPriceToken(nextLine, priceTokens);
                 double priceValue;
-                if (normalizePrice(lastPrice, priceValue)) {
+                if (!priceToken.empty() && normalizePrice(priceToken, priceValue)) {
                     Item item;
                     item.description = match[1];
                     item.code = match[2];
                     item.price = priceValue;
+                    item.isUnitPrice = nextLine.find('@') != std::string::npos;
                     item.timestamp = timestamp.empty() ? getCurrentTimestamp() : timestamp;
                     items.push_back(item);
                     ++i;
                 } else {
-                    std::cerr << "Skipping multiline item with invalid price: " << lastPrice << std::endl;
+                    std::cerr << "Skipping multiline item with invalid price: " << priceToken << std::endl;
                 }
             } else if (!currentLine.empty()) {
                 std::cerr << "Skipping unrecognized OCR line: " << currentLine << std::endl;

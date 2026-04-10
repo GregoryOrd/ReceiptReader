@@ -125,7 +125,8 @@ TEST_F(ParserTest, ParseMultilineItemEntryWithSpacePrice) {
     auto items = parseReceiptText(receipt);
     ASSERT_EQ(items.size(), 1);
     EXPECT_EQ(items[0].code, "00000040110");
-    EXPECT_DOUBLE_EQ(items[0].price, 3.92);
+    EXPECT_DOUBLE_EQ(items[0].price, 1.60);
+    EXPECT_TRUE(items[0].isUnitPrice);
 }
 
 TEST_F(ParserTest, ParseMultilineItemEntryWithCodeSuffix) {
@@ -133,7 +134,8 @@ TEST_F(ParserTest, ParseMultilineItemEntryWithCodeSuffix) {
     auto items = parseReceiptText(receipt);
     ASSERT_EQ(items.size(), 1);
     EXPECT_EQ(items[0].code, "000000046640");
-    EXPECT_DOUBLE_EQ(items[0].price, 6.30);
+    EXPECT_DOUBLE_EQ(items[0].price, 7.20);
+    EXPECT_TRUE(items[0].isUnitPrice);
 }
 
 TEST_F(ParserTest, ParseMultilineItemEntryWithCommaPrice) {
@@ -141,5 +143,6 @@ TEST_F(ParserTest, ParseMultilineItemEntryWithCommaPrice) {
     auto items = parseReceiptText(receipt);
     ASSERT_EQ(items.size(), 1);
     EXPECT_EQ(items[0].code, "000000040740");
-    EXPECT_DOUBLE_EQ(items[0].price, 9.94);
+    EXPECT_DOUBLE_EQ(items[0].price, 4.37);
+    EXPECT_TRUE(items[0].isUnitPrice);
 }
