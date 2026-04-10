@@ -15,9 +15,10 @@ std::vector<Item> parseReceiptText(const std::string& text) {
     std::string line;
     std::string timestamp = "";
     std::regex dateRegex(R"(\b(\d{1,2})/(\d{1,2})/(\d{2})\s+(\d{1,2}):(\d{2}):(\d{2})\b)");
-    std::regex itemRegex(R"(^\s*(.+?)\s+(\d{12})\s+(\S[0-9Oo]+(?:[.,][0-9Oo]+| [0-9Oo]+)?)(?:\s+(\S+))?\s*$)");
+    std::regex itemRegex(R"(^\s*(.+?)\s+(\d{12})\s+([\$Ss][0-9Oo]+([.,][0-9Oo]{2}| [0-9Oo]{2})?)(\s+(\S+))?\s*$)");
+    std::regex itemGenericRegex(R"(^\s*(.+?)\s+(\d{12})\s+(\S+)(\s+(\S+))?\s*$)");
     std::regex itemLine1Regex(R"(^\s*(.+?)\s+([0-9]{11,12})([A-Za-z]?)\s*$)");
-    std::regex priceRegex(R"(\S[0-9Oo]+(?:[.,][0-9Oo]+| [0-9Oo]+)?)");
+    std::regex priceRegex(R"((([\$Ss]|§)[0-9Oo]+([.,][0-9Oo]+| [0-9Oo]+)?)|([0-9Oo]+([.,][0-9Oo]+| [0-9Oo]+)))");
 
     auto normalizeLine = [&](std::string source) {
         std::string normalized = std::move(source);
@@ -34,7 +35,9 @@ std::vector<Item> parseReceiptText(const std::string& text) {
         if (priceStr.empty()) {
             return false;
         }
+        bool hasCurrencyPrefix = false;
         if (priceStr[0] == 'S' || priceStr[0] == 's' || priceStr[0] == '$' || priceStr.rfind("§", 0) == 0) {
+            hasCurrencyPrefix = true;
             priceStr = priceStr.substr(1);
         }
         for (auto& c : priceStr) {
@@ -49,7 +52,11 @@ std::vector<Item> parseReceiptText(const std::string& text) {
             auto dotPos = priceStr.find(' ');
             priceStr[dotPos] = '.';
         }
+        bool hasDecimal = priceStr.find('.') != std::string::npos;
         priceStr.erase(std::remove(priceStr.begin(), priceStr.end(), ' '), priceStr.end());
+        if (!hasCurrencyPrefix && !hasDecimal) {
+            return false;
+        }
         std::regex validPrice(R"(^\d+(?:\.\d+)?$)");
         if (!std::regex_match(priceStr, validPrice)) {
             return false;
@@ -85,6 +92,18 @@ std::vector<Item> parseReceiptText(const std::string& text) {
                 << std::setw(2) << day;
             timestamp = oss.str();
         } else if (std::regex_search(currentLine, match, itemRegex)) {
+            double priceValue;
+            if (normalizePrice(match[3].str(), priceValue)) {
+                Item item;
+                item.description = match[1];
+                item.code = match[2];
+                item.price = priceValue;
+                item.timestamp = timestamp.empty() ? getCurrentTimestamp() : timestamp;
+                items.push_back(item);
+            } else {
+                std::cerr << "Skipping item with invalid price: " << match[3].str() << std::endl;
+            }
+        } else if (std::regex_search(currentLine, match, itemGenericRegex)) {
             double priceValue;
             if (normalizePrice(match[3].str(), priceValue)) {
                 Item item;

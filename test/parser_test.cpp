@@ -94,6 +94,16 @@ TEST_F(ParserTest, ParseOCRLineWithSectionSymbolAndSuffix) {
     EXPECT_DOUBLE_EQ(items[0].price, 2.27);
 }
 
+TEST_F(ParserTest, WarnsOnInvalidSingleDigitPriceToken) {
+    std::string receipt = "PORT PEASANT 661172018160 5 oH";
+    testing::internal::CaptureStderr();
+    auto items = parseReceiptText(receipt);
+    std::string output = testing::internal::GetCapturedStderr();
+
+    ASSERT_EQ(items.size(), 0);
+    EXPECT_NE(output.find("Skipping item with invalid price: 5"), std::string::npos);
+}
+
 TEST_F(ParserTest, ParseOCRLineWithSingleDecimalDigit) {
     std::string receipt = "ARM HARB CHS 061120052440 $10.9 1";
     auto items = parseReceiptText(receipt);
