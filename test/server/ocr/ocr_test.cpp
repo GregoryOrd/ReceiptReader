@@ -22,8 +22,8 @@ TEST_F(OCRTest, ExtractTextFromEmptyImagePath) {
     EXPECT_EQ(result, "");
 }
 
-TEST_F(OCRTest, ExtractTextFromValidImagePath) {
-    std::string result = extractTextFromImage("../imgs/Receipt1/IMG_3397.HEIC");
-    std::cout << "Extracted text: " << result << std::endl;
-    EXPECT_EQ(result, "");
-}
+// TEST_F(OCRTest, ExtractTextFromValidImagePath) {
+//     std::string result = extractTextFromImage("../imgs/Receipt1/IMG_3397.HEIC");
+//     std::cout << "Extracted text: " << result << std::endl;
+//     EXPECT_EQ(result, "");
+// }

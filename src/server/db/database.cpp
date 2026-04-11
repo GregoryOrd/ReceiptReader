@@ -69,46 +69,7 @@ void Database::insertWarning(WarningType type, const std::string& code, const st
 }
 
 void Database::insertItem(const Item& item) {
-    const char* selectSql = "SELECT price FROM items WHERE code = ? AND timestamp = ?;";
     sqlite3_stmt* stmt;
-    if (sqlite3_prepare_v2(db, selectSql, -1, &stmt, nullptr) != SQLITE_OK) {
-        std::cerr << "Failed to prepare select statement: " << sqlite3_errmsg(db) << std::endl;
-        return;
-    }
-    sqlite3_bind_text(stmt, 1, item.code.c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 2, item.timestamp.c_str(), -1, SQLITE_STATIC);
-    int rc = sqlite3_step(stmt);
-    if (rc == SQLITE_ROW) {
-        double existingPrice = sqlite3_column_double(stmt, 0);
-        sqlite3_finalize(stmt);
-        if (item.price > existingPrice) {
-            const char* updateSql = "UPDATE items SET price = ?, description = ?, is_unit_price = ? WHERE code = ? AND timestamp = ?;";
-            if (sqlite3_prepare_v2(db, updateSql, -1, &stmt, nullptr) != SQLITE_OK) {
-                std::cerr << "Failed to prepare update statement: " << sqlite3_errmsg(db) << std::endl;
-                return;
-            }
-            sqlite3_bind_double(stmt, 1, item.price);
-            sqlite3_bind_text(stmt, 2, item.description.c_str(), -1, SQLITE_STATIC);
-            sqlite3_bind_int(stmt, 3, item.isUnitPrice ? 1 : 0);
-            sqlite3_bind_text(stmt, 4, item.code.c_str(), -1, SQLITE_STATIC);
-            sqlite3_bind_text(stmt, 5, item.timestamp.c_str(), -1, SQLITE_STATIC);
-            if (sqlite3_step(stmt) != SQLITE_DONE) {
-                std::cerr << "Failed to execute update statement: " << sqlite3_errmsg(db) << std::endl;
-            } else {
-                std::string warning = "Duplicate item for code " + item.code + " on " + item.timestamp + "; updated to higher price.";
-                std::cerr << warning << std::endl;
-                insertWarning(WarningType::Duplicate, item.code, item.description, warning);
-            }
-            sqlite3_finalize(stmt);
-        } else {
-            std::string warning = "Duplicate item for code " + item.code + " on " + item.timestamp + "; existing price kept.";
-            std::cerr << warning << std::endl;
-            insertWarning(WarningType::Duplicate, item.code, item.description, warning);
-        }
-        return;
-    }
-    sqlite3_finalize(stmt);
-
     const char* sql = "INSERT INTO items (description, code, price, timestamp, is_unit_price) VALUES (?, ?, ?, ?, ?);";
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
         std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;

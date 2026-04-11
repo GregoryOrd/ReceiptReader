@@ -19,7 +19,7 @@ ReceiptReaderServer::ReceiptReaderServer(int port, const std::string& dbPath)
 }
 
 bool ReceiptReaderServer::run() {
-    m_db.createTable();
+    m_db.createTableIfNotExists();
 
     int serverSock = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSock < 0) {
