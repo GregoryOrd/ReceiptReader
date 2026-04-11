@@ -6,12 +6,19 @@
 #include "db/database.h"
 #include "processor.pb.h"
 
+struct sockaddr_in;
+
 class ReceiptReaderServer {
 public:
     ReceiptReaderServer(int port, const std::string& dbPath);
     bool run();
 
 private:
+    int createServerSocket();
+    bool bindAndListen(int serverSock);
+    int acceptClient(int serverSock, sockaddr_in& clientAddr);
+    void logAcceptedClient(const sockaddr_in& clientAddr);
+
     bool handleClient(int clientSock);
     bool queryItemsRequest(int clientSock, const receiptreader::QueryItemsRequest& request);
     bool processImagesRequest(int clientSock, const receiptreader::ProcessImagesRequest& request);

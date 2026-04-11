@@ -41,7 +41,9 @@ bool ReceiptReaderServer::run() {
         }
 
         logAcceptedClient(clientAddr);
-        handleClient(clientSock);
+        while (handleClient(clientSock)) {
+            // Continue accepting multiple requests on the same client connection.
+        }
         close(clientSock);
     }
 
