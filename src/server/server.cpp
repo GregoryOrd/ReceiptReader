@@ -21,28 +21,12 @@ ReceiptReaderServer::ReceiptReaderServer(int port, const std::string& dbPath)
 bool ReceiptReaderServer::run() {
     m_db.createTableIfNotExists();
 
-    int serverSock = socket(AF_INET, SOCK_STREAM, 0);
+    int serverSock = createServerSocket();
     if (serverSock < 0) {
-        std::cerr << "Failed to create server socket: " << strerror(errno) << std::endl;
         return false;
     }
 
-    int opt = 1;
-    setsockopt(serverSock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-
-    sockaddr_in addr{};
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr.sin_port = htons(m_port);
-
-    if (bind(serverSock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0) {
-        std::cerr << "Failed to bind server socket: " << strerror(errno) << std::endl;
-        close(serverSock);
-        return false;
-    }
-
-    if (listen(serverSock, 5) < 0) {
-        std::cerr << "Server failed to listen: " << strerror(errno) << std::endl;
+    if (!bindAndListen(serverSock)) {
         close(serverSock);
         return false;
     }
@@ -51,24 +35,65 @@ bool ReceiptReaderServer::run() {
 
     while (true) {
         sockaddr_in clientAddr{};
-        socklen_t clientAddrLen = sizeof(clientAddr);
-        int clientSock = accept(serverSock, reinterpret_cast<sockaddr*>(&clientAddr), &clientAddrLen);
+        int clientSock = acceptClient(serverSock, clientAddr);
         if (clientSock < 0) {
-            std::cerr << "Failed to accept connection: " << strerror(errno) << std::endl;
             continue;
         }
 
-        char clientIp[INET_ADDRSTRLEN] = {0};
-        inet_ntop(AF_INET, &clientAddr.sin_addr, clientIp, sizeof(clientIp));
-        int clientPort = ntohs(clientAddr.sin_port);
-        std::cout << "Accepted connection from " << clientIp << ":" << clientPort << std::endl;
-
+        logAcceptedClient(clientAddr);
         handleClient(clientSock);
         close(clientSock);
     }
 
     close(serverSock);
     return true;
+}
+
+int ReceiptReaderServer::createServerSocket() {
+    int serverSock = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSock < 0) {
+        std::cerr << "Failed to create server socket: " << strerror(errno) << std::endl;
+        return -1;
+    }
+
+    int opt = 1;
+    setsockopt(serverSock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    return serverSock;
+}
+
+bool ReceiptReaderServer::bindAndListen(int serverSock) {
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_port = htons(m_port);
+
+    if (bind(serverSock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0) {
+        std::cerr << "Failed to bind server socket: " << strerror(errno) << std::endl;
+        return false;
+    }
+
+    if (listen(serverSock, 5) < 0) {
+        std::cerr << "Server failed to listen: " << strerror(errno) << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+int ReceiptReaderServer::acceptClient(int serverSock, sockaddr_in& clientAddr) {
+    socklen_t clientAddrLen = sizeof(clientAddr);
+    int clientSock = accept(serverSock, reinterpret_cast<sockaddr*>(&clientAddr), &clientAddrLen);
+    if (clientSock < 0) {
+        std::cerr << "Failed to accept connection: " << strerror(errno) << std::endl;
+    }
+    return clientSock;
+}
+
+void ReceiptReaderServer::logAcceptedClient(const sockaddr_in& clientAddr) {
+    char clientIp[INET_ADDRSTRLEN] = {0};
+    inet_ntop(AF_INET, &clientAddr.sin_addr, clientIp, sizeof(clientIp));
+    int clientPort = ntohs(clientAddr.sin_port);
+    std::cout << "Accepted connection from " << clientIp << ":" << clientPort << std::endl;
 }
 
 bool ReceiptReaderServer::handleClient(int clientSock) {
