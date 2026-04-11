@@ -52,7 +52,8 @@ Database::~Database() {
     }
 }
 
-void Database::createTableIfNotExists() {
+bool Database::createTableIfNotExists() {
+    std::lock_guard<std::mutex> lock(m_mutex);
     const char* sql = "CREATE TABLE IF NOT EXISTS items ("
                       "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "description TEXT, "
@@ -73,10 +74,13 @@ void Database::createTableIfNotExists() {
     if (sqlite3_exec(db, sql, nullptr, nullptr, &errMsg) != SQLITE_OK) {
         std::cerr << "SQL error: " << errMsg << std::endl;
         sqlite3_free(errMsg);
+        return false;
     }
+    return true;
 }
 
 void Database::insertWarning(WarningType type, const std::string& code, const std::string& description, const std::string& message) {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (!insertWarningStmt) {
         std::cerr << "Warning statement is not prepared." << std::endl;
         return;
@@ -93,6 +97,7 @@ void Database::insertWarning(WarningType type, const std::string& code, const st
 }
 
 void Database::insertItem(const Item& item) {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (!selectItemStmt || !updateItemStmt || !insertItemStmt) {
         std::cerr << "Database statements are not prepared." << std::endl;
         return;
@@ -143,6 +148,7 @@ void Database::insertItem(const Item& item) {
 }
 
 std::vector<Item> Database::queryItems(const std::string& whereClause) {
+    std::lock_guard<std::mutex> lock(m_mutex);
     std::vector<Item> items;
     std::string sql = "SELECT description, code, price, timestamp, is_unit_price FROM items";
     if (!whereClause.empty()) {
@@ -173,6 +179,7 @@ std::vector<Item> Database::queryItemsFiltered(const std::string& code,
                                                const std::string& dateStart,
                                                const std::string& dateEnd,
                                                bool orderByTimestamp) {
+    std::lock_guard<std::mutex> lock(m_mutex);
     std::vector<Item> items;
     std::string sql = "SELECT description, code, price, timestamp, is_unit_price FROM items";
     std::vector<std::string> conditions;

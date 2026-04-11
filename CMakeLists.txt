@@ -37,6 +37,8 @@ set(GUI_SOURCES
 set(SERVER_SOURCES
     src/server/main.cpp
     src/server/server.cpp
+    src/server/ProtobufServer.cpp
+    src/server/WebServer.cpp
     src/ipc/message_io.cpp
     src/server/ocr/ocr.cpp
     src/server/parser/parser.cpp

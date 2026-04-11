@@ -1,35 +1,35 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#include <functional>
 #include <string>
-#include <mutex>
+#include <vector>
 #include "db/database.h"
+#include "parser/parser.h"
 #include "processor.pb.h"
 
-struct sockaddr_in;
-
-class ReceiptReaderServer {
+class Server {
 public:
-    ReceiptReaderServer(int port, const std::string& dbPath);
-    bool run();
+    explicit Server(const std::string& dbPath);
+    bool initialize();
+
+    std::vector<Item> queryItemsFiltered(const std::string& code,
+                                         const std::string& priceMin,
+                                         const std::string& priceMax,
+                                         const std::string& dateStart,
+                                         const std::string& dateEnd,
+                                         bool orderByTimestamp);
+
+    std::vector<Item> processImageBytes(const std::string& filename, const std::string& imageData);
+    bool confirmProcessedItems(const std::vector<Item>& items);
+    bool processImagesDirectory(const std::string& receiptDir,
+                                const std::function<bool(const receiptreader::ProcessProgress&)>& progressCallback,
+                                receiptreader::ProcessComplete& complete);
 
 private:
-    int createServerSocket();
-    bool bindAndListen(int serverSock);
-    int acceptClient(int serverSock, sockaddr_in& clientAddr);
-    void logAcceptedClient(const sockaddr_in& clientAddr);
+    static bool writeBytesToTempFile(const std::string& filename, const std::string& data, std::string& outPath);
 
-    bool handleClient(int clientSock);
-    bool queryItemsRequest(int clientSock, const receiptreader::QueryItemsRequest& request);
-    bool processImagesRequest(int clientSock, const receiptreader::ProcessImagesRequest& request);
-    bool processImageRequest(int clientSock, const receiptreader::ProcessImageRequest& request);
-    bool confirmProcessedItemsRequest(int clientSock, const receiptreader::ConfirmProcessedItemsRequest& request);
-    bool processImagesDirectory(const std::string& receiptDir, int clientSock);
-    bool sendStatus(int clientSock, bool success, const std::string& message);
-
-    int m_port;
     Database m_db;
-    std::mutex m_dbMutex;
 };
 
 #endif // SERVER_H

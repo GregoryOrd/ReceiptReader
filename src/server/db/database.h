@@ -1,6 +1,7 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
+#include <mutex>
 #include <string>
 #include <vector>
 #include <sqlite3.h>
@@ -15,7 +16,7 @@ public:
 
     Database(const std::string& dbPath);
     ~Database();
-    void createTableIfNotExists();
+    bool createTableIfNotExists();
     void insertItem(const Item& item);
     void insertWarning(WarningType type, const std::string& code, const std::string& description, const std::string& message);
     std::vector<Item> queryItems(const std::string& whereClause = "");
@@ -33,6 +34,7 @@ private:
     sqlite3_stmt* updateItemStmt = nullptr;
     sqlite3_stmt* insertItemStmt = nullptr;
     sqlite3_stmt* insertWarningStmt = nullptr;
+    std::mutex m_mutex;
 };
 
 #endif

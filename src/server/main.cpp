@@ -1,20 +1,49 @@
-#include "server/server.h"
+#include "server.h"
+#include "ProtobufServer.h"
+#include "WebServer.h"
+#include <atomic>
 #include <iostream>
+#include <thread>
 
 int main(int argc, char* argv[]) {
-    int port = 52000;
-    std::string imgDir = "imgs";
+    int protoPort = 52000;
+    int restPort = 53000;
+    std::string dbPath = "receipts.db";
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
         if (arg == "--port" && i + 1 < argc) {
-            port = std::stoi(argv[++i]);
-        } else if (arg == "--imgdir" && i + 1 < argc) {
-            imgDir = argv[++i];
+            protoPort = std::stoi(argv[++i]);
+        } else if (arg == "--rest-port" && i + 1 < argc) {
+            restPort = std::stoi(argv[++i]);
+        } else if (arg == "--db" && i + 1 < argc) {
+            dbPath = argv[++i];
         }
     }
 
-    std::cout << "Starting ReceiptReaderServer on port " << port << "." << std::endl;
-    ReceiptReaderServer server(port, "receipts.db");
-    return server.run() ? 0 : 1;
+    Server server(dbPath);
+    if (!server.initialize()) {
+        std::cerr << "Failed to initialize database." << std::endl;
+        return 1;
+    }
+
+    ProtobufServer protobufServer(protoPort, server);
+    WebServer webServer(restPort, server);
+    std::atomic<bool> failure{false};
+
+    std::thread protoThread([&] {
+        if (!protobufServer.run()) {
+            failure = true;
+        }
+    });
+    std::thread webThread([&] {
+        if (!webServer.run()) {
+            failure = true;
+        }
+    });
+
+    protoThread.join();
+    webThread.join();
+
+    return failure ? 1 : 0;
 }
