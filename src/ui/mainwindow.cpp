@@ -238,7 +238,6 @@ void MainWindow::graphSelected() {
         return;
     }
 
-    QMessageBox::warning(this, "Found Items", QString::fromStdString("Found " + std::to_string(items.size()) + " items."));
     QLineSeries* series = new QLineSeries;
     series->setName("Price over Time for " + code);
     for (const auto& item : items) {
