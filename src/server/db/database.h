@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <sqlite3.h>
 #include "parser/parser.h" // for Item
 
 class Database {
@@ -25,7 +26,13 @@ public:
                                          const std::string& dateEnd,
                                          bool orderByTimestamp = false);
 private:
+    bool prepareStatement(const char* sql, sqlite3_stmt** stmt);
+
     struct sqlite3* db;
+    sqlite3_stmt* selectItemStmt = nullptr;
+    sqlite3_stmt* updateItemStmt = nullptr;
+    sqlite3_stmt* insertItemStmt = nullptr;
+    sqlite3_stmt* insertWarningStmt = nullptr;
 };
 
 #endif
