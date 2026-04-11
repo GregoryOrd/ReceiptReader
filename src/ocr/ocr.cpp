@@ -100,38 +100,29 @@ std::string extractTextFromImage(const std::string& imagePath) {
     // Preprocess: grayscale, threshold
     cv::Mat gray;
     cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
+    
     cv::Mat thresh;
     cv::threshold(gray, thresh, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
-
-    cv::Mat thresh2;
-    cv::threshold(gray, thresh2, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU); 
 
     // //Save the thresholded image for debugging
     cv::imwrite("thresh.png", thresh);
 
-    drawGrid(&thresh, "initial_grid.png");
-    whiteOut(&thresh2);
-    drawGrid(&thresh2, "final_grid.png");
 
-    // std::cout << "Preprocessing done, starting OCR..." << std::endl;
+    // OCR
+    tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
+    if (api->Init(NULL, "eng")) {
+        std::cerr << "Could not initialize tesseract." << std::endl;
+        return "";
+    }
+    api->SetImage(thresh.data, thresh.cols, thresh.rows, 1, thresh.step);
+    std::string text = std::string(api->GetUTF8Text());
+    api->End();
+    delete api;
 
-    return "";
+    // Clean up temp file if converted
+    if (processedPath != imagePath) {
+        fs::remove(processedPath);
+    }
 
-    // // OCR
-    // tesseract::TessBaseAPI* api = new tesseract::TessBaseAPI();
-    // if (api->Init(NULL, "eng")) {
-    //     std::cerr << "Could not initialize tesseract." << std::endl;
-    //     return "";
-    // }
-    // api->SetImage(thresh.data, thresh.cols, thresh.rows, 1, thresh.step);
-    // std::string text = std::string(api->GetUTF8Text());
-    // api->End();
-    // delete api;
-
-    // // Clean up temp file if converted
-    // if (processedPath != imagePath) {
-    //     fs::remove(processedPath);
-    // }
-
-    // return text;
+    return text;
 }
