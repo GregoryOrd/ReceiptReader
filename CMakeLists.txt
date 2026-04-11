@@ -75,9 +75,14 @@ add_executable(ReceiptReaderTests
     test/server/ocr/ocr_test.cpp
     test/server/parser/parser_test.cpp
     test/server/db/database_test.cpp
+    test/server/server_integration_test.cpp
     src/server/ocr/ocr.cpp
     src/server/parser/parser.cpp
     src/server/db/database.cpp
+    src/server/server.cpp
+    src/server/ProtobufServer.cpp
+    src/server/WebServer.cpp
+    src/ipc/message_io.cpp
     ${PROTO_SRCS}
 )
 
