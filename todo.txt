@@ -1,0 +1,2 @@
+- We should have some mechanism to try and detect errors so that we 
+  can alert the user to try and fix them.
