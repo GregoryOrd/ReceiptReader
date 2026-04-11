@@ -15,6 +15,7 @@ public:
     bool connectToServer();
     void disconnect();
     bool isConnected() const;
+    int port() const;
 
     bool queryItems(const std::string& code,
                     const std::string& priceMin,

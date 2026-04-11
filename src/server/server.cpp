@@ -58,6 +58,11 @@ bool ReceiptReaderServer::run() {
             continue;
         }
 
+        char clientIp[INET_ADDRSTRLEN] = {0};
+        inet_ntop(AF_INET, &clientAddr.sin_addr, clientIp, sizeof(clientIp));
+        int clientPort = ntohs(clientAddr.sin_port);
+        std::cout << "Accepted connection from " << clientIp << ":" << clientPort << std::endl;
+
         handleClient(clientSock);
         close(clientSock);
     }

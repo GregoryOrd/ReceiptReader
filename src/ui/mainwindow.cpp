@@ -63,7 +63,11 @@ MainWindow::MainWindow(QWidget* parent)
 
 void MainWindow::updateConnectionStatus() {
     bool connected = m_serverClient->isConnected();
-    m_connectionStatusLabel->setText(connected ? "Connected" : "Disconnected");
+    if (connected) {
+        m_connectionStatusLabel->setText(QString("Connected to server port %1").arg(m_serverClient->port()));
+    } else {
+        m_connectionStatusLabel->setText("Disconnected");
+    }
     m_connectButton->setText(connected ? "Disconnect" : "Connect");
 
     m_searchButton->setEnabled(connected);

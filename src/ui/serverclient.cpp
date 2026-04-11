@@ -51,6 +51,10 @@ bool ServerClient::isConnected() const {
     return m_sock >= 0;
 }
 
+int ServerClient::port() const {
+    return m_port;
+}
+
 bool ServerClient::sendRequest(const receiptreader::ServerRequest& request, std::string& error) {
     if (!isConnected()) {
         error = "Not connected to server.";
