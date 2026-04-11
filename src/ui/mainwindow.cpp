@@ -238,6 +238,7 @@ void MainWindow::graphSelected() {
         return;
     }
 
+    QMessageBox::warning(this, "Found Items", QString::fromStdString("Found " + std::to_string(items.size()) + " items."));
     QLineSeries* series = new QLineSeries;
     series->setName("Price over Time for " + code);
     for (const auto& item : items) {
@@ -247,17 +248,9 @@ void MainWindow::graphSelected() {
 
     QChart* chart = new QChart;
     chart->addSeries(series);
-
-    auto* axisX = new QDateTimeAxis;
-    axisX->setFormat("yyyy-MM-dd");
-    axisX->setTitleText("Date");
-    chart->addAxis(axisX, Qt::AlignBottom);
-    series->attachAxis(axisX);
-
-    auto* axisY = new QValueAxis;
-    axisY->setTitleText("Price");
-    chart->addAxis(axisY, Qt::AlignLeft);
-    series->attachAxis(axisY);
+    chart->createDefaultAxes();
+    chart->axes(Qt::Horizontal).first()->setTitleText("Time");
+    chart->axes(Qt::Vertical).first()->setTitleText("Price");
 
     m_chartView->setChart(chart);
 }
