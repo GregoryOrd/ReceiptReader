@@ -21,12 +21,13 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${TESSERACT_INCLUDE_DIRS})
 include_directories(${LEPTONICA_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/src/server)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS proto/processor.proto)
 
 set(GUI_SOURCES
-    src/main.cpp
+    src/ui/main.cpp
     src/ui/mainwindow.cpp
     src/ui/serverclient.cpp
     src/ipc/message_io.cpp
@@ -37,9 +38,9 @@ set(SERVER_SOURCES
     src/server/main.cpp
     src/server/server.cpp
     src/ipc/message_io.cpp
-    src/ocr/ocr.cpp
-    src/parser/parser.cpp
-    src/db/database.cpp
+    src/server/ocr/ocr.cpp
+    src/server/parser/parser.cpp
+    src/server/db/database.cpp
     ${PROTO_SRCS}
 )
 
@@ -69,12 +70,12 @@ target_link_libraries(ReceiptReaderServer
 
 # Add test executable
 add_executable(ReceiptReaderTests
-    test/ocr_test.cpp
-    test/parser_test.cpp
-    test/database_test.cpp
-    src/ocr/ocr.cpp
-    src/parser/parser.cpp
-    src/db/database.cpp
+    test/server/ocr/ocr_test.cpp
+    test/server/parser/parser_test.cpp
+    test/server/db/database_test.cpp
+    src/server/ocr/ocr.cpp
+    src/server/parser/parser.cpp
+    src/server/db/database.cpp
     ${PROTO_SRCS}
 )
 
