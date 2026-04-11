@@ -128,6 +128,79 @@ bool ServerClient::queryItems(const std::string& code,
     return true;
 }
 
+bool ServerClient::processImage(const std::vector<uint8_t>& imageData,
+                                const std::string& filename,
+                                std::vector<Item>& items,
+                                std::string& error) {
+    receiptreader::ServerRequest request;
+    auto* imageRequest = request.mutable_process_image();
+    imageRequest->set_image_data(reinterpret_cast<const char*>(imageData.data()), static_cast<int>(imageData.size()));
+    if (!filename.empty()) {
+        imageRequest->set_filename(filename);
+    }
+
+    if (!sendRequest(request, error)) {
+        return false;
+    }
+
+    receiptreader::ServerResponse response;
+    if (!receiveResponse(response, error)) {
+        return false;
+    }
+
+    if (response.has_status()) {
+        error = response.status().message();
+        return false;
+    }
+    if (!response.has_process_image_response()) {
+        error = "Unexpected server response.";
+        return false;
+    }
+
+    items.clear();
+    for (const auto& entry : response.process_image_response().items()) {
+        Item item;
+        item.description = entry.description();
+        item.code = entry.code();
+        item.price = entry.price();
+        item.timestamp = entry.timestamp();
+        items.push_back(item);
+    }
+    return true;
+}
+
+bool ServerClient::confirmProcessedItems(const std::vector<Item>& items,
+                                         std::string& error) {
+    receiptreader::ServerRequest request;
+    auto* confirmRequest = request.mutable_confirm_processed_items();
+    for (const auto& item : items) {
+        auto* entry = confirmRequest->add_items();
+        entry->set_code(item.code);
+        entry->set_description(item.description);
+        entry->set_price(item.price);
+        entry->set_timestamp(item.timestamp);
+    }
+
+    if (!sendRequest(request, error)) {
+        return false;
+    }
+
+    receiptreader::ServerResponse response;
+    if (!receiveResponse(response, error)) {
+        return false;
+    }
+
+    if (!response.has_status()) {
+        error = "Unexpected server response.";
+        return false;
+    }
+    if (!response.status().success()) {
+        error = response.status().message();
+        return false;
+    }
+    return true;
+}
+
 bool ServerClient::processImages(const std::string& receiptDir,
                                  const std::function<void(int, int, const std::string&)>& onProgress,
                                  std::string& error) {

@@ -1,8 +1,11 @@
 #include "mainwindow.h"
 #include <QDateTime>
+#include <QDialog>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QtCharts/QDateTimeAxis>
 #include <QtCharts/QValueAxis>
+#include <fstream>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
@@ -18,7 +21,7 @@ MainWindow::MainWindow(QWidget* parent)
     connectionLayout->addWidget(m_connectionStatusLabel);
     m_connectButton = new QPushButton("Connect");
     connectionLayout->addWidget(m_connectButton);
-    m_processButton = new QPushButton("Process Images");
+    m_processButton = new QPushButton("Process Image");
     connectionLayout->addWidget(m_processButton);
     layout->addLayout(connectionLayout);
 
@@ -58,7 +61,7 @@ MainWindow::MainWindow(QWidget* parent)
     layout->addWidget(m_chartView);
 
     connect(m_connectButton, &QPushButton::clicked, this, &MainWindow::toggleConnection);
-    connect(m_processButton, &QPushButton::clicked, this, &MainWindow::processImages);
+    connect(m_processButton, &QPushButton::clicked, this, &MainWindow::processImage);
 
     updateConnectionStatus();
 }
@@ -93,26 +96,90 @@ void MainWindow::toggleConnection() {
     updateConnectionStatus();
 }
 
-void MainWindow::processImages() {
+void MainWindow::processImage() {
     if (!m_serverClient->isConnected()) {
-        QMessageBox::warning(this, "Not Connected", "Please connect to the server before processing images.");
+        QMessageBox::warning(this, "Not Connected", "Please connect to the server before processing an image.");
         return;
     }
 
-    m_connectionStatusLabel->setText("Processing images...");
-    std::string error;
-    bool success = m_serverClient->processImages("imgs",
-        [this](int processed, int total, const std::string& current) {
-            QString status = QString("Processing %1/%2: %3").arg(processed).arg(total).arg(QString::fromStdString(current));
-            m_connectionStatusLabel->setText(status);
-        },
-        error);
+    QDialog dialog(this);
+    dialog.setWindowTitle("Process Image");
+    QVBoxLayout* dialogLayout = new QVBoxLayout(&dialog);
 
-    if (!success) {
-        QMessageBox::warning(this, "Process Failed", QString::fromStdString(error));
-    }
+    QPushButton* selectButton = new QPushButton("Select Image");
+    QLabel* selectedFileLabel = new QLabel("No image selected");
+    dialogLayout->addWidget(selectButton);
+    dialogLayout->addWidget(selectedFileLabel);
 
-    updateConnectionStatus();
+    QListWidget* itemList = new QListWidget;
+    dialogLayout->addWidget(itemList);
+
+    QHBoxLayout* buttonLayout = new QHBoxLayout;
+    QPushButton* confirmButton = new QPushButton("Confirm");
+    QPushButton* cancelButton = new QPushButton("Cancel");
+    confirmButton->setEnabled(false);
+    buttonLayout->addWidget(confirmButton);
+    buttonLayout->addWidget(cancelButton);
+    dialogLayout->addLayout(buttonLayout);
+
+    std::vector<Item> foundItems;
+    QString selectedPath;
+
+    connect(selectButton, &QPushButton::clicked, this, [&]() {
+        QString fileName = QFileDialog::getOpenFileName(&dialog, "Select Receipt Image", QString(), "Images (*.png *.jpg *.jpeg *.heic)");
+        if (fileName.isEmpty()) {
+            return;
+        }
+        selectedPath = fileName;
+        selectedFileLabel->setText(fileName);
+        itemList->clear();
+        confirmButton->setEnabled(false);
+
+        std::ifstream file(fileName.toStdString(), std::ios::binary);
+        if (!file) {
+            QMessageBox::warning(&dialog, "Read Failed", "Could not open the selected image file.");
+            return;
+        }
+
+        std::vector<uint8_t> imageData((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        file.close();
+
+        std::string error;
+        if (!m_serverClient->processImage(imageData, selectedPath.toStdString(), foundItems, error)) {
+            QMessageBox::warning(&dialog, "Process Failed", QString::fromStdString(error));
+            return;
+        }
+
+        itemList->clear();
+        for (const auto& item : foundItems) {
+            QString line = QString("Code: %1, Desc: %2, Price: %3, Date: %4")
+                               .arg(QString::fromStdString(item.code))
+                               .arg(QString::fromStdString(item.description))
+                               .arg(item.price)
+                               .arg(QString::fromStdString(item.timestamp));
+            itemList->addItem(line);
+        }
+
+        confirmButton->setEnabled(!foundItems.empty());
+    });
+
+    connect(cancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
+    connect(confirmButton, &QPushButton::clicked, this, [&]() {
+        if (foundItems.empty()) {
+            QMessageBox::warning(&dialog, "Nothing to Confirm", "No items have been processed yet.");
+            return;
+        }
+
+        std::string error;
+        if (!m_serverClient->confirmProcessedItems(foundItems, error)) {
+            QMessageBox::warning(&dialog, "Confirm Failed", QString::fromStdString(error));
+            return;
+        }
+
+        dialog.accept();
+    });
+
+    dialog.exec();
 }
 
 void MainWindow::search() {

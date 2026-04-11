@@ -22,6 +22,8 @@ private:
     bool handleClient(int clientSock);
     bool queryItemsRequest(int clientSock, const receiptreader::QueryItemsRequest& request);
     bool processImagesRequest(int clientSock, const receiptreader::ProcessImagesRequest& request);
+    bool processImageRequest(int clientSock, const receiptreader::ProcessImageRequest& request);
+    bool confirmProcessedItemsRequest(int clientSock, const receiptreader::ConfirmProcessedItemsRequest& request);
     bool processImagesDirectory(const std::string& receiptDir, int clientSock);
     bool sendStatus(int clientSock, bool success, const std::string& message);
 

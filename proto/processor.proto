@@ -25,6 +25,19 @@ message ProcessImagesRequest {
   string receipt_dir = 1;
 }
 
+message ProcessImageRequest {
+  bytes image_data = 1;
+  string filename = 2;
+}
+
+message ProcessImageResponse {
+  repeated ReceiptItem items = 1;
+}
+
+message ConfirmProcessedItemsRequest {
+  repeated ReceiptItem items = 1;
+}
+
 message ProcessProgress {
   int32 processed_images = 1;
   int32 total_images = 2;
@@ -46,6 +59,8 @@ message ServerRequest {
   oneof request {
     QueryItemsRequest query_items = 1;
     ProcessImagesRequest process_images = 2;
+    ProcessImageRequest process_image = 3;
+    ConfirmProcessedItemsRequest confirm_processed_items = 4;
   }
 }
 
@@ -55,5 +70,6 @@ message ServerResponse {
     ProcessProgress progress = 2;
     ProcessComplete complete = 3;
     StatusResponse status = 4;
+    ProcessImageResponse process_image_response = 5;
   }
 }

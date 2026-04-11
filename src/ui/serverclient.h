@@ -26,6 +26,14 @@ public:
                     std::vector<Item>& items,
                     std::string& error);
 
+    bool processImage(const std::vector<uint8_t>& imageData,
+                      const std::string& filename,
+                      std::vector<Item>& items,
+                      std::string& error);
+
+    bool confirmProcessedItems(const std::vector<Item>& items,
+                               std::string& error);
+
     bool processImages(const std::string& receiptDir,
                        const std::function<void(int, int, const std::string&)>& onProgress,
                        std::string& error);

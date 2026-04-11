@@ -21,7 +21,7 @@ public:
 
 private slots:
     void toggleConnection();
-    void processImages();
+    void processImage();
     void search();
     void graphSelected();
 

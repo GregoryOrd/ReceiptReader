@@ -7,10 +7,12 @@
 #include <cerrno>
 #include <cstring>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <chrono>
 
 namespace fs = std::filesystem;
 
@@ -113,6 +115,14 @@ bool ReceiptReaderServer::handleClient(int clientSock) {
         std::cout << "Received process images request for directory: " << request.process_images().receipt_dir() << std::endl;
         return processImagesRequest(clientSock, request.process_images());
     }
+    if (request.has_process_image()) {
+        std::cout << "Received process image request." << std::endl;
+        return processImageRequest(clientSock, request.process_image());
+    }
+    if (request.has_confirm_processed_items()) {
+        std::cout << "Received confirm processed items request." << std::endl;
+        return confirmProcessedItemsRequest(clientSock, request.confirm_processed_items());
+    }
 
     return sendStatus(clientSock, false, "Unsupported request type.");
 }
@@ -137,6 +147,65 @@ bool ReceiptReaderServer::queryItemsRequest(int clientSock, const receiptreader:
 bool ReceiptReaderServer::processImagesRequest(int clientSock, const receiptreader::ProcessImagesRequest& request) {
     std::cout << "Processing receipt images in directory." << std::endl;
     return processImagesDirectory(request.receipt_dir(), clientSock);
+}
+
+static bool writeBytesToTempFile(const std::string& filename, const std::string& data, std::string& outPath) {
+    try {
+        fs::path tempDir = fs::temp_directory_path();
+        std::string extension = fs::path(filename).extension().string();
+        if (extension.empty()) {
+            extension = ".png";
+        }
+        std::string uniqueName = "receipt_image_" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()) + extension;
+        fs::path path = tempDir / uniqueName;
+        std::ofstream out(path, std::ios::binary);
+        if (!out) {
+            return false;
+        }
+        out.write(data.data(), data.size());
+        out.close();
+        outPath = path.string();
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+bool ReceiptReaderServer::processImageRequest(int clientSock, const receiptreader::ProcessImageRequest& request) {
+    std::string tempPath;
+    if (!writeBytesToTempFile(request.filename(), request.image_data(), tempPath)) {
+        return sendStatus(clientSock, false, "Failed to save uploaded image.");
+    }
+
+    std::string text = extractTextFromImage(tempPath);
+    fs::remove(tempPath);
+    auto items = parseReceiptText(text);
+
+    receiptreader::ServerResponse response;
+    auto* imageResponse = response.mutable_process_image_response();
+    for (const auto& item : items) {
+        auto* entry = imageResponse->add_items();
+        entry->set_code(item.code);
+        entry->set_description(item.description);
+        entry->set_price(item.price);
+        entry->set_timestamp(item.timestamp);
+    }
+
+    return ipc::sendProtobufMessage(clientSock, response);
+}
+
+bool ReceiptReaderServer::confirmProcessedItemsRequest(int clientSock, const receiptreader::ConfirmProcessedItemsRequest& request) {
+    std::lock_guard<std::mutex> lock(m_dbMutex);
+    for (const auto& entry : request.items()) {
+        Item item;
+        item.code = entry.code();
+        item.description = entry.description();
+        item.price = entry.price();
+        item.timestamp = entry.timestamp();
+        item.isUnitPrice = false;
+        m_db.insertItem(item);
+    }
+    return sendStatus(clientSock, true, "Items saved to database.");
 }
 
 bool ReceiptReaderServer::processImagesDirectory(const std::string& receiptDir, int clientSock) {
