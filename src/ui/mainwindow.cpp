@@ -1,6 +1,8 @@
 #include "mainwindow.h"
-#include <QMessageBox>
 #include <QDateTime>
+#include <QMessageBox>
+#include <QtCharts/QDateTimeAxis>
+#include <QtCharts/QValueAxis>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
@@ -178,8 +180,17 @@ void MainWindow::graphSelected() {
 
     QChart* chart = new QChart;
     chart->addSeries(series);
-    chart->createDefaultAxes();
-    chart->axes(Qt::Horizontal).first()->setTitleText("Time");
-    chart->axes(Qt::Vertical).first()->setTitleText("Price");
+
+    auto* axisX = new QDateTimeAxis;
+    axisX->setFormat("yyyy-MM-dd");
+    axisX->setTitleText("Date");
+    chart->addAxis(axisX, Qt::AlignBottom);
+    series->attachAxis(axisX);
+
+    auto* axisY = new QValueAxis;
+    axisY->setTitleText("Price");
+    chart->addAxis(axisY, Qt::AlignLeft);
+    series->attachAxis(axisY);
+
     m_chartView->setChart(chart);
 }
