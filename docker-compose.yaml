@@ -1,0 +1,17 @@
+services:
+  dev:
+    build: .
+    container_name: cpp_qt_dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${PROJECT_DIR}:/home/devuser/ReceiptReader
+      - ${GITCONFIG}:/home/devuser/.gitconfig:ro
+      - ${SSH_DIR}:/home/devuser/.ssh:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+    network_mode: host
+    stdin_open: true
+    tty: true
