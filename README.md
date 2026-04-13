@@ -7,11 +7,18 @@ To enable this we run:
     xhost +local:docker
 
 ### Git in Docker Container
-When trying to run git in the container it will fail because the user in the container does not match the owner of the mounted directory. The error will be something like:
+To get git working in the container, we create volumes for the following files on the
+host into the container. For the permissions to work correctly, we need to make sure that
+the files on the host have the correct permissions and belong to the 1001 user id. 
 
-    fatal: detected dubious ownership in repository at '/home/devuser/ReceiptReader'
+    ../.docker_gitconfig
+    ../.docker_ssh_key
+    ../.docker_ssh_key.pub
 
-To fix this we need to run the following command on the host to mark the repo in the container
-as a safe directory:
+The .docker_gitconfig file can be a copy of the hosts ~/.gitconfig.
+The .docker_ssh_key and .docker_ssh_key.pub files should be created on the host 
+with ssh-keygen. 
 
-    git config --global --add safe.directory /home/devuser/ReceiptReader
+    chown 1001:1001 .docker_gitconfig
+    chown 1001:1001 .docker_ssh_key
+    chown 1001:1001 .docker_ssh_key.pub

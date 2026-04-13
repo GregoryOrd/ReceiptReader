@@ -47,9 +47,5 @@ RUN useradd -m devuser
 USER devuser
 WORKDIR /home/devuser
 
-# Git fail with error because the user in the container does not match the owner of the mounted directory. This is a workaround to allow git to work in the mounted directory.
-# The error will be something like:
-# fatal: detected dubious ownership in repository at '/home/devuser/ReceiptReader'
-# Tell git to mark the repo as a safe directory
-RUN git config --global --add safe.directory /home/devuser/ReceiptReader
-
+# Make sure the .ssh directory exists for the user
+RUN mkdir -p /home/devuser/.ssh
