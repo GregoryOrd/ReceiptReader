@@ -40,7 +40,10 @@ RUN apt-get install -y \
     qt6-base-dev \
     qt6-tools-dev \
     qt6-tools-dev-tools \
-    qt6-qpa-plugins
+    qt6-qpa-plugins 
+    
+# Install github copilot cli
+RUN curl -fsSL https://gh.io/copilot-install | bash
 
 # Create non-root user (important for GUI apps)
 RUN useradd -m devuser
