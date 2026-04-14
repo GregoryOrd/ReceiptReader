@@ -41,7 +41,11 @@ RUN apt-get install -y \
     qt6-tools-dev \
     qt6-tools-dev-tools \
     qt6-qpa-plugins 
-    
+
+
+# Install vim
+RUN apt-get install -y vim
+
 # Install github copilot cli
 RUN curl -fsSL https://gh.io/copilot-install | bash
 
