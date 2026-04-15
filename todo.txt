@@ -1,3 +1,5 @@
 - We should have some mechanism to try and detect errors so that we 
   can alert the user to try and fix them.
 - The OCR module seems to often confuse the characters '5' and '6'
+- Fix CMAKE warning: "-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")"
+- During in the servers client disconnection message, print the IP and port of the client that disconnected.
