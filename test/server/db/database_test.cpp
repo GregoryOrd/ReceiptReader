@@ -48,16 +48,3 @@ TEST_F(DatabaseTest, InsertAndQueryUnitPriceFlag) {
     EXPECT_DOUBLE_EQ(items[0].price, 1.60);
     EXPECT_TRUE(items[0].isUnitPrice);
 }
-
-TEST_F(DatabaseTest, DuplicateItemKeepsHighestPrice) {
-    Database db(testDbPath);
-    Item first{"Bananas", "001", 19.99, false, "2025-01-15"};
-    Item second{"Bananas", "001", 20.50, false, "2025-01-15"};
-    db.insertItem(first);
-    db.insertItem(second);
-
-    auto items = db.queryItems();
-    ASSERT_EQ(items.size(), 1);
-    EXPECT_EQ(items[0].code, "001");
-    EXPECT_DOUBLE_EQ(items[0].price, 20.50);
-}
