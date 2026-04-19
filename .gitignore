@@ -3,3 +3,7 @@ build/
 
 # Ignore the env file used by docker-compose
 .env
+
+# Runtime Artifacts
+receipts.db
+thresh.png
