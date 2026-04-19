@@ -32,6 +32,7 @@ public:
                       std::string& error);
 
     bool confirmProcessedItems(const std::vector<Item>& items,
+                               const std::string& date,
                                std::string& error);
 
     bool processImages(const std::string& receiptDir,

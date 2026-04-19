@@ -170,7 +170,7 @@ bool ProtobufServer::confirmProcessedItemsRequest(int clientSock, const receiptr
         item.code = entry.code();
         item.description = entry.description();
         item.price = entry.price();
-        item.timestamp = entry.timestamp();
+        item.timestamp = request.date();
         item.isUnitPrice = false;
         items.push_back(item);
     }

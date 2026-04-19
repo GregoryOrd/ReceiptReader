@@ -1,4 +1,6 @@
 #include "mainwindow.h"
+#include <QDate>
+#include <QDateEdit>
 #include <QDateTime>
 #include <QDialog>
 #include <QFileDialog>
@@ -114,6 +116,14 @@ void MainWindow::processImage() {
     QListWidget* itemList = new QListWidget;
     dialogLayout->addWidget(itemList);
 
+    QLabel* dateLabel = new QLabel("Receipt Date:");
+    QDateEdit* dateEdit = new QDateEdit(QDate::currentDate());
+    dateEdit->setCalendarPopup(true);
+    QHBoxLayout* dateLayout = new QHBoxLayout;
+    dateLayout->addWidget(dateLabel);
+    dateLayout->addWidget(dateEdit);
+    dialogLayout->addLayout(dateLayout);
+
     QHBoxLayout* buttonLayout = new QHBoxLayout;
     QPushButton* confirmButton = new QPushButton("Confirm");
     QPushButton* cancelButton = new QPushButton("Cancel");
@@ -152,11 +162,10 @@ void MainWindow::processImage() {
 
         itemList->clear();
         for (const auto& item : foundItems) {
-            QString line = QString("Code: %1, Desc: %2, Price: %3, Date: %4")
+            QString line = QString("Code: %1, Desc: %2, Price: %3")
                                .arg(QString::fromStdString(item.code))
                                .arg(QString::fromStdString(item.description))
-                               .arg(item.price)
-                               .arg(QString::fromStdString(item.timestamp));
+                               .arg(item.price);
             itemList->addItem(line);
         }
 
@@ -170,8 +179,9 @@ void MainWindow::processImage() {
             return;
         }
 
+        QString dateStr = dateEdit->date().toString("yyyy-MM-dd");
         std::string error;
-        if (!m_serverClient->confirmProcessedItems(foundItems, error)) {
+        if (!m_serverClient->confirmProcessedItems(foundItems, dateStr.toStdString(), error)) {
             QMessageBox::warning(&dialog, "Confirm Failed", QString::fromStdString(error));
             return;
         }

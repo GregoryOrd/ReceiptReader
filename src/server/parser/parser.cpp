@@ -13,8 +13,6 @@ std::vector<Item> parseReceiptText(const std::string& text) {
     std::vector<Item> items;
     std::istringstream iss(text);
     std::string line;
-    std::string timestamp = "";
-    std::regex dateRegex(R"(\b(\d{1,2})/(\d{1,2})/(\d{2})\s+(\d{1,2}):(\d{2}):(\d{2})\b)");
     std::regex itemRegex(R"(^\s*(.+?)\s+(\d{12})\s+([\$Ss][0-9Oo]+([.,][0-9Oo]{2}| [0-9Oo]{2})?)(\s+(\S+))?\s*$)");
     std::regex itemGenericRegex(R"(^\s*(.+?)\s+(\d{12})\s+(\S+)(\s+(\S+))?\s*$)");
     std::regex itemLine1Regex(R"(^\s*(.+?)\s+([0-9]{11,12})([A-Za-z]?)\s*$)");
@@ -94,27 +92,14 @@ std::vector<Item> parseReceiptText(const std::string& text) {
         const std::string& originalLine = lines[i];
         std::string currentLine = normalizeLine(originalLine);
         std::smatch match;
-        if (std::regex_search(currentLine, match, dateRegex)) {
-            // Assume year is 20YY
-            int month = std::stoi(match[1]);
-            int day = std::stoi(match[2]);
-            int year = 2000 + std::stoi(match[3]);
-            int hour = std::stoi(match[4]);
-            int min = std::stoi(match[5]);
-            int sec = std::stoi(match[6]);
-            std::ostringstream oss;
-            oss << std::setfill('0') << std::setw(4) << year << "-"
-                << std::setw(2) << month << "-"
-                << std::setw(2) << day;
-            timestamp = oss.str();
-        } else if (std::regex_search(currentLine, match, itemRegex)) {
+        if (std::regex_search(currentLine, match, itemRegex)) {
             double priceValue;
             if (normalizePrice(match[3].str(), priceValue)) {
                 Item item;
                 item.description = match[1];
                 item.code = match[2];
                 item.price = priceValue;
-                item.timestamp = timestamp.empty() ? getCurrentTimestamp() : timestamp;
+                item.timestamp = getCurrentTimestamp();
                 items.push_back(item);
             } else {
                 std::cerr << "Skipping item with invalid price: " << match[3].str() << std::endl;
@@ -126,7 +111,7 @@ std::vector<Item> parseReceiptText(const std::string& text) {
                 item.description = match[1];
                 item.code = match[2];
                 item.price = priceValue;
-                item.timestamp = timestamp.empty() ? getCurrentTimestamp() : timestamp;
+                item.timestamp = getCurrentTimestamp();
                 items.push_back(item);
             } else {
                 std::cerr << "Skipping item with invalid price: " << match[3].str() << std::endl;
@@ -146,7 +131,7 @@ std::vector<Item> parseReceiptText(const std::string& text) {
                     item.code = match[2];
                     item.price = priceValue;
                     item.isUnitPrice = nextLine.find('@') != std::string::npos;
-                    item.timestamp = timestamp.empty() ? getCurrentTimestamp() : timestamp;
+                    item.timestamp = getCurrentTimestamp();
                     items.push_back(item);
                     ++i;
                 } else {

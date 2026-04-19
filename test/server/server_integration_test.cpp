@@ -210,7 +210,7 @@ TEST_F(ServerIntegrationTest, ProcessImagesProtobuf) {
 TEST_F(ServerIntegrationTest, ConfirmProcessedItemsHttp) {
     int sock = connectWithRetry(HTTP_PORT);
     ASSERT_GE(sock, 0);
-    std::string body = R"({"items":[{"code":"HTTP_CODE","description":"HTTP Item","price":5.55,"timestamp":"2025-04-11"}]})";
+    std::string body = R"({"date":"2025-04-11","items":[{"code":"HTTP_CODE","description":"HTTP Item","price":5.55,"timestamp":"2025-04-11"}]})";
     std::string response = sendHttpRequest(sock, "POST", "/confirm_processed_items", body);
     ASSERT_FALSE(response.empty());
     EXPECT_EQ(parseHttpStatus(response), 200);

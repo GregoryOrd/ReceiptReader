@@ -400,6 +400,16 @@ bool WebServer::handleConnection(int clientSock) {
             return true;
         }
 
+        std::string date;
+        if (!parseJsonStringField(body, "date", date)) {
+            sendJson(clientSock, 400, "{\"error\":\"Missing date field\"}");
+            return true;
+        }
+
+        for (auto& item : items) {
+            item.timestamp = date;
+        }
+
         bool success = m_server.confirmProcessedItems(items);
         sendJson(clientSock, success ? 200 : 500, success ? "{\"success\":true}" : "{\"success\":false}");
         return true;

@@ -170,9 +170,11 @@ bool ServerClient::processImage(const std::vector<uint8_t>& imageData,
 }
 
 bool ServerClient::confirmProcessedItems(const std::vector<Item>& items,
+                                         const std::string& date,
                                          std::string& error) {
     receiptreader::ServerRequest request;
     auto* confirmRequest = request.mutable_confirm_processed_items();
+    confirmRequest->set_date(date);
     for (const auto& item : items) {
         auto* entry = confirmRequest->add_items();
         entry->set_code(item.code);

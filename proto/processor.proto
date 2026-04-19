@@ -36,6 +36,7 @@ message ProcessImageResponse {
 
 message ConfirmProcessedItemsRequest {
   repeated ReceiptItem items = 1;
+  string date = 2;
 }
 
 message ProcessProgress {
