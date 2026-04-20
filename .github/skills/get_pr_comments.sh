@@ -1,9 +1,16 @@
 #!/bin/bash
 
-reviewId=4136500022
+prNum=$1
+reviewId=$2
 repo=ReceiptReader
-prNum=2
 GH_USER=GregoryOrd
+
+# Print Usage if not enough arguments are provided
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 <prNum> <reviewId>"
+    exit 1
+fi
+
 comments_json=$(gh api repos/$GH_USER/$repo/pulls/$prNum/reviews/$reviewId/comments)
 
 echo "$comments_json" | jq -r '.[].id | @base64' | while IFS= read -r b64; do   id=$(printf '%s' "$b64" | base64 --decode);  printf 'ID: %s\n' "$id"; done
