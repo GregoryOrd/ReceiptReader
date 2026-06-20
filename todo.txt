@@ -3,3 +3,34 @@
 - The OCR module seems to often confuse the characters '5' and '6'
 - Fix CMAKE warning: "-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")"
 - During in the servers client disconnection message, print the IP and port of the client that disconnected.
+- Highlight rows in the search green or red based on if the price went up or down in the most recent entry for the item
+- Perhaps also a dialog popup box to indicate items that have gone up or have values different than normal on input
+
+
+TODO: Put the above into the categories below
+
+
+
+
+Features To Implement
+-----------------------
+Nothing right now
+
+Defects
+---------
+Nothing right now
+
+
+Styling
+-----------
+Nothing right now
+
+
+Refactors
+-----------
+Nothing right now
+
+
+Tests
+----------
+Nothing right now
