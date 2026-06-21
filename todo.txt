@@ -1,24 +1,56 @@
-- We should have some mechanism to try and detect errors so that we 
-  can alert the user to try and fix them.
-- The OCR module seems to often confuse the characters '5' and '6'
-- Fix CMAKE warning: "-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")"
-- During in the servers client disconnection message, print the IP and port of the client that disconnected.
-- Highlight rows in the search green or red based on if the price went up or down in the most recent entry for the item
-- Perhaps also a dialog popup box to indicate items that have gone up or have values different than normal on input
-
-
-TODO: Put the above into the categories below
-
-
-
-
 Features To Implement
 -----------------------
-Nothing right now
+1) Search result list colouring. Highlight rows in the search green or red based on if the price went up or down in the most recent entry for the item
+  - Perhaps a rolling average of the price could be used to dictate this colouring
+2) Other gui features or statstics could perhaps also be displayed in these rows some how to should items of interest.
+  - Perhaps the rows can be sorted based off of these price action categories.
+3) In the server's client disconnection message, print the IP and port of the client that disconnected.
+4) Improve item price charts.
+  - More resoultion in lables on time axis
+  - Ability to show value under mouse when hovering over data points
+  - More like a grafana panel would be nice
+  - Perhpas a third-party charting software could be used and worked into the UI somehow
+
+
+
+Features - Error Detection/Correction after Input
+------------------------------------------------------
+1) Detection of items that have only purchased once (or perhaps less than X amount of times). 
+   Since we expect most items to be purchases often, it an items has few occurences it might represent an error from the OCR.
+2) Similar description (or item code) search algorithm (triggered manually or automatically). If entries have similar enough descriptions or items codes 
+   they might actually be the same item and it was just on OCR error.
+3) Price anonamilies. Add a feature to check if the price of an item went up for a single instance and then come back down to what it previously was.
+   If this is the case, it might represent an OCR error causing an the anomaly.
+4) Put commonly seen OCR errors (for example, confusing '5' with '6') into a database. When price anonamilies, or similar descriptions or items codes, are detected check if any of the commonly seen OCR 
+   errors could be present and have caused the error. Given this information, we might be able to auto correct the error, or at least suggest a correction to the user.
+
+
+Features - Error Detection/Correction at Input
+-----------------------------------------------
+* While the the input verification that is below should reduce errors, it is still possible to have the wrong values add to a correct sum, so the error detection/correction after input is still needed.
+  If errors get past the input verification, hopefully the detection/correction strategy after input can slowly catch the missed errors and cleanup the dataset over time. *
+1) Get user to input the total price (before tax) when inputting a photo. Then when the software processes the photo, have it sum all of the items it found 
+   and compare against the total that was inputted by the user. If these values are different, an error is present.
+2) If an error is detected (from (1) above), use automatic detection/correction techniques similar to those from "Features - Error Detection/Correction after Input"
+  - Compare each item code and description to item codes and description already present in the database. Correct ones that are similar but slighlty wrong to the matching 
+  previously seen one in the database. If multiple similar ones are found, prompt the user to correct manually.
+  - If a price anomaly is detected, check commonly known OCR errors and see if appling an automatic fix removes the price anomaly. If the price anomaly can't be fixed automatically
+  prompt the user to enter the correction
+3) If an error is detected by the total price check, after the auto and manual corrections are fixed, rerun the price check with the corrected list of items. Rerun the error detection/correction cycle until 
+   the sum of the items matches the user inputted pre-tax total.
+
+
+Features - OCR Pre-Processing
+---------------------------------
+* Implement this after the error detection/correction features so that we have error on which to develop the error detection/correction features.*
+1) Investigate techniques for pre-processing the images before passing to the OCR.
+  - See https://medium.com/@TechforHumans/image-pre-processing-techniques-for-ocr-d231586c1230
+2) Add tasks to this list after investigating pre-processing techniques
+
 
 Defects
 ---------
-Nothing right now
+1) Fix CMAKE warning: "-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")"
 
 
 Styling
