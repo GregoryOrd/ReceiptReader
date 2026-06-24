@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QColor>
 #include <QListWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -27,6 +28,7 @@ private slots:
 
 private:
     void updateConnectionStatus();
+    void colourResultListRow(int row, const QColor& color);
 
     std::unique_ptr<ServerClient> m_serverClient;
     QLabel* m_connectionStatusLabel;
