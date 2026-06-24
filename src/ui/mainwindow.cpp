@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QtCharts/QDateTimeAxis>
 #include <QtCharts/QValueAxis>
+#include <QBrush>
 #include <fstream>
 
 MainWindow::MainWindow(QWidget* parent)
@@ -216,7 +217,23 @@ void MainWindow::search() {
                            .arg(item.price)
                            .arg(QString::fromStdString(item.timestamp));
         m_resultsList->addItem(text);
+        int newRow = m_resultsList->count() - 1;
+        colourResultListRow(newRow, QColor(Qt::green));
     }
+}
+
+void MainWindow::colourResultListRow(int row, const QColor& color) {
+    if (!m_resultsList) {
+        return;
+    }
+    if (row < 0 || row >= m_resultsList->count()) {
+        return;
+    }
+    QListWidgetItem* item = m_resultsList->item(row);
+    if (!item) {
+        return;
+    }
+    item->setBackground(QBrush(color));
 }
 
 void MainWindow::graphSelected() {
