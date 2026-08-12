@@ -107,32 +107,6 @@ void Database::insertItem(const Item& item) {
     }
 }
 
-std::vector<Item> Database::queryItems(const std::string& whereClause) {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    std::vector<Item> items;
-    std::string sql = "SELECT description, code, price, timestamp, is_unit_price FROM items";
-    if (!whereClause.empty()) {
-        sql += " WHERE " + whereClause;
-    }
-    sql += ";";
-    sqlite3_stmt* stmt;
-    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;
-        return items;
-    }
-    while (sqlite3_step(stmt) == SQLITE_ROW) {
-        Item item;
-        item.description = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-        item.code = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-        item.price = sqlite3_column_double(stmt, 2);
-        item.timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
-        item.isUnitPrice = sqlite3_column_int(stmt, 4) != 0;
-        items.push_back(item);
-    }
-    sqlite3_finalize(stmt);
-    return items;
-}
-
 std::vector<Item> Database::queryItemsFiltered(const std::string& code,
                                                const std::string& priceMin,
                                                const std::string& priceMax,

@@ -19,7 +19,6 @@ public:
     bool createTableIfNotExists();
     void insertItem(const Item& item);
     void insertWarning(WarningType type, const std::string& code, const std::string& description, const std::string& message);
-    std::vector<Item> queryItems(const std::string& whereClause = "");
     std::vector<Item> queryItemsFiltered(const std::string& code,
                                          const std::string& priceMin,
                                          const std::string& priceMax,
