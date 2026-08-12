@@ -1,0 +1,16 @@
+#!/bin/bash
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_DIR="${SCRIPT_DIR}/.."
+RUNTIME_DIR="${PROJECT_DIR}/development-runtime"
+BUILD_DIR="${PROJECT_DIR}/build"
+
+CWD="$(pwd)"
+cd "${RUNTIME_DIR}"
+
+source "${SCRIPT_DIR}/stop"
+
+"${BUILD_DIR}/ReceiptReaderServer" > server.log 2>&1 &
+"${BUILD_DIR}/ReceiptReaderGUI" > gui.log 2>&1 &
+
+cd "${CWD}"

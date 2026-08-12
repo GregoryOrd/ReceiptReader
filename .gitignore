@@ -5,5 +5,6 @@ build/
 .env
 
 # Runtime Artifacts
-receipts.db
-thresh.png
+development-runtime/receipts.db
+development-runtime/gui.log
+development-runtime/server.log

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_DIR="${SCRIPT_DIR}/.."
+RUNTIME_DIR="${PROJECT_DIR}/development-runtime"
+BUILD_DIR="${PROJECT_DIR}/build"
+
+if [ ! -d "${BUILD_DIR}" ]; then
+    mkdir -p "${BUILD_DIR}"
+fi
+cd "${BUILD_DIR}"
+
+if [ ! -d "${RUNTIME_DIR}" ]; then
+    mkdir -p "${RUNTIME_DIR}"
+fi
+
+if [ ! -f Makefile ]; then
+    cmake -S "${PROJECT_DIR}" -B "${BUILD_DIR}" "${PROJECT_DIR}"
+fi
+
+make
+
+cd "${CWD}"
