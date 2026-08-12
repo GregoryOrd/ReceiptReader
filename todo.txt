@@ -48,6 +48,11 @@ Features - OCR Pre-Processing
 2) Add tasks to this list after investigating pre-processing techniques
 
 
+Features - Configuration
+-----------------------------
+1) Make the directory where the receipts.db file lives configurable
+2) Write stdout and stderr to log files instead of to the console, and make the location of these log files configurable
+
 Defects
 ---------
 1) Fix CMAKE warning: "-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")"
