@@ -19,12 +19,16 @@ public:
     bool createTableIfNotExists();
     void insertItem(const Item& item);
     void insertWarning(WarningType type, const std::string& code, const std::string& description, const std::string& message);
+    
+    //TODO: Update the query to return one item per code, see the comment in the CPP code for possible SQL query.
     std::vector<Item> queryItemsFiltered(const std::string& code,
                                          const std::string& priceMin,
                                          const std::string& priceMax,
                                          const std::string& dateStart,
                                          const std::string& dateEnd,
                                          bool orderByTimestamp = false);
+
+    //TODO: Add a query function that returns all instances of an item code, ordered by timestamp, for graphing purposes.
 private:
     bool prepareStatement(const char* sql, sqlite3_stmt** stmt);
 

@@ -113,6 +113,61 @@ std::vector<Item> Database::queryItemsFiltered(const std::string& code,
                                                const std::string& dateStart,
                                                const std::string& dateEnd,
                                                bool orderByTimestamp) {
+
+/* 
+TODO: Update the query to be something like this: 
+
+SELECT item_code, price, timestamp
+FROM (
+    SELECT
+        item_code,
+        price,
+        timestamp,
+        ROW_NUMBER() OVER (
+            PARTITION BY item_code
+            ORDER BY timestamp DESC
+        ) AS rn
+    FROM item_prices p
+    WHERE EXISTS (
+        SELECT 1
+        FROM item_prices p2
+        WHERE p2.item_code = p.item_code
+          AND p2.price >= 10
+          AND p2.price <= 20
+    )
+) t
+WHERE rn = 1;
+
+Or:
+
+WITH qualifying_items AS (
+    SELECT DISTINCT item_code
+    FROM item_prices
+    WHERE price >= 10
+      AND price <= 20
+),
+latest_prices AS (
+    SELECT
+        item_code,
+        price,
+        timestamp,
+        ROW_NUMBER() OVER (
+            PARTITION BY item_code
+            ORDER BY timestamp DESC
+        ) AS rn
+    FROM item_prices
+)
+SELECT
+    lp.item_code,
+    lp.price,
+    lp.timestamp
+FROM latest_prices lp
+JOIN qualifying_items qi
+    ON qi.item_code = lp.item_code
+WHERE lp.rn = 1;
+
+*/
+
     std::lock_guard<std::mutex> lock(m_mutex);
     std::vector<Item> items;
     std::string sql = "SELECT description, code, price, timestamp, is_unit_price FROM items";
