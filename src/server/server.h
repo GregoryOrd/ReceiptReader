@@ -7,13 +7,14 @@
 #include "db/database.h"
 #include "parser/parser.h"
 #include "processor.pb.h"
+#include "common/CategorizedResultItem.h"
 
 class Server {
 public:
     explicit Server(const std::string& dbPath);
     bool initialize();
 
-    std::vector<Item> queryItemsFiltered(const std::string& code,
+    std::vector<CategorizedResultItem> queryItemsFiltered(const std::string& code,
                                          const std::string& priceMin,
                                          const std::string& priceMax,
                                          const std::string& dateStart,

@@ -194,7 +194,7 @@ void MainWindow::processImage() {
 }
 
 void MainWindow::search() {
-    std::vector<Item> items;
+    std::vector<CategorizedResultItem> items;
     std::string error;
     if (!m_serverClient->queryItems(
             m_codeEdit->text().toStdString(),
@@ -217,8 +217,23 @@ void MainWindow::search() {
                            .arg(item.price)
                            .arg(QString::fromStdString(item.timestamp));
         m_resultsList->addItem(text);
+
+        std::cout << "Item: " << item.code << ", " << item.description << ", " << item.price << ", " << item.timestamp << ", Category: " << item.category << std::endl;
+        QColor rowColor;
+        if(item.category == 0) {
+            rowColor = QColor(Qt::gray);
+        } else if(item.category == 1) {
+            rowColor = QColor(Qt::blue);
+        } else if(item.category == 2) {
+            rowColor = QColor(Qt::red);
+        } else if(item.category == 3) {
+            rowColor = QColor(Qt::green);
+        } else {
+            rowColor = QColor(Qt::gray);
+        }
+
         int newRow = m_resultsList->count() - 1;
-        colourResultListRow(newRow, QColor(Qt::green));
+        colourResultListRow(newRow, rowColor);
     }
 }
 
@@ -246,7 +261,7 @@ void MainWindow::graphSelected() {
     QString text = m_resultsList->item(row)->text();
     QString code = text.split(",")[0].split(":")[1].trimmed();
 
-    std::vector<Item> items;
+    std::vector<CategorizedResultItem> items;
     std::string error;
     if (!m_serverClient->queryItems(
             code.toStdString(),

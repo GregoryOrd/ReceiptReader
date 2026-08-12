@@ -4,13 +4,7 @@
 #include <string>
 #include <vector>
 
-struct Item {
-    std::string description;
-    std::string code;
-    double price;
-    bool isUnitPrice = false;
-    std::string timestamp;
-};
+#include "common/Item.h"
 
 std::vector<Item> parseReceiptText(const std::string& text);
 

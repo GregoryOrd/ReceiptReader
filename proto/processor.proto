@@ -8,6 +8,14 @@ message ReceiptItem {
   string timestamp = 4;
 }
 
+message CategorizedReceiptItem {
+  string code = 1;
+  string description = 2;
+  double price = 3;
+  string timestamp = 4;
+  int32 category = 5;
+}
+
 message QueryItemsRequest {
   string code = 1;
   string price_min = 2;
@@ -18,7 +26,7 @@ message QueryItemsRequest {
 }
 
 message QueryItemsResponse {
-  repeated ReceiptItem items = 1;
+  repeated CategorizedReceiptItem items = 1;
 }
 
 message ProcessImagesRequest {

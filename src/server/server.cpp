@@ -15,13 +15,21 @@ bool Server::initialize() {
     return m_db.createTableIfNotExists();
 }
 
-std::vector<Item> Server::queryItemsFiltered(const std::string& code,
+std::vector<CategorizedResultItem> Server::queryItemsFiltered(const std::string& code,
                                              const std::string& priceMin,
                                              const std::string& priceMax,
                                              const std::string& dateStart,
                                              const std::string& dateEnd,
                                              bool orderByTimestamp) {
-    return m_db.queryItemsFiltered(code, priceMin, priceMax, dateStart, dateEnd, orderByTimestamp);
+    std::vector<Item> items = m_db.queryItemsFiltered(code, priceMin, priceMax, dateStart, dateEnd, orderByTimestamp);
+    
+    std::vector<CategorizedResultItem> categorizedItems;
+    for (const auto& item : items) {
+        CategorizedResultItem categorizedItem(item, 1);
+        categorizedItems.push_back(categorizedItem);
+        std::cout << "ItcategorizedItemem: " << categorizedItem.code << ", " << categorizedItem.description << ", " << categorizedItem.price << ", " << categorizedItem.timestamp << ", Category: " << categorizedItem.category << std::endl;
+    }
+    return categorizedItems;
 }
 
 std::vector<Item> Server::processImageBytes(const std::string& filename, const std::string& imageData) {

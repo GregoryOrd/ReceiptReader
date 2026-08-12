@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "parser/parser.h"
+#include "common/CategorizedResultItem.h"
 #include "processor.pb.h"
 
 class ServerClient {
@@ -23,7 +24,7 @@ public:
                     const std::string& dateStart,
                     const std::string& dateEnd,
                     bool orderByTimestamp,
-                    std::vector<Item>& items,
+                    std::vector<CategorizedResultItem>& items,
                     std::string& error);
 
     bool processImage(const std::vector<uint8_t>& imageData,

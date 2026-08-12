@@ -115,7 +115,7 @@ bool ProtobufServer::handleClient(int clientSock) {
 }
 
 bool ProtobufServer::queryItemsRequest(int clientSock, const receiptreader::QueryItemsRequest& request) {
-    auto items = m_server.queryItemsFiltered(request.code(), request.price_min(), request.price_max(), request.date_start(), request.date_end(), request.order_by_timestamp());
+    std::vector<CategorizedResultItem> items = m_server.queryItemsFiltered(request.code(), request.price_min(), request.price_max(), request.date_start(), request.date_end(), request.order_by_timestamp());
 
     receiptreader::ServerResponse response;
     auto* queryResponse = response.mutable_query_items_response();
@@ -125,6 +125,7 @@ bool ProtobufServer::queryItemsRequest(int clientSock, const receiptreader::Quer
         entry->set_description(item.description);
         entry->set_price(item.price);
         entry->set_timestamp(item.timestamp);
+        entry->set_category(item.category);
     }
 
     return ipc::sendProtobufMessage(clientSock, response);

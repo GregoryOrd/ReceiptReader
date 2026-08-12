@@ -87,7 +87,7 @@ bool ServerClient::queryItems(const std::string& code,
                               const std::string& dateStart,
                               const std::string& dateEnd,
                               bool orderByTimestamp,
-                              std::vector<Item>& items,
+                              std::vector<CategorizedResultItem>& items,
                               std::string& error) {
     receiptreader::ServerRequest request;
     auto* query = request.mutable_query_items();
@@ -118,11 +118,12 @@ bool ServerClient::queryItems(const std::string& code,
 
     items.clear();
     for (const auto& entry : response.query_items_response().items()) {
-        Item item;
+        CategorizedResultItem item;
         item.description = entry.description();
         item.code = entry.code();
         item.price = entry.price();
         item.timestamp = entry.timestamp();
+        item.category = entry.category();
         items.push_back(item);
     }
     return true;
