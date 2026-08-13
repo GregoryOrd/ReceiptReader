@@ -23,7 +23,10 @@ public:
                     const std::string& priceMax,
                     const std::string& dateStart,
                     const std::string& dateEnd,
-                    bool orderByTimestamp,
+                    std::vector<CategorizedResultItem>& items,
+                    std::string& error);
+
+    bool queryItemCode(const std::string& code,
                     std::vector<CategorizedResultItem>& items,
                     std::string& error);
 

@@ -18,8 +18,9 @@ public:
                                          const std::string& priceMin,
                                          const std::string& priceMax,
                                          const std::string& dateStart,
-                                         const std::string& dateEnd,
-                                         bool orderByTimestamp);
+                                         const std::string& dateEnd);
+
+    std::vector<Item> queryItemCode(const std::string& code);
 
     std::vector<Item> processImageBytes(const std::string& filename, const std::string& imageData);
     bool confirmProcessedItems(const std::vector<Item>& items);

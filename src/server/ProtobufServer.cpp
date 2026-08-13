@@ -101,6 +101,9 @@ bool ProtobufServer::handleClient(int clientSock) {
     if (request.has_query_items()) {
         return queryItemsRequest(clientSock, request.query_items());
     }
+    if (request.has_query_code()) {
+        return queryItemCode(clientSock, request.query_code());
+    }
     if (request.has_process_images()) {
         return processImagesRequest(clientSock, request.process_images());
     }
@@ -115,7 +118,7 @@ bool ProtobufServer::handleClient(int clientSock) {
 }
 
 bool ProtobufServer::queryItemsRequest(int clientSock, const receiptreader::QueryItemsRequest& request) {
-    std::vector<CategorizedResultItem> items = m_server.queryItemsFiltered(request.code(), request.price_min(), request.price_max(), request.date_start(), request.date_end(), request.order_by_timestamp());
+    std::vector<CategorizedResultItem> items = m_server.queryItemsFiltered(request.code(), request.price_min(), request.price_max(), request.date_start(), request.date_end());
 
     receiptreader::ServerResponse response;
     auto* queryResponse = response.mutable_query_items_response();
@@ -126,6 +129,23 @@ bool ProtobufServer::queryItemsRequest(int clientSock, const receiptreader::Quer
         entry->set_price(item.price);
         entry->set_timestamp(item.timestamp);
         entry->set_category(item.category);
+    }
+
+    return ipc::sendProtobufMessage(clientSock, response);
+}
+
+bool ProtobufServer::queryItemCode(int clientSock, const receiptreader::QueryItemCodeRequest& request) {
+    std::vector<Item> items = m_server.queryItemCode(request.code());
+
+    receiptreader::ServerResponse response;
+    auto* queryResponse = response.mutable_query_item_code_response();
+    for (const auto& item : items) {
+        std::cout << "Found Item for Code: " << item.code << ", " << item.description << ", " << item.price << ", " << item.timestamp << std::endl;
+        auto* entry = queryResponse->add_items();
+        entry->set_code(item.code);
+        entry->set_description(item.description);
+        entry->set_price(item.price);
+        entry->set_timestamp(item.timestamp);
     }
 
     return ipc::sendProtobufMessage(clientSock, response);

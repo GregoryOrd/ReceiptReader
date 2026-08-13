@@ -10,6 +10,6 @@ cd "${RUNTIME_DIR}"
 
 source "${SCRIPT_DIR}/stop"
 
-"${BUILD_DIR}/ReceiptReaderTests" > test.log 2>&1 &
+"${BUILD_DIR}/ReceiptReaderTests" $@
 
 cd "${CWD}"

@@ -202,7 +202,6 @@ void MainWindow::search() {
             m_priceMaxEdit->text().toStdString(),
             m_dateStartEdit->text().toStdString(),
             m_dateEndEdit->text().toStdString(),
-            false,
             items,
             error)) {
         QMessageBox::warning(this, "Query Failed", QString::fromStdString(error));
@@ -218,7 +217,6 @@ void MainWindow::search() {
                            .arg(QString::fromStdString(item.timestamp));
         m_resultsList->addItem(text);
 
-        std::cout << "Item: " << item.code << ", " << item.description << ", " << item.price << ", " << item.timestamp << ", Category: " << item.category << std::endl;
         QColor rowColor;
         if(item.category == 0) {
             rowColor = QColor(Qt::gray);
@@ -263,13 +261,8 @@ void MainWindow::graphSelected() {
 
     std::vector<CategorizedResultItem> items;
     std::string error;
-    if (!m_serverClient->queryItems(
+    if (!m_serverClient->queryItemCode(
             code.toStdString(),
-            "",
-            "",
-            "",
-            "",
-            true,
             items,
             error)) {
         QMessageBox::warning(this, "Query Failed", QString::fromStdString(error));

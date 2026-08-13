@@ -16,6 +16,7 @@ private:
     void logAcceptedClient(const struct sockaddr_in& clientAddr);
     bool handleClient(int clientSock);
     bool queryItemsRequest(int clientSock, const receiptreader::QueryItemsRequest& request);
+    bool queryItemCode(int clientSock, const receiptreader::QueryItemCodeRequest& request);
     bool processImagesRequest(int clientSock, const receiptreader::ProcessImagesRequest& request);
     bool processImageRequest(int clientSock, const receiptreader::ProcessImageRequest& request);
     bool confirmProcessedItemsRequest(int clientSock, const receiptreader::ConfirmProcessedItemsRequest& request);

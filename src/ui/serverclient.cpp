@@ -86,7 +86,6 @@ bool ServerClient::queryItems(const std::string& code,
                               const std::string& priceMax,
                               const std::string& dateStart,
                               const std::string& dateEnd,
-                              bool orderByTimestamp,
                               std::vector<CategorizedResultItem>& items,
                               std::string& error) {
     receiptreader::ServerRequest request;
@@ -96,7 +95,6 @@ bool ServerClient::queryItems(const std::string& code,
     query->set_price_max(priceMax);
     query->set_date_start(dateStart);
     query->set_date_end(dateEnd);
-    query->set_order_by_timestamp(orderByTimestamp);
 
     if (!sendRequest(request, error)) {
         return false;
@@ -124,6 +122,43 @@ bool ServerClient::queryItems(const std::string& code,
         item.price = entry.price();
         item.timestamp = entry.timestamp();
         item.category = entry.category();
+        items.push_back(item);
+    }
+    return true;
+}
+
+bool ServerClient::queryItemCode(const std::string& code,
+                              std::vector<CategorizedResultItem>& items,
+                              std::string& error) {
+    receiptreader::ServerRequest request;
+    auto* query = request.mutable_query_code();
+    query->set_code(code);
+
+    if (!sendRequest(request, error)) {
+        return false;
+    }
+
+    receiptreader::ServerResponse response;
+    if (!receiveResponse(response, error)) {
+        return false;
+    }
+
+    if (response.has_status()) {
+        error = response.status().message();
+        return false;
+    }
+    if (!response.has_query_item_code_response()) {
+        error = "Unexpected server response.";
+        return false;
+    }
+
+    items.clear();
+    for (const auto& entry : response.query_item_code_response().items()) {
+        CategorizedResultItem item;
+        item.description = entry.description();
+        item.code = entry.code();
+        item.price = entry.price();
+        item.timestamp = entry.timestamp();
         items.push_back(item);
     }
     return true;

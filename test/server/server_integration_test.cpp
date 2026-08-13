@@ -172,7 +172,6 @@ TEST_F(ServerIntegrationTest, QueryItemsProtobuf) {
     query->set_price_max("");
     query->set_date_start("");
     query->set_date_end("");
-    query->set_order_by_timestamp(false);
     receiptreader::ServerResponse response;
     ASSERT_TRUE(sendProtobufRequest(sock, request, response));
     ASSERT_TRUE(response.has_query_items_response());
@@ -210,7 +209,7 @@ TEST_F(ServerIntegrationTest, ProcessImagesProtobuf) {
 TEST_F(ServerIntegrationTest, ConfirmProcessedItemsHttp) {
     int sock = connectWithRetry(HTTP_PORT);
     ASSERT_GE(sock, 0);
-    std::string body = R"({"date":"2025-04-11","items":[{"code":"HTTP_CODE","description":"HTTP Item","price":5.55,"timestamp":"2025-04-11"}]})";
+    std::string body = R"({"date":"2025-04-11","items":[{"code":"1","description":"HTTP Item","price":5.55,"timestamp":"2025-04-11"}]})";
     std::string response = sendHttpRequest(sock, "POST", "/confirm_processed_items", body);
     ASSERT_FALSE(response.empty());
     EXPECT_EQ(parseHttpStatus(response), 200);
@@ -220,10 +219,11 @@ TEST_F(ServerIntegrationTest, ConfirmProcessedItemsHttp) {
 TEST_F(ServerIntegrationTest, GetItemsHttp) {
     int sock = connectWithRetry(HTTP_PORT);
     ASSERT_GE(sock, 0);
-    std::string response = sendHttpRequest(sock, "GET", "/items?code=HTTP_CODE");
+    std::string response = sendHttpRequest(sock, "GET", "/items?code=000000040110");
     ASSERT_FALSE(response.empty());
+    std::cout << response << std::endl;
     EXPECT_EQ(parseHttpStatus(response), 200);
-    EXPECT_NE(response.find("HTTP_CODE"), std::string::npos);
+    EXPECT_NE(response.find("000000040110"), std::string::npos);
     close(sock);
 }
 

@@ -234,8 +234,6 @@ bool WebServer::run() {
         return false;
     }
 
-    std::cout << "Web server listening on port " << m_port << std::endl;
-
     while (true) {
         sockaddr_in clientAddr{};
         socklen_t clientAddrLen = sizeof(clientAddr);
@@ -310,7 +308,6 @@ bool WebServer::handleConnection(int clientSock) {
         std::string priceMax;
         std::string dateStart;
         std::string dateEnd;
-        bool orderByTimestamp = false;
         for (const auto& [key, value] : queryParams) {
             if (key == "code") {
                 code = value;
@@ -322,12 +319,10 @@ bool WebServer::handleConnection(int clientSock) {
                 dateStart = value;
             } else if (key == "date_end") {
                 dateEnd = value;
-            } else if (key == "order_by_timestamp") {
-                orderByTimestamp = (value == "true" || value == "1");
             }
         }
 
-        auto items = m_server.queryItemsFiltered(code, priceMin, priceMax, dateStart, dateEnd, orderByTimestamp);
+        auto items = m_server.queryItemsFiltered(code, priceMin, priceMax, dateStart, dateEnd);
         std::ostringstream json;
         json << "{\"items\": [";
         for (size_t i = 0; i < items.size(); ++i) {

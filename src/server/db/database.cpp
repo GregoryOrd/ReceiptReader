@@ -111,66 +111,13 @@ std::vector<Item> Database::queryItemsFiltered(const std::string& code,
                                                const std::string& priceMin,
                                                const std::string& priceMax,
                                                const std::string& dateStart,
-                                               const std::string& dateEnd,
-                                               bool orderByTimestamp) {
-
-/* 
-TODO: Update the query to be something like this: 
-
-SELECT item_code, price, timestamp
-FROM (
-    SELECT
-        item_code,
-        price,
-        timestamp,
-        ROW_NUMBER() OVER (
-            PARTITION BY item_code
-            ORDER BY timestamp DESC
-        ) AS rn
-    FROM item_prices p
-    WHERE EXISTS (
-        SELECT 1
-        FROM item_prices p2
-        WHERE p2.item_code = p.item_code
-          AND p2.price >= 10
-          AND p2.price <= 20
-    )
-) t
-WHERE rn = 1;
-
-Or:
-
-WITH qualifying_items AS (
-    SELECT DISTINCT item_code
-    FROM item_prices
-    WHERE price >= 10
-      AND price <= 20
-),
-latest_prices AS (
-    SELECT
-        item_code,
-        price,
-        timestamp,
-        ROW_NUMBER() OVER (
-            PARTITION BY item_code
-            ORDER BY timestamp DESC
-        ) AS rn
-    FROM item_prices
-)
-SELECT
-    lp.item_code,
-    lp.price,
-    lp.timestamp
-FROM latest_prices lp
-JOIN qualifying_items qi
-    ON qi.item_code = lp.item_code
-WHERE lp.rn = 1;
-
-*/
-
+                                               const std::string& dateEnd) {
     std::lock_guard<std::mutex> lock(m_mutex);
     std::vector<Item> items;
-    std::string sql = "SELECT description, code, price, timestamp, is_unit_price FROM items";
+
+    std::string sql = "SELECT description, code, price, timestamp, rn FROM (SELECT description, code, price, timestamp, ROW_NUMBER() OVER (PARTITION BY code ORDER BY timestamp DESC) AS rn ";
+    sql += "FROM items ";
+
     std::vector<std::string> conditions;
     std::vector<std::string> arguments;
 
@@ -204,10 +151,62 @@ WHERE lp.rn = 1;
             sql += conditions[i];
         }
     }
-    if (orderByTimestamp) {
-        sql += " ORDER BY timestamp";
+
+    sql += ") WHERE rn = 1;";
+
+    std::cout << "SQL: " << sql << std::endl;
+
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;
+        return items;
     }
+
+    for (size_t i = 0; i < arguments.size(); ++i) {
+        sqlite3_bind_text(stmt, static_cast<int>(i + 1), arguments[i].c_str(), -1, SQLITE_TRANSIENT);
+    }
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        Item item;
+        item.description = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+        item.code = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        item.price = sqlite3_column_double(stmt, 2);
+        item.timestamp = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+        item.isUnitPrice = sqlite3_column_int(stmt, 4) != 0;
+        items.push_back(item);
+    }
+    sqlite3_finalize(stmt);
+    return items;
+}
+
+std::vector<Item> Database::queryItemCode(const std::string& code) {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    std::vector<Item> items;
+
+    std::string sql = "SELECT description, code, price, timestamp FROM items ";
+
+    std::vector<std::string> conditions;
+    std::vector<std::string> arguments;
+
+    if (!code.empty()) {
+        conditions.push_back("code LIKE ?");
+        arguments.push_back("%" + code + "%");
+    }
+
+    if (!conditions.empty()) {
+        sql += " WHERE ";
+        for (size_t i = 0; i < conditions.size(); ++i) {
+            if (i > 0) {
+                sql += " AND ";
+            }
+            sql += conditions[i];
+        }
+    }
+
     sql += ";";
+
+    std::cout << "SQL: " << sql << std::endl;
+    std::cout << "Code: " << code << std::endl;
 
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {

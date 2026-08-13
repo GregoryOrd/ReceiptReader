@@ -22,11 +22,18 @@ message QueryItemsRequest {
   string price_max = 3;
   string date_start = 4;
   string date_end = 5;
-  bool order_by_timestamp = 6;
+}
+
+message QueryItemCodeRequest {
+  string code = 1;
 }
 
 message QueryItemsResponse {
   repeated CategorizedReceiptItem items = 1;
+}
+
+message QueryItemCodeResponse {
+  repeated ReceiptItem items = 1;
 }
 
 message ProcessImagesRequest {
@@ -70,6 +77,7 @@ message ServerRequest {
     ProcessImagesRequest process_images = 2;
     ProcessImageRequest process_image = 3;
     ConfirmProcessedItemsRequest confirm_processed_items = 4;
+    QueryItemCodeRequest query_code = 5;
   }
 }
 
@@ -80,5 +88,6 @@ message ServerResponse {
     ProcessComplete complete = 3;
     StatusResponse status = 4;
     ProcessImageResponse process_image_response = 5;
+    QueryItemCodeResponse query_item_code_response = 6;
   }
 }
