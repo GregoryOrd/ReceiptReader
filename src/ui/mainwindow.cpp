@@ -218,14 +218,17 @@ void MainWindow::search() {
         m_resultsList->addItem(text);
 
         QColor rowColor;
-        if(item.oneMonthInflationRate <= 2.0) {
-            rowColor = QColor(Qt::gray);
-        } else if(item.oneYearInflationRate <= 4.0) {
-            rowColor = QColor(Qt::blue);
-        } else if(item.sixMonthInflationRate <= 6.0) {
-            rowColor = QColor(Qt::red);
-        } else if(item.threeMonthInflationRate <= 8.0) {
+        std::cout << "Item: " << item.code << ", One Month Inflation Rate: " << item.oneMonthInflationRate
+                  << ", Three Month Inflation Rate: " << item.threeMonthInflationRate
+                  << ", Six Month Inflation Rate: " << item.sixMonthInflationRate
+                  << ", One Year Inflation Rate: " << item.oneYearInflationRate 
+                  << ", Lifetime Inflation Rate: " << item.liftimeInflationRate << std::endl;
+        if(item.threeMonthInflationRate <= 2.0) {
             rowColor = QColor(Qt::green);
+        } else if(item.threeMonthInflationRate <= 4.0) {
+            rowColor = QColor(Qt::yellow);
+        } else if(item.threeMonthInflationRate <= 6.0) {
+            rowColor = QColor(Qt::red);
         } else {
             rowColor = QColor(Qt::gray);
         }

@@ -84,6 +84,7 @@ set_target_properties(ReceiptReaderGUI PROPERTIES
 add_executable(ReceiptReaderServer ${SERVER_SOURCES})
 target_include_directories(ReceiptReaderServer PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(ReceiptReaderServer
+    Qt6::Core
     ${OpenCV_LIBS}
     ${TESSERACT_LIBRARIES}
     ${LEPTONICA_LIBRARIES}
@@ -96,6 +97,7 @@ add_executable(ReceiptReaderTests ${TEST_SOURCES})
 
 target_include_directories(ReceiptReaderTests PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(ReceiptReaderTests
+    Qt6::Core
     GTest::gtest_main
     GTest::gmock
     ${OpenCV_LIBS}
