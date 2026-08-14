@@ -149,8 +149,6 @@ std::vector<std::string> Database::queryDistinctItemCodes(const std::string& pri
 
     sql += ";";
 
-    std::cout << "SQL: " << sql << std::endl;
-
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
         std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;
@@ -219,8 +217,6 @@ std::vector<Item> Database::queryItems(const std::string& code,
         sql += " ORDER BY timestamp";
     }
     sql += ";";
-
-    std::cout << "SQL: " << sql << std::endl;
 
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
