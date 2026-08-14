@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include "parser/parser.h"
-#include "common/CategorizedResultItem.h"
+#include "common/PriceHistorySummary.h"
 #include "processor.pb.h"
 
 class ServerClient {
@@ -23,11 +23,11 @@ public:
                     const std::string& priceMax,
                     const std::string& dateStart,
                     const std::string& dateEnd,
-                    std::vector<CategorizedResultItem>& items,
+                    std::vector<PriceHistorySummary>& items,
                     std::string& error);
 
     bool queryItemCode(const std::string& code,
-                    std::vector<CategorizedResultItem>& items,
+                    std::vector<Item>& items,
                     std::string& error);
 
     bool processImage(const std::vector<uint8_t>& imageData,
@@ -44,8 +44,8 @@ public:
                        std::string& error);
 
 private:
-    bool sendRequest(const receiptreader::ServerRequest& request, std::string& error);
-    bool receiveResponse(receiptreader::ServerResponse& response, std::string& error);
+    bool sendRequest(const receiptreaderproto::ServerRequest& request, std::string& error);
+    bool receiveResponse(receiptreaderproto::ServerResponse& response, std::string& error);
 
     int m_sock;
     std::string m_host;

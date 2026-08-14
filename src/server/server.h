@@ -7,14 +7,14 @@
 #include "db/database.h"
 #include "parser/parser.h"
 #include "processor.pb.h"
-#include "common/CategorizedResultItem.h"
+#include "common/PriceHistorySummary.h"
 
 class Server {
 public:
     explicit Server(const std::string& dbPath);
     bool initialize();
 
-    std::vector<CategorizedResultItem> queryItemsFiltered(const std::string& code,
+    std::vector<PriceHistorySummary> queryPriceHistorySummaries(const std::string& code,
                                          const std::string& priceMin,
                                          const std::string& priceMax,
                                          const std::string& dateStart,
@@ -25,8 +25,8 @@ public:
     std::vector<Item> processImageBytes(const std::string& filename, const std::string& imageData);
     bool confirmProcessedItems(const std::vector<Item>& items);
     bool processImagesDirectory(const std::string& receiptDir,
-                                const std::function<bool(const receiptreader::ProcessProgress&)>& progressCallback,
-                                receiptreader::ProcessComplete& complete);
+                                const std::function<bool(const receiptreaderproto::ProcessProgress&)>& progressCallback,
+                                receiptreaderproto::ProcessComplete& complete);
 
 private:
     static bool writeBytesToTempFile(const std::string& filename, const std::string& data, std::string& outPath);

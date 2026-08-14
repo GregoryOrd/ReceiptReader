@@ -111,7 +111,7 @@ protected:
         return -1;
     }
 
-    bool sendProtobufRequest(int sock, const receiptreader::ServerRequest& request, receiptreader::ServerResponse& response) {
+    bool sendProtobufRequest(int sock, const receiptreaderproto::ServerRequest& request, receiptreaderproto::ServerResponse& response) {
         return ipc::sendProtobufMessage(sock, request) && ipc::receiveProtobufMessage(sock, &response);
     }
 
@@ -149,14 +149,14 @@ protected:
 TEST_F(ServerIntegrationTest, ConfirmProcessedItemsProtobuf) {
     int sock = connectWithRetry(PROTO_PORT);
     ASSERT_GE(sock, 0);
-    receiptreader::ServerRequest request;
+    receiptreaderproto::ServerRequest request;
     auto* confirm = request.mutable_confirm_processed_items();
     auto* item = confirm->add_items();
     item->set_code("PROTO_CODE");
     item->set_description("Proto Item");
     item->set_price(9.99);
     item->set_timestamp("2025-04-11");
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     ASSERT_TRUE(sendProtobufRequest(sock, request, response));
     ASSERT_TRUE(response.has_status());
     close(sock);
@@ -165,14 +165,14 @@ TEST_F(ServerIntegrationTest, ConfirmProcessedItemsProtobuf) {
 TEST_F(ServerIntegrationTest, QueryItemsProtobuf) {
     int sock = connectWithRetry(PROTO_PORT);
     ASSERT_GE(sock, 0);
-    receiptreader::ServerRequest request;
+    receiptreaderproto::ServerRequest request;
     auto* query = request.mutable_query_items();
     query->set_code("PROTO_CODE");
     query->set_price_min("");
     query->set_price_max("");
     query->set_date_start("");
     query->set_date_end("");
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     ASSERT_TRUE(sendProtobufRequest(sock, request, response));
     ASSERT_TRUE(response.has_query_items_response());
     close(sock);
@@ -181,11 +181,11 @@ TEST_F(ServerIntegrationTest, QueryItemsProtobuf) {
 TEST_F(ServerIntegrationTest, ProcessImageProtobuf) {
     int sock = connectWithRetry(PROTO_PORT);
     ASSERT_GE(sock, 0);
-    receiptreader::ServerRequest request;
+    receiptreaderproto::ServerRequest request;
     auto* proc = request.mutable_process_image();
     proc->set_filename("test.jpg");
     proc->set_image_data("dGVzdA==");
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     ASSERT_TRUE(sendProtobufRequest(sock, request, response));
     ASSERT_TRUE(response.has_process_image_response() || response.has_status());
     close(sock);
@@ -197,10 +197,10 @@ TEST_F(ServerIntegrationTest, ProcessImagesProtobuf) {
 
     int sock = connectWithRetry(PROTO_PORT);
     ASSERT_GE(sock, 0);
-    receiptreader::ServerRequest request;
+    receiptreaderproto::ServerRequest request;
     auto* proc = request.mutable_process_images();
     proc->set_receipt_dir(receiptDir);
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     ASSERT_TRUE(sendProtobufRequest(sock, request, response));
     ASSERT_TRUE(response.has_complete() || response.has_progress() || response.has_status());
     close(sock);

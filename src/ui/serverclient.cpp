@@ -55,7 +55,7 @@ int ServerClient::port() const {
     return m_port;
 }
 
-bool ServerClient::sendRequest(const receiptreader::ServerRequest& request, std::string& error) {
+bool ServerClient::sendRequest(const receiptreaderproto::ServerRequest& request, std::string& error) {
     if (!isConnected()) {
         error = "Not connected to server.";
         return false;
@@ -68,7 +68,7 @@ bool ServerClient::sendRequest(const receiptreader::ServerRequest& request, std:
     return true;
 }
 
-bool ServerClient::receiveResponse(receiptreader::ServerResponse& response, std::string& error) {
+bool ServerClient::receiveResponse(receiptreaderproto::ServerResponse& response, std::string& error) {
     if (!isConnected()) {
         error = "Not connected to server.";
         return false;
@@ -86,9 +86,9 @@ bool ServerClient::queryItems(const std::string& code,
                               const std::string& priceMax,
                               const std::string& dateStart,
                               const std::string& dateEnd,
-                              std::vector<CategorizedResultItem>& items,
+                              std::vector<PriceHistorySummary>& items,
                               std::string& error) {
-    receiptreader::ServerRequest request;
+    receiptreaderproto::ServerRequest request;
     auto* query = request.mutable_query_items();
     query->set_code(code);
     query->set_price_min(priceMin);
@@ -100,7 +100,7 @@ bool ServerClient::queryItems(const std::string& code,
         return false;
     }
 
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     if (!receiveResponse(response, error)) {
         return false;
     }
@@ -116,21 +116,28 @@ bool ServerClient::queryItems(const std::string& code,
 
     items.clear();
     for (const auto& entry : response.query_items_response().items()) {
-        CategorizedResultItem item;
+        PriceHistorySummary item;
         item.description = entry.description();
         item.code = entry.code();
-        item.price = entry.price();
-        item.timestamp = entry.timestamp();
-        item.category = entry.category();
+        item.minPrice = entry.minprice();
+        item.maxPrice = entry.maxprice();
+        item.currentPrice = entry.currentprice();
+        item.timestampFirst = entry.timestampfirst();
+        item.timestampLast = entry.timestamplast();
+        item.liftimeInflationRate = entry.liftimeinflationrate();
+        item.oneYearInflationRate = entry.oneyearinflationrate();
+        item.sixMonthInflationRate = entry.sixmonthinflationrate();
+        item.threeMonthInflationRate = entry.threemonthinflationrate();
+        item.oneMonthInflationRate = entry.onemonthinflationrate();
         items.push_back(item);
     }
     return true;
 }
 
 bool ServerClient::queryItemCode(const std::string& code,
-                              std::vector<CategorizedResultItem>& items,
+                              std::vector<Item>& items,
                               std::string& error) {
-    receiptreader::ServerRequest request;
+    receiptreaderproto::ServerRequest request;
     auto* query = request.mutable_query_code();
     query->set_code(code);
 
@@ -138,7 +145,7 @@ bool ServerClient::queryItemCode(const std::string& code,
         return false;
     }
 
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     if (!receiveResponse(response, error)) {
         return false;
     }
@@ -154,7 +161,7 @@ bool ServerClient::queryItemCode(const std::string& code,
 
     items.clear();
     for (const auto& entry : response.query_item_code_response().items()) {
-        CategorizedResultItem item;
+        Item item;
         item.description = entry.description();
         item.code = entry.code();
         item.price = entry.price();
@@ -168,7 +175,7 @@ bool ServerClient::processImage(const std::vector<uint8_t>& imageData,
                                 const std::string& filename,
                                 std::vector<Item>& items,
                                 std::string& error) {
-    receiptreader::ServerRequest request;
+    receiptreaderproto::ServerRequest request;
     auto* imageRequest = request.mutable_process_image();
     imageRequest->set_image_data(reinterpret_cast<const char*>(imageData.data()), static_cast<int>(imageData.size()));
     if (!filename.empty()) {
@@ -179,7 +186,7 @@ bool ServerClient::processImage(const std::vector<uint8_t>& imageData,
         return false;
     }
 
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     if (!receiveResponse(response, error)) {
         return false;
     }
@@ -208,7 +215,7 @@ bool ServerClient::processImage(const std::vector<uint8_t>& imageData,
 bool ServerClient::confirmProcessedItems(const std::vector<Item>& items,
                                          const std::string& date,
                                          std::string& error) {
-    receiptreader::ServerRequest request;
+    receiptreaderproto::ServerRequest request;
     auto* confirmRequest = request.mutable_confirm_processed_items();
     confirmRequest->set_date(date);
     for (const auto& item : items) {
@@ -223,7 +230,7 @@ bool ServerClient::confirmProcessedItems(const std::vector<Item>& items,
         return false;
     }
 
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     if (!receiveResponse(response, error)) {
         return false;
     }
@@ -242,7 +249,7 @@ bool ServerClient::confirmProcessedItems(const std::vector<Item>& items,
 bool ServerClient::processImages(const std::string& receiptDir,
                                  const std::function<void(int, int, const std::string&)>& onProgress,
                                  std::string& error) {
-    receiptreader::ServerRequest request;
+    receiptreaderproto::ServerRequest request;
     auto* process = request.mutable_process_images();
     process->set_receipt_dir(receiptDir);
 
@@ -251,7 +258,7 @@ bool ServerClient::processImages(const std::string& receiptDir,
     }
 
     while (true) {
-        receiptreader::ServerResponse response;
+        receiptreaderproto::ServerResponse response;
         if (!receiveResponse(response, error)) {
             return false;
         }

@@ -1,19 +1,28 @@
 syntax = "proto3";
-package receiptreader;
+package receiptreaderproto;
 
 message ReceiptItem {
   string code = 1;
   string description = 2;
   double price = 3;
   string timestamp = 4;
+  bool isUnitPrice = 5;
 }
 
-message CategorizedReceiptItem {
+message PriceHistorySummary {
   string code = 1;
   string description = 2;
-  double price = 3;
-  string timestamp = 4;
-  int32 category = 5;
+  double minPrice = 3;
+  double maxPrice = 4;
+  double currentPrice = 5;
+  bool isUnitPrice = 6;
+  string timestampFirst = 7;
+  string timestampLast = 8;
+  double liftimeInflationRate = 9;
+  double oneYearInflationRate = 10;
+  double sixMonthInflationRate = 11;
+  double threeMonthInflationRate = 12;
+  double oneMonthInflationRate = 13;
 }
 
 message QueryItemsRequest {
@@ -29,7 +38,7 @@ message QueryItemCodeRequest {
 }
 
 message QueryItemsResponse {
-  repeated CategorizedReceiptItem items = 1;
+  repeated PriceHistorySummary items = 1;
 }
 
 message QueryItemCodeResponse {

@@ -22,16 +22,22 @@ include_directories(${TESSERACT_INCLUDE_DIRS})
 include_directories(${LEPTONICA_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/src/server)
+include_directories(${CMAKE_SOURCE_DIR}/src/common)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS proto/processor.proto)
+
+set(COMMON_SOURCES
+    src/common/PriceHistorySummary.cpp
+    ${PROTO_SRCS}
+)
 
 set(GUI_SOURCES
     src/ui/main.cpp
     src/ui/mainwindow.cpp
     src/ui/serverclient.cpp
     src/ipc/message_io.cpp
-    ${PROTO_SRCS}
+    ${COMMON_SOURCES}
 )
 
 set(SERVER_SOURCES
@@ -43,7 +49,22 @@ set(SERVER_SOURCES
     src/server/ocr/ocr.cpp
     src/server/parser/parser.cpp
     src/server/db/database.cpp
-    ${PROTO_SRCS}
+    ${COMMON_SOURCES}
+)
+
+set(TEST_SOURCES
+    test/server/ocr/ocr_test.cpp
+    test/server/parser/parser_test.cpp
+    test/server/db/database_test.cpp
+    test/server/server_integration_test.cpp
+    src/server/ocr/ocr.cpp
+    src/server/parser/parser.cpp
+    src/server/db/database.cpp
+    src/server/server.cpp
+    src/server/ProtobufServer.cpp
+    src/server/WebServer.cpp
+    src/ipc/message_io.cpp
+    ${COMMON_SOURCES}
 )
 
 add_executable(ReceiptReaderGUI ${GUI_SOURCES})
@@ -71,20 +92,7 @@ target_link_libraries(ReceiptReaderServer
 )
 
 # Add test executable
-add_executable(ReceiptReaderTests
-    test/server/ocr/ocr_test.cpp
-    test/server/parser/parser_test.cpp
-    test/server/db/database_test.cpp
-    test/server/server_integration_test.cpp
-    src/server/ocr/ocr.cpp
-    src/server/parser/parser.cpp
-    src/server/db/database.cpp
-    src/server/server.cpp
-    src/server/ProtobufServer.cpp
-    src/server/WebServer.cpp
-    src/ipc/message_io.cpp
-    ${PROTO_SRCS}
-)
+add_executable(ReceiptReaderTests ${TEST_SOURCES})
 
 target_include_directories(ReceiptReaderTests PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(ReceiptReaderTests

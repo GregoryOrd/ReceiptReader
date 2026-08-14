@@ -20,16 +20,17 @@ public:
     void insertItem(const Item& item);
     void insertWarning(WarningType type, const std::string& code, const std::string& description, const std::string& message);
     
-    //TODO: Rename this function and remove the dateStart and dateEnd arguments.
-    std::vector<Item> queryItemsFiltered(const std::string& code,
-                                         const std::string& priceMin,
+    std::vector<std::string> queryDistinctItemCodes(const std::string& priceMin,
                                          const std::string& priceMax,
                                          const std::string& dateStart,
-                                         const std::string& dateEnd,
-                                         bool orderByTimestamp);
+                                         const std::string& dateEnd);
 
-    
-    std::vector<Item> queryItemCode(const std::string& code);
+    std::vector<Item> queryItems(const std::string& code="",
+                                         const std::string& priceMin="",
+                                         const std::string& priceMax="",
+                                         const std::string& dateStart="",
+                                         const std::string& dateEnd="",
+                                         bool orderByTimestamp=true);
 private:
     bool prepareStatement(const char* sql, sqlite3_stmt** stmt);
 

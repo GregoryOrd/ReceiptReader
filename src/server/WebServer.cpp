@@ -322,7 +322,7 @@ bool WebServer::handleConnection(int clientSock) {
             }
         }
 
-        auto items = m_server.queryItemsFiltered(code, priceMin, priceMax, dateStart, dateEnd);
+        auto items = m_server.queryPriceHistorySummaries(code, priceMin, priceMax, dateStart, dateEnd);
         std::ostringstream json;
         json << "{\"items\": [";
         for (size_t i = 0; i < items.size(); ++i) {
@@ -330,8 +330,8 @@ bool WebServer::handleConnection(int clientSock) {
             if (i > 0) json << ",";
             json << "{\"code\":\"" << escapeJsonString(item.code) << "\",";
             json << "\"description\":\"" << escapeJsonString(item.description) << "\",";
-            json << "\"price\":" << item.price << ",";
-            json << "\"timestamp\":\"" << escapeJsonString(item.timestamp) << "\"}";
+            json << "\"price\":" << item.currentPrice << ",";
+            json << "\"timestamp\":\"" << escapeJsonString(item.timestampLast) << "\"}";
         }
         json << "]}";
         sendJson(clientSock, 200, json.str());
@@ -345,8 +345,8 @@ bool WebServer::handleConnection(int clientSock) {
             return true;
         }
 
-        receiptreader::ProcessComplete complete;
-        bool success = m_server.processImagesDirectory(receiptDir, [&](const receiptreader::ProcessProgress&) {
+        receiptreaderproto::ProcessComplete complete;
+        bool success = m_server.processImagesDirectory(receiptDir, [&](const receiptreaderproto::ProcessProgress&) {
             return true;
         }, complete);
 

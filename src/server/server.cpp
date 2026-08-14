@@ -15,23 +15,30 @@ bool Server::initialize() {
     return m_db.createTableIfNotExists();
 }
 
-std::vector<CategorizedResultItem> Server::queryItemsFiltered(const std::string& code,
+std::vector<PriceHistorySummary> Server::queryPriceHistorySummaries(const std::string& code,
                                              const std::string& priceMin,
                                              const std::string& priceMax,
                                              const std::string& dateStart,
-                                             const std::string& dateEnd) {
-    std::vector<Item> items = m_db.queryItemsFiltered(code, priceMin, priceMax, dateStart, dateEnd, true);
+                                             const std::string& dateEnd) {  
     
-    std::vector<CategorizedResultItem> categorizedItems;
-    for (const auto& item : items) {
-        CategorizedResultItem categorizedItem(item, 1);
-        categorizedItems.push_back(categorizedItem);
+    std::vector<PriceHistorySummary> summaries;
+    if(!code.empty()) {
+        summaries.push_back(PriceHistorySummary::fromItems(m_db.queryItems(code, priceMin, priceMax, dateStart, dateEnd, true)));
     }
-    return categorizedItems;
+    else
+    {
+        std::vector<std::string> codes = m_db.queryDistinctItemCodes(priceMin, priceMax, dateStart, dateEnd);
+
+        for(const auto& code : codes) {
+            summaries.push_back(PriceHistorySummary::fromItems(m_db.queryItems(code, priceMin, priceMax, dateStart, dateEnd, true)));
+        }
+    }
+
+    return summaries;
 }
 
 std::vector<Item> Server::queryItemCode(const std::string& code) {
-    return m_db.queryItemCode(code);
+    return m_db.queryItems(code);
 }
 
 std::vector<Item> Server::processImageBytes(const std::string& filename, const std::string& imageData) {
@@ -53,8 +60,8 @@ bool Server::confirmProcessedItems(const std::vector<Item>& items) {
 }
 
 bool Server::processImagesDirectory(const std::string& receiptDir,
-                                    const std::function<bool(const receiptreader::ProcessProgress&)>& progressCallback,
-                                    receiptreader::ProcessComplete& complete) {
+                                    const std::function<bool(const receiptreaderproto::ProcessProgress&)>& progressCallback,
+                                    receiptreaderproto::ProcessComplete& complete) {
     fs::path directory(receiptDir);
     if (!fs::exists(directory) || !fs::is_directory(directory)) {
         complete.set_success(false);
@@ -89,7 +96,7 @@ bool Server::processImagesDirectory(const std::string& receiptDir,
         }
 
         processedImages += 1;
-        receiptreader::ProcessProgress progress;
+        receiptreaderproto::ProcessProgress progress;
         progress.set_processed_images(processedImages);
         progress.set_total_images(totalImages);
         progress.set_current_image(path.string());

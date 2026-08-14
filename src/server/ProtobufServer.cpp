@@ -92,7 +92,7 @@ void ProtobufServer::logAcceptedClient(const sockaddr_in& clientAddr) {
 }
 
 bool ProtobufServer::handleClient(int clientSock) {
-    receiptreader::ServerRequest request;
+    receiptreaderproto::ServerRequest request;
     if (!ipc::receiveProtobufMessage(clientSock, &request)) {
         std::cerr << "Failed to receive request from protobuf client." << std::endl;
         return false;
@@ -117,27 +117,34 @@ bool ProtobufServer::handleClient(int clientSock) {
     return sendStatus(clientSock, false, "Unsupported request type.");
 }
 
-bool ProtobufServer::queryItemsRequest(int clientSock, const receiptreader::QueryItemsRequest& request) {
-    std::vector<CategorizedResultItem> items = m_server.queryItemsFiltered(request.code(), request.price_min(), request.price_max(), request.date_start(), request.date_end());
+bool ProtobufServer::queryItemsRequest(int clientSock, const receiptreaderproto::QueryItemsRequest& request) {
+    std::vector<PriceHistorySummary> items = m_server.queryPriceHistorySummaries(request.code(), request.price_min(), request.price_max(), request.date_start(), request.date_end());
 
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     auto* queryResponse = response.mutable_query_items_response();
     for (const auto& item : items) {
         auto* entry = queryResponse->add_items();
         entry->set_code(item.code);
         entry->set_description(item.description);
-        entry->set_price(item.price);
-        entry->set_timestamp(item.timestamp);
-        entry->set_category(item.category);
+        entry->set_minprice(item.minPrice);
+        entry->set_maxprice(item.maxPrice);
+        entry->set_currentprice(item.currentPrice);
+        entry->set_timestampfirst(item.timestampFirst);
+        entry->set_timestamplast(item.timestampLast);
+        entry->set_liftimeinflationrate(item.liftimeInflationRate);
+        entry->set_oneyearinflationrate(item.oneYearInflationRate);
+        entry->set_sixmonthinflationrate(item.sixMonthInflationRate);
+        entry->set_threemonthinflationrate(item.threeMonthInflationRate);
+        entry->set_onemonthinflationrate(item.oneMonthInflationRate);
     }
 
     return ipc::sendProtobufMessage(clientSock, response);
 }
 
-bool ProtobufServer::queryItemCode(int clientSock, const receiptreader::QueryItemCodeRequest& request) {
+bool ProtobufServer::queryItemCode(int clientSock, const receiptreaderproto::QueryItemCodeRequest& request) {
     std::vector<Item> items = m_server.queryItemCode(request.code());
 
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     auto* queryResponse = response.mutable_query_item_code_response();
     for (const auto& item : items) {
         std::cout << "Found Item for Code: " << item.code << ", " << item.description << ", " << item.price << ", " << item.timestamp << std::endl;
@@ -151,28 +158,28 @@ bool ProtobufServer::queryItemCode(int clientSock, const receiptreader::QueryIte
     return ipc::sendProtobufMessage(clientSock, response);
 }
 
-bool ProtobufServer::processImagesRequest(int clientSock, const receiptreader::ProcessImagesRequest& request) {
-    receiptreader::ProcessComplete complete;
-    bool success = m_server.processImagesDirectory(request.receipt_dir(), [&](const receiptreader::ProcessProgress& progress) {
-        receiptreader::ServerResponse progressResponse;
+bool ProtobufServer::processImagesRequest(int clientSock, const receiptreaderproto::ProcessImagesRequest& request) {
+    receiptreaderproto::ProcessComplete complete;
+    bool success = m_server.processImagesDirectory(request.receipt_dir(), [&](const receiptreaderproto::ProcessProgress& progress) {
+        receiptreaderproto::ServerResponse progressResponse;
         *progressResponse.mutable_progress() = progress;
         return ipc::sendProtobufMessage(clientSock, progressResponse);
     }, complete);
 
     if (!success) {
-        receiptreader::ServerResponse response;
+        receiptreaderproto::ServerResponse response;
         *response.mutable_complete() = complete;
         return ipc::sendProtobufMessage(clientSock, response);
     }
 
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     *response.mutable_complete() = complete;
     return ipc::sendProtobufMessage(clientSock, response);
 }
 
-bool ProtobufServer::processImageRequest(int clientSock, const receiptreader::ProcessImageRequest& request) {
+bool ProtobufServer::processImageRequest(int clientSock, const receiptreaderproto::ProcessImageRequest& request) {
     auto items = m_server.processImageBytes(request.filename(), request.image_data());
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     auto* imageResponse = response.mutable_process_image_response();
     for (const auto& item : items) {
         auto* entry = imageResponse->add_items();
@@ -184,7 +191,7 @@ bool ProtobufServer::processImageRequest(int clientSock, const receiptreader::Pr
     return ipc::sendProtobufMessage(clientSock, response);
 }
 
-bool ProtobufServer::confirmProcessedItemsRequest(int clientSock, const receiptreader::ConfirmProcessedItemsRequest& request) {
+bool ProtobufServer::confirmProcessedItemsRequest(int clientSock, const receiptreaderproto::ConfirmProcessedItemsRequest& request) {
     std::vector<Item> items;
     for (const auto& entry : request.items()) {
         Item item;
@@ -201,7 +208,7 @@ bool ProtobufServer::confirmProcessedItemsRequest(int clientSock, const receiptr
 }
 
 bool ProtobufServer::sendStatus(int clientSock, bool success, const std::string& message) {
-    receiptreader::ServerResponse response;
+    receiptreaderproto::ServerResponse response;
     auto* status = response.mutable_status();
     status->set_success(success);
     status->set_message(message);

@@ -194,7 +194,7 @@ void MainWindow::processImage() {
 }
 
 void MainWindow::search() {
-    std::vector<CategorizedResultItem> items;
+    std::vector<PriceHistorySummary> items;
     std::string error;
     if (!m_serverClient->queryItems(
             m_codeEdit->text().toStdString(),
@@ -213,18 +213,18 @@ void MainWindow::search() {
         QString text = QString("Code: %1, Desc: %2, Price: %3, Date: %4")
                            .arg(QString::fromStdString(item.code))
                            .arg(QString::fromStdString(item.description))
-                           .arg(item.price)
-                           .arg(QString::fromStdString(item.timestamp));
+                           .arg(item.currentPrice)
+                           .arg(QString::fromStdString(item.timestampLast));
         m_resultsList->addItem(text);
 
         QColor rowColor;
-        if(item.category == 0) {
+        if(item.oneMonthInflationRate <= 2.0) {
             rowColor = QColor(Qt::gray);
-        } else if(item.category == 1) {
+        } else if(item.oneYearInflationRate <= 4.0) {
             rowColor = QColor(Qt::blue);
-        } else if(item.category == 2) {
+        } else if(item.sixMonthInflationRate <= 6.0) {
             rowColor = QColor(Qt::red);
-        } else if(item.category == 3) {
+        } else if(item.threeMonthInflationRate <= 8.0) {
             rowColor = QColor(Qt::green);
         } else {
             rowColor = QColor(Qt::gray);
@@ -259,7 +259,7 @@ void MainWindow::graphSelected() {
     QString text = m_resultsList->item(row)->text();
     QString code = text.split(",")[0].split(":")[1].trimmed();
 
-    std::vector<CategorizedResultItem> items;
+    std::vector<Item> items;
     std::string error;
     if (!m_serverClient->queryItemCode(
             code.toStdString(),
