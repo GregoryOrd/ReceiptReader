@@ -20,7 +20,7 @@ std::vector<CategorizedResultItem> Server::queryItemsFiltered(const std::string&
                                              const std::string& priceMax,
                                              const std::string& dateStart,
                                              const std::string& dateEnd) {
-    std::vector<Item> items = m_db.queryItemsFiltered(code, priceMin, priceMax, dateStart, dateEnd);
+    std::vector<Item> items = m_db.queryItemsFiltered(code, priceMin, priceMax, dateStart, dateEnd, true);
     
     std::vector<CategorizedResultItem> categorizedItems;
     for (const auto& item : items) {

@@ -25,7 +25,8 @@ public:
                                          const std::string& priceMin,
                                          const std::string& priceMax,
                                          const std::string& dateStart,
-                                         const std::string& dateEnd);
+                                         const std::string& dateEnd,
+                                         bool orderByTimestamp);
 
     
     std::vector<Item> queryItemCode(const std::string& code);

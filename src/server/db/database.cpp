@@ -111,12 +111,12 @@ std::vector<Item> Database::queryItemsFiltered(const std::string& code,
                                                const std::string& priceMin,
                                                const std::string& priceMax,
                                                const std::string& dateStart,
-                                               const std::string& dateEnd) {
+                                               const std::string& dateEnd,
+                                               bool orderByTimestamp) {
     std::lock_guard<std::mutex> lock(m_mutex);
     std::vector<Item> items;
 
-    std::string sql = "SELECT description, code, price, timestamp, rn FROM (SELECT description, code, price, timestamp, ROW_NUMBER() OVER (PARTITION BY code ORDER BY timestamp DESC) AS rn ";
-    sql += "FROM items ";
+    std::string sql = "SELECT description, code, price, timestamp, is_unit_price FROM items";
 
     std::vector<std::string> conditions;
     std::vector<std::string> arguments;
@@ -152,7 +152,10 @@ std::vector<Item> Database::queryItemsFiltered(const std::string& code,
         }
     }
 
-    sql += ") WHERE rn = 1;";
+    if (orderByTimestamp) {
+        sql += " ORDER BY timestamp";
+    }
+    sql += ";";
 
     std::cout << "SQL: " << sql << std::endl;
 
