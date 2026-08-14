@@ -217,6 +217,7 @@ void MainWindow::search() {
                            .arg(QString::fromStdString(item.timestampLast));
         m_resultsList->addItem(text);
 
+        //TODO: Split our a function and improve logic for deciding colours based on inflation rates.
         QColor rowColor;
         std::cout << "Item: " << item.code << ", One Month Inflation Rate: " << item.oneMonthInflationRate
                   << ", Three Month Inflation Rate: " << item.threeMonthInflationRate

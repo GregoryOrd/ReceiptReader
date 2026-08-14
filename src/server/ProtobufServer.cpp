@@ -147,7 +147,6 @@ bool ProtobufServer::queryItemCode(int clientSock, const receiptreaderproto::Que
     receiptreaderproto::ServerResponse response;
     auto* queryResponse = response.mutable_query_item_code_response();
     for (const auto& item : items) {
-        std::cout << "Found Item for Code: " << item.code << ", " << item.description << ", " << item.price << ", " << item.timestamp << std::endl;
         auto* entry = queryResponse->add_items();
         entry->set_code(item.code);
         entry->set_description(item.description);

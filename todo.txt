@@ -6,6 +6,8 @@ Features To Implement
   fix these weird behaviours while working on the colouring. For example, the search results return multiple instances of say code 000000040110 (Bananas).
   However, selecting different instances of bananas to graph gives different graph results. Really we just need one instance in the list and also it is weird
   that the different instances are currently showing different graphs.
+  - Show inflation rates in the initial results list
+  - Add unit test for for the PriceHistorySummary inflation rate calculations
 2) Other gui features or statstics could perhaps also be displayed in these rows some how to should items of interest.
   - Perhaps the rows can be sorted based off of these price action categories.
 3) In the server's client disconnection message, print the IP and port of the client that disconnected.
