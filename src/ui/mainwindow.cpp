@@ -195,7 +195,7 @@ void MainWindow::processImage() {
 }
 
 void MainWindow::search() {
-    std::vector<PriceHistorySummary> items;
+    std::vector<PriceHistorySummary> priceSummaries;
     std::string error;
     if (!m_serverClient->queryItems(
             m_codeEdit->text().toStdString(),
@@ -203,41 +203,14 @@ void MainWindow::search() {
             m_priceMaxEdit->text().toStdString(),
             m_dateStartEdit->text().toStdString(),
             m_dateEndEdit->text().toStdString(),
-            items,
+            priceSummaries,
             error)) {
         QMessageBox::warning(this, "Query Failed", QString::fromStdString(error));
         return;
     }
 
     m_resultsList->clear();
-    for (const auto& item : items) {
-        QString text = QString("Code: %1, Desc: %2, Price: %3, Date: %4")
-                           .arg(QString::fromStdString(item.code))
-                           .arg(QString::fromStdString(item.description))
-                           .arg(item.currentPrice)
-                           .arg(QString::fromStdString(item.timestampLast));
-        m_resultsList->addItem(text);
-
-        //TODO: Split our a function and improve logic for deciding colours based on inflation rates.
-        QColor rowColor;
-        std::cout << "Item: " << item.code << ", One Month Inflation Rate: " << item.oneMonthInflationRate
-                  << ", Three Month Inflation Rate: " << item.threeMonthInflationRate
-                  << ", Six Month Inflation Rate: " << item.sixMonthInflationRate
-                  << ", One Year Inflation Rate: " << item.oneYearInflationRate 
-                  << ", Lifetime Inflation Rate: " << item.liftimeInflationRate << std::endl;
-        if(item.threeMonthInflationRate <= 2.0) {
-            rowColor = QColor(Qt::green);
-        } else if(item.threeMonthInflationRate <= 4.0) {
-            rowColor = QColor(Qt::yellow);
-        } else if(item.threeMonthInflationRate <= 6.0) {
-            rowColor = QColor(Qt::red);
-        } else {
-            rowColor = QColor(Qt::gray);
-        }
-
-        int newRow = m_resultsList->count() - 1;
-        m_resultsList->colourRow(newRow, rowColor);
-    }
+    m_resultsList->addItems(priceSummaries);
 }
 
 void MainWindow::graphSelected() {

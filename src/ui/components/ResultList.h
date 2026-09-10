@@ -17,6 +17,7 @@ public:
     void setChartView(PriceChart* chartView);
     void graphSelected();
     void colourRow(int row, const QColor& color);
+    void addItems(std::vector<PriceHistorySummary> items);
 
 private:
     ServerClient* m_serverClient;
