@@ -69,7 +69,9 @@ set(TEST_SOURCES
 
 add_executable(ReceiptReaderGUI ${GUI_SOURCES}
     src/ui/ResultList.h
-    src/ui/ResultList.cpp)
+    src/ui/ResultList.cpp
+    src/ui/PriceChart.h
+    src/ui/PriceChart.cpp)
 target_include_directories(ReceiptReaderGUI PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(ReceiptReaderGUI
     Qt6::Core

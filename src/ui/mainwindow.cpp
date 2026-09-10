@@ -60,9 +60,9 @@ MainWindow::MainWindow(QWidget* parent)
     connect(m_graphButton, &QPushButton::clicked, this, &MainWindow::graphSelected);
     layout->addWidget(m_graphButton);
 
-    m_chartView = new QChartView;
-    m_resultsList->setChartView(m_chartView);
-    layout->addWidget(m_chartView);
+    m_chartView = std::make_unique<PriceChart>();
+    m_resultsList->setChartView(m_chartView.get());
+    layout->addWidget(m_chartView.get());
 
     connect(m_connectButton, &QPushButton::clicked, this, &MainWindow::toggleConnection);
     connect(m_processButton, &QPushButton::clicked, this, &MainWindow::processImage);

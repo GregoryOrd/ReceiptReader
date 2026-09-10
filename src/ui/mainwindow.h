@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "ResultList.h"
+#include "PriceChart.h"
 
 #include <memory>
 #include <QMainWindow>
@@ -45,7 +46,7 @@ private:
     std::unique_ptr<ResultList> m_resultsList;
     QPushButton* m_searchButton;
     QPushButton* m_graphButton;
-    QChartView* m_chartView;
+    std::unique_ptr<PriceChart> m_chartView;
 };
 
 #endif // MAINWINDOW_H

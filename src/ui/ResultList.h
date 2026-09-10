@@ -3,7 +3,7 @@
 
 #include <QListWidget>
 #include <QMouseEvent>
-#include <QChartView>
+#include "PriceChart.h"
 #include "serverclient.h"
 
 class ResultList : public QListWidget {
@@ -14,12 +14,12 @@ public:
     : QListWidget(nullptr), m_serverClient(serverClient) {}
 
 public:
-    void setChartView(QChartView* chartView);
+    void setChartView(PriceChart* chartView);
     void graphSelected();
 
 private:
     ServerClient* m_serverClient;
-    QChartView* m_chartView;
+    PriceChart* m_chartView;
 
 signals:
     void doubleClicked();
