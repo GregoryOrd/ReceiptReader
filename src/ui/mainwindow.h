@@ -1,8 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "ResultList.h"
-#include "PriceChart.h"
+#include "components/ResultList.h"
+#include "components/PriceChart.h"
 
 #include <memory>
 #include <QMainWindow>

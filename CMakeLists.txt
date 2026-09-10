@@ -37,6 +37,10 @@ set(GUI_SOURCES
     src/ui/mainwindow.cpp
     src/ui/serverclient.cpp
     src/ipc/message_io.cpp
+    src/ui/components/ResultList.h
+    src/ui/components/ResultList.cpp
+    src/ui/components/PriceChart.h
+    src/ui/components/PriceChart.cpp
     ${COMMON_SOURCES}
 )
 
@@ -67,11 +71,7 @@ set(TEST_SOURCES
     ${COMMON_SOURCES}
 )
 
-add_executable(ReceiptReaderGUI ${GUI_SOURCES}
-    src/ui/ResultList.h
-    src/ui/ResultList.cpp
-    src/ui/PriceChart.h
-    src/ui/PriceChart.cpp)
+add_executable(ReceiptReaderGUI ${GUI_SOURCES})
 target_include_directories(ReceiptReaderGUI PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(ReceiptReaderGUI
     Qt6::Core

@@ -4,7 +4,7 @@
 #include <QListWidget>
 #include <QMouseEvent>
 #include "PriceChart.h"
-#include "serverclient.h"
+#include "../serverclient.h"
 
 class ResultList : public QListWidget {
     Q_OBJECT
