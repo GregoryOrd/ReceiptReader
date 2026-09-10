@@ -35,7 +35,7 @@ set(COMMON_SOURCES
 set(GUI_SOURCES
     src/ui/main.cpp
     src/ui/mainwindow.cpp
-    src/ui/serverclient.cpp
+    src/ui/serverConn/serverclient.cpp
     src/ipc/message_io.cpp
     src/ui/components/ResultList.h
     src/ui/components/ResultList.cpp

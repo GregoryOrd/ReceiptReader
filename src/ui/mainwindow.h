@@ -3,6 +3,7 @@
 
 #include "components/ResultList.h"
 #include "components/PriceChart.h"
+#include "ui/serverConn/serverclient.h"
 
 #include <memory>
 #include <QMainWindow>
@@ -16,7 +17,6 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QChart>
 #include <QtCharts/QLineSeries>
-#include "ui/serverclient.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
