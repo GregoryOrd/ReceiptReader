@@ -236,22 +236,8 @@ void MainWindow::search() {
         }
 
         int newRow = m_resultsList->count() - 1;
-        colourResultListRow(newRow, rowColor);
+        m_resultsList->colourRow(newRow, rowColor);
     }
-}
-
-void MainWindow::colourResultListRow(int row, const QColor& color) {
-    if (!m_resultsList) {
-        return;
-    }
-    if (row < 0 || row >= m_resultsList->count()) {
-        return;
-    }
-    QListWidgetItem* item = m_resultsList->item(row);
-    if (!item) {
-        return;
-    }
-    item->setBackground(QBrush(color));
 }
 
 void MainWindow::graphSelected() {

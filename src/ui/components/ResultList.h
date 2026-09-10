@@ -16,6 +16,7 @@ public:
 public:
     void setChartView(PriceChart* chartView);
     void graphSelected();
+    void colourRow(int row, const QColor& color);
 
 private:
     ServerClient* m_serverClient;

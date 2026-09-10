@@ -42,3 +42,15 @@ void ResultList::graphSelected() {
 
     m_chartView->plotItems(items, code);
 }
+
+void ResultList::colourRow(int row, const QColor& color) {
+    if (row < 0 || row >= this->count()) {
+        return;
+    }
+    QListWidgetItem* item = this->item(row);
+    if (!item) {
+        return;
+    }
+    
+    item->setBackground(QBrush(color));
+}
