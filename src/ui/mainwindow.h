@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "ResultList.h"
+
 #include <memory>
 #include <QMainWindow>
 #include <QLineEdit>
@@ -40,7 +42,7 @@ private:
     QLineEdit* m_priceMaxEdit;
     QLineEdit* m_dateStartEdit;
     QLineEdit* m_dateEndEdit;
-    QListWidget* m_resultsList;
+    std::unique_ptr<ResultList> m_resultsList;
     QPushButton* m_searchButton;
     QPushButton* m_graphButton;
     QChartView* m_chartView;

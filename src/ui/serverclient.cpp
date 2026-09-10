@@ -55,7 +55,7 @@ int ServerClient::port() const {
     return m_port;
 }
 
-bool ServerClient::sendRequest(const receiptreaderproto::ServerRequest& request, std::string& error) {
+bool ServerClient::sendRequest(const receiptreaderproto::ServerRequest& request, std::string& error) const {
     if (!isConnected()) {
         error = "Not connected to server.";
         return false;
@@ -68,7 +68,7 @@ bool ServerClient::sendRequest(const receiptreaderproto::ServerRequest& request,
     return true;
 }
 
-bool ServerClient::receiveResponse(receiptreaderproto::ServerResponse& response, std::string& error) {
+bool ServerClient::receiveResponse(receiptreaderproto::ServerResponse& response, std::string& error) const {
     if (!isConnected()) {
         error = "Not connected to server.";
         return false;
@@ -87,7 +87,7 @@ bool ServerClient::queryItems(const std::string& code,
                               const std::string& dateStart,
                               const std::string& dateEnd,
                               std::vector<PriceHistorySummary>& items,
-                              std::string& error) {
+                              std::string& error) const {
     receiptreaderproto::ServerRequest request;
     auto* query = request.mutable_query_items();
     query->set_code(code);
@@ -136,7 +136,7 @@ bool ServerClient::queryItems(const std::string& code,
 
 bool ServerClient::queryItemCode(const std::string& code,
                               std::vector<Item>& items,
-                              std::string& error) {
+                              std::string& error) const {
     receiptreaderproto::ServerRequest request;
     auto* query = request.mutable_query_code();
     query->set_code(code);
@@ -174,7 +174,7 @@ bool ServerClient::queryItemCode(const std::string& code,
 bool ServerClient::processImage(const std::vector<uint8_t>& imageData,
                                 const std::string& filename,
                                 std::vector<Item>& items,
-                                std::string& error) {
+                                std::string& error) const {
     receiptreaderproto::ServerRequest request;
     auto* imageRequest = request.mutable_process_image();
     imageRequest->set_image_data(reinterpret_cast<const char*>(imageData.data()), static_cast<int>(imageData.size()));
@@ -214,7 +214,7 @@ bool ServerClient::processImage(const std::vector<uint8_t>& imageData,
 
 bool ServerClient::confirmProcessedItems(const std::vector<Item>& items,
                                          const std::string& date,
-                                         std::string& error) {
+                                         std::string& error) const {
     receiptreaderproto::ServerRequest request;
     auto* confirmRequest = request.mutable_confirm_processed_items();
     confirmRequest->set_date(date);
@@ -248,7 +248,7 @@ bool ServerClient::confirmProcessedItems(const std::vector<Item>& items,
 
 bool ServerClient::processImages(const std::string& receiptDir,
                                  const std::function<void(int, int, const std::string&)>& onProgress,
-                                 std::string& error) {
+                                 std::string& error) const {
     receiptreaderproto::ServerRequest request;
     auto* process = request.mutable_process_images();
     process->set_receipt_dir(receiptDir);

@@ -24,28 +24,28 @@ public:
                     const std::string& dateStart,
                     const std::string& dateEnd,
                     std::vector<PriceHistorySummary>& items,
-                    std::string& error);
+                    std::string& error) const;
 
     bool queryItemCode(const std::string& code,
                     std::vector<Item>& items,
-                    std::string& error);
+                    std::string& error) const;
 
     bool processImage(const std::vector<uint8_t>& imageData,
                       const std::string& filename,
                       std::vector<Item>& items,
-                      std::string& error);
+                      std::string& error) const;
 
     bool confirmProcessedItems(const std::vector<Item>& items,
                                const std::string& date,
-                               std::string& error);
+                               std::string& error) const;
 
     bool processImages(const std::string& receiptDir,
                        const std::function<void(int, int, const std::string&)>& onProgress,
-                       std::string& error);
+                       std::string& error) const;
 
 private:
-    bool sendRequest(const receiptreaderproto::ServerRequest& request, std::string& error);
-    bool receiveResponse(receiptreaderproto::ServerResponse& response, std::string& error);
+    bool sendRequest(const receiptreaderproto::ServerRequest& request, std::string& error) const;
+    bool receiveResponse(receiptreaderproto::ServerResponse& response, std::string& error) const;
 
     int m_sock;
     std::string m_host;
