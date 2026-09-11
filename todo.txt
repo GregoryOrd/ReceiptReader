@@ -2,6 +2,7 @@ Features To Implement
 -----------------------
 1) Search result list colouring. Highlight rows in the search green or red based on if the price went up or down in the most recent entry for the item
   - First attempt implemented, need to update algorithm
+  - Left some "TODO" tags throughout the code. Search for them and fix
 2) Other gui features or statstics could perhaps also be displayed in these rows some how to should items of interest.
   - Perhaps the rows can be sorted based off of these price action categories.
 3) In the server's client disconnection message, print the IP and port of the client that disconnected.

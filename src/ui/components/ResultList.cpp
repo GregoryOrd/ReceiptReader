@@ -59,27 +59,19 @@ void ResultList::addItems(std::vector<PriceHistorySummary> items)
 {
     for (const auto& item : items) {
         QString text = QString("Code: %1, Desc: %2, Price: %3, Date: %4")
-                           .arg(QString::fromStdString(item.code))
-                           .arg(QString::fromStdString(item.description))
-                           .arg(item.currentPrice)
-                           .arg(QString::fromStdString(item.timestampLast));
+                           .arg(QString::fromStdString(item._code))
+                           .arg(QString::fromStdString(item._description))
+                           .arg(item._currentPrice)
+                           .arg(QString::fromStdString(item._timestampLast));
         addItem(text);
 
-        //TODO: Split our a function and improve logic for deciding colours based on inflation rates.
         QColor rowColor;
-        std::cout << "Item: " << item.code << ", One Month Inflation Rate: " << item.oneMonthInflationRate
-                  << ", Three Month Inflation Rate: " << item.threeMonthInflationRate
-                  << ", Six Month Inflation Rate: " << item.sixMonthInflationRate
-                  << ", One Year Inflation Rate: " << item.oneYearInflationRate 
-                  << ", Lifetime Inflation Rate: " << item.liftimeInflationRate << std::endl;
-        if(item.threeMonthInflationRate <= 2.0) {
+        if(item._category == InflationCategory::LOW) {
             rowColor = QColor(Qt::green);
-        } else if(item.threeMonthInflationRate <= 4.0) {
+        } else if(item._category == InflationCategory::NORMAL) {
             rowColor = QColor(Qt::yellow);
-        } else if(item.threeMonthInflationRate <= 6.0) {
-            rowColor = QColor(Qt::red);
         } else {
-            rowColor = QColor(Qt::gray);
+            rowColor = QColor(Qt::red);
         }
 
         colourRow(count() - 1, rowColor);

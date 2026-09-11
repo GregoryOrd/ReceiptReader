@@ -1,6 +1,12 @@
 syntax = "proto3";
 package receiptreaderproto;
 
+enum InflationCategory {
+  LOW = 0;
+  NORMAL = 1;
+  HIGH = 2;
+}
+
 message ReceiptItem {
   string code = 1;
   string description = 2;
@@ -9,6 +15,7 @@ message ReceiptItem {
   bool isUnitPrice = 5;
 }
 
+//TODO: Define a enum for category and use that here
 message PriceHistorySummary {
   string code = 1;
   string description = 2;
@@ -18,11 +25,7 @@ message PriceHistorySummary {
   bool isUnitPrice = 6;
   string timestampFirst = 7;
   string timestampLast = 8;
-  double liftimeInflationRate = 9;
-  double oneYearInflationRate = 10;
-  double sixMonthInflationRate = 11;
-  double threeMonthInflationRate = 12;
-  double oneMonthInflationRate = 13;
+  InflationCategory category = 9;
 }
 
 message QueryItemsRequest {

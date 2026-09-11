@@ -2,44 +2,38 @@
 #define PriceHistorySummary_H 
 
 #include "common/Item.h"
+#include "common/InflationCategory.h"
 #include <vector>
 #include "processor.pb.h"
 
 class PriceHistorySummary {
 public:
-    enum class InflationRatePeriod {
-        Lifetime,
-        OneYear,
-        SixMonths,
-        ThreeMonths,
-        OneMonth
-    };
-    PriceHistorySummary() = default;
+    PriceHistorySummary(
+        std::string description,
+        std::string code,
+        std::string timestampFirst,
+        std::string timestampLast,
+        double minPrice = 0.0,
+        double maxPrice = 0.0,
+        double currentPrice = 0.0,
+        bool isUnitPrice = false,
+        InflationCategory category = InflationCategory::NORMAL
+    );
 
-    static PriceHistorySummary fromItems(const std::vector<Item>& timestampSortedItems);
-    static PriceHistorySummary fromProto(const receiptreaderproto::PriceHistorySummary& proto);
-
-private:
-    static Item itemToCompare(InflationRatePeriod period, const std::vector<Item>& timestampSortedItems);
-    static double calculateInflationRate(InflationRatePeriod period, const std::vector<Item>& timestampSortedItems);
-
+//TODO: Make these private and add getters
 public:
-    std::string description;
-    std::string code;
+    std::string _description;
+    std::string _code;
 
-    double minPrice = 0.0;
-    double maxPrice = 0.0;
-    double currentPrice = 0.0;
-    bool isUnitPrice = false;
+    double _minPrice = 0.0;
+    double _maxPrice = 0.0;
+    double _currentPrice = 0.0;
+    bool _isUnitPrice = false;
 
-    std::string timestampFirst;
-    std::string timestampLast;
+    std::string _timestampFirst;
+    std::string _timestampLast;
 
-    double liftimeInflationRate = 0.0;
-    double oneYearInflationRate = 0.0;
-    double sixMonthInflationRate = 0.0;
-    double threeMonthInflationRate = 0.0;
-    double oneMonthInflationRate = 0.0;
+    InflationCategory _category;
 };
 
 #endif

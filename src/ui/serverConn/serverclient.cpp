@@ -116,20 +116,17 @@ bool ServerClient::queryItems(const std::string& code,
 
     items.clear();
     for (const auto& entry : response.query_items_response().items()) {
-        PriceHistorySummary item;
-        item.description = entry.description();
-        item.code = entry.code();
-        item.minPrice = entry.minprice();
-        item.maxPrice = entry.maxprice();
-        item.currentPrice = entry.currentprice();
-        item.timestampFirst = entry.timestampfirst();
-        item.timestampLast = entry.timestamplast();
-        item.liftimeInflationRate = entry.liftimeinflationrate();
-        item.oneYearInflationRate = entry.oneyearinflationrate();
-        item.sixMonthInflationRate = entry.sixmonthinflationrate();
-        item.threeMonthInflationRate = entry.threemonthinflationrate();
-        item.oneMonthInflationRate = entry.onemonthinflationrate();
-        items.push_back(item);
+        items.push_back(PriceHistorySummary(
+            entry.description(),
+            entry.code(),
+            entry.timestampfirst(),
+            entry.timestamplast(),
+            entry.minprice(),
+            entry.maxprice(),
+            entry.currentprice(),
+            entry.isunitprice(),
+            inflationCatFromProto(entry.category())
+        ));
     }
     return true;
 }

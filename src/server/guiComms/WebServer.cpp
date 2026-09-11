@@ -328,10 +328,10 @@ bool WebServer::handleConnection(int clientSock) {
         for (size_t i = 0; i < items.size(); ++i) {
             const auto& item = items[i];
             if (i > 0) json << ",";
-            json << "{\"code\":\"" << escapeJsonString(item.code) << "\",";
-            json << "\"description\":\"" << escapeJsonString(item.description) << "\",";
-            json << "\"price\":" << item.currentPrice << ",";
-            json << "\"timestamp\":\"" << escapeJsonString(item.timestampLast) << "\"}";
+            json << "{\"code\":\"" << escapeJsonString(item._code) << "\",";
+            json << "\"description\":\"" << escapeJsonString(item._description) << "\",";
+            json << "\"price\":" << item._currentPrice << ",";
+            json << "\"timestamp\":\"" << escapeJsonString(item._timestampLast) << "\"}";
         }
         json << "]}";
         sendJson(clientSock, 200, json.str());
