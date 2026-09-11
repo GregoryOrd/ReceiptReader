@@ -6,3 +6,6 @@ build/
 
 # Runtime Artifacts
 development-runtime/
+
+# VS Code Settings.json - Leave as Per Developer Environment
+settings.json
