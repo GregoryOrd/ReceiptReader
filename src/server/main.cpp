@@ -1,6 +1,6 @@
 #include "server.h"
-#include "ProtobufServer.h"
-#include "WebServer.h"
+#include "guiComms/ProtobufServer.h"
+#include "guiComms/WebServer.h"
 #include <atomic>
 #include <iostream>
 #include <thread>

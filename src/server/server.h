@@ -1,13 +1,15 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include <functional>
-#include <string>
-#include <vector>
 #include "db/database.h"
 #include "parser/parser.h"
 #include "processor.pb.h"
 #include "common/PriceHistorySummary.h"
+#include "ImageProcessor.h"
+
+#include <functional>
+#include <string>
+#include <vector>
 
 class Server {
 public:
@@ -29,9 +31,8 @@ public:
                                 receiptreaderproto::ProcessComplete& complete);
 
 private:
-    static bool writeBytesToTempFile(const std::string& filename, const std::string& data, std::string& outPath);
-
-    Database m_db;
+    std::unique_ptr<Database> _db;
+    std::unique_ptr<ImageProcessor> _imageProcessor;
 };
 
 #endif // SERVER_H
