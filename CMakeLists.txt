@@ -48,6 +48,7 @@ set(SERVER_SOURCES
     src/server/main.cpp
     src/server/server.cpp
     src/server/ImageProcessor.cpp
+    src/server/PriceSummaryGenerator.cpp
     src/server/guiComms/ProtobufServer.cpp
     src/server/guiComms/WebServer.cpp
     src/ipc/message_io.cpp

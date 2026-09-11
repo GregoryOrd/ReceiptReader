@@ -8,7 +8,9 @@
 namespace fs = std::filesystem;
 
 Server::Server(const std::string& dbPath)
-    : _db(std::make_unique<Database>(dbPath)), _imageProcessor(std::make_unique<ImageProcessor>(_db.get())) {
+    : _db(std::make_unique<Database>(dbPath)), 
+      _imageProcessor(std::make_unique<ImageProcessor>(_db.get())),
+      _summaryGenerator(std::make_unique<PriceSummaryGenerator>(_db.get())) {
 }
 
 bool Server::initialize() {
@@ -21,20 +23,7 @@ std::vector<PriceHistorySummary> Server::queryPriceHistorySummaries(const std::s
                                              const std::string& dateStart,
                                              const std::string& dateEnd) {  
     
-    std::vector<PriceHistorySummary> summaries;
-    if(!code.empty()) {
-        summaries.push_back(PriceHistorySummary::fromItems(_db->queryItems(code, priceMin, priceMax, dateStart, dateEnd, true)));
-    }
-    else
-    {
-        std::vector<std::string> codes = _db->queryDistinctItemCodes(priceMin, priceMax, dateStart, dateEnd);
-
-        for(const auto& code : codes) {
-            summaries.push_back(PriceHistorySummary::fromItems(_db->queryItems(code, priceMin, priceMax, dateStart, dateEnd, true)));
-        }
-    }
-
-    return summaries;
+    return _summaryGenerator->generateSummaries(code, priceMin, priceMax, dateStart, dateEnd);
 }
 
 std::vector<Item> Server::queryItemCode(const std::string& code) {

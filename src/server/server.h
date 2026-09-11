@@ -6,6 +6,7 @@
 #include "processor.pb.h"
 #include "common/PriceHistorySummary.h"
 #include "ImageProcessor.h"
+#include "PriceSummaryGenerator.h"
 
 #include <functional>
 #include <string>
@@ -33,6 +34,7 @@ public:
 private:
     std::unique_ptr<Database> _db;
     std::unique_ptr<ImageProcessor> _imageProcessor;
+    std::unique_ptr<PriceSummaryGenerator> _summaryGenerator;
 };
 
 #endif // SERVER_H
