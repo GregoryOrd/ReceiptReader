@@ -48,14 +48,17 @@ InflationCategory PriceSummaryGenerator::calculateCategory(const std::vector<Ite
     double oneMonthInflationRate = calculateInflationRate(InflationRatePeriod::OneMonth, timestampSortedItems);
 
     InflationCategory cat;
-    if(threeMonthInflationRate <= 2.0) {
+    if(threeMonthInflationRate <= 2.0) 
+    {
         cat = InflationCategory::LOW;
-    } else if(threeMonthInflationRate <= 4.0) {
+    } 
+    else if(threeMonthInflationRate <= 4.0) 
+    {
         cat = InflationCategory::NORMAL;
-    } else if(threeMonthInflationRate <= 6.0) {
+    } 
+    else 
+    {
         cat = InflationCategory::HIGH;
-    } else {
-        cat = InflationCategory::NORMAL;
     }
 
     return cat;
