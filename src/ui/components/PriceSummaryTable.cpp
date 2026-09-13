@@ -67,13 +67,13 @@ void PriceSummaryTable::setChartView(PriceChart* chartView)
 }
 
 void PriceSummaryTable::graphSelected() {
-    int row = this->currentRow();
+    int row = currentRow();
     if (row < 0) {
         QMessageBox::warning(this, "No Selection", "Please select an item to graph.");
         return;
     }
 
-    QString code = this->item(row, CODE_COL)->text();
+    QString code = item(row, CODE_COL)->text();
 
     std::vector<Item> items;
     std::string error;
@@ -92,22 +92,6 @@ void PriceSummaryTable::graphSelected() {
     m_chartView->plotItems(items, code);
 }
 
-void PriceSummaryTable::colourRow(int row, const QColor& color) {
-    if (row < 0 || row >= rowCount()) {
-        return;
-    }
-
-    for(int col = 4; col < NUM_COLS; col++)
-    {
-        QTableWidgetItem* item = this->item(row, col);
-        if (!item) {
-            return;
-        }
-
-        item->setBackground(QBrush(color));
-    }
-}
-
 void PriceSummaryTable::setItems(std::vector<PriceHistorySummary> priceSummaries)
 {
     setRowCount(priceSummaries.size());
@@ -124,16 +108,35 @@ void PriceSummaryTable::setItems(std::vector<PriceHistorySummary> priceSummaries
         setItem(i, THREE_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps._threeMonthInflationRate));
         setItem(i, ONE_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps._oneMonthInflationRate));
 
-        QColor rowColor;
-        if(ps._category == InflationCategory::LOW) {
-            rowColor = QColor(Qt::green);
-        } else if(ps._category == InflationCategory::NORMAL) {
-            rowColor = QColor(Qt::yellow);
-        } else {
-            rowColor = QColor(Qt::red);
-        }
-
-        colourRow(i, rowColor);
+        colourInflationRate(i, LIFETIME_INFLATION_COL, ps._liftimeInflationRate);
+        colourInflationRate(i, ONE_YEAR_INFLATION_COL, ps._oneYearInflationRate);
+        colourInflationRate(i, SIX_MONTH_INFLATION_COL, ps._sixMonthInflationRate);
+        colourInflationRate(i, THREE_MONTH_INFLATION_COL, ps._threeMonthInflationRate);
+        colourInflationRate(i, ONE_MONTH_INFLATION_COL, ps._oneMonthInflationRate);
     }
 
+}
+
+void PriceSummaryTable::colourCell(int row, int col, QColor color)
+{
+    QTableWidgetItem* cellItem = item(row, col);
+    if (!cellItem) {
+        return;
+    }
+
+    cellItem->setBackground(QBrush(color));
+}
+
+void PriceSummaryTable::colourInflationRate(int row, int col, double inflationRate)
+{
+    QColor color;
+    if(inflationRate <= 2.0) {
+        color = QColor(Qt::green);
+    } else if(inflationRate <= 4.0) {
+        color = QColor(Qt::yellow);
+    } else {
+        color = QColor(Qt::red);
+    }
+
+    colourCell(row, col, color);    
 }

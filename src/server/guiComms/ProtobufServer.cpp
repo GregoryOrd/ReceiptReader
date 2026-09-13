@@ -131,7 +131,11 @@ bool ProtobufServer::queryItemsRequest(int clientSock, const receiptreaderproto:
         entry->set_currentprice(item._currentPrice);
         entry->set_timestampfirst(item._timestampFirst);
         entry->set_timestamplast(item._timestampLast);
-        entry->set_category(inflationCatToProto(item._category));
+        entry->set_liftimeinflationrate(item._liftimeInflationRate);
+        entry->set_oneyearinflationrate(item._oneYearInflationRate);
+        entry->set_sixmonthinflationrate(item._sixMonthInflationRate);
+        entry->set_threemonthinflationrate(item._threeMonthInflationRate);
+        entry->set_onemonthinflationrate(item._oneMonthInflationRate);
     }
 
     return ipc::sendProtobufMessage(clientSock, response);

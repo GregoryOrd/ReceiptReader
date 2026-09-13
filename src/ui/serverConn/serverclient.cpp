@@ -121,11 +121,15 @@ bool ServerClient::queryItems(const std::string& code,
             entry.code(),
             entry.timestampfirst(),
             entry.timestamplast(),
+            entry.liftimeinflationrate(),
+            entry.oneyearinflationrate(),
+            entry.sixmonthinflationrate(),
+            entry.threemonthinflationrate(),
+            entry.onemonthinflationrate(),
             entry.minprice(),
             entry.maxprice(),
             entry.currentprice(),
-            entry.isunitprice(),
-            inflationCatFromProto(entry.category())
+            entry.isunitprice()
         ));
     }
     return true;

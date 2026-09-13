@@ -15,8 +15,11 @@ public:
 public:
     void setChartView(PriceChart* chartView);
     void graphSelected();
-    void colourRow(int row, const QColor& color);
     void setItems(std::vector<PriceHistorySummary> items);
+
+private:
+    void colourCell(int row, int col, QColor color);
+    void colourInflationRate(int row, int col, double inflationRate);
 
 private:
     ServerClient* m_serverClient;

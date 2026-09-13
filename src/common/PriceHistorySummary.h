@@ -2,7 +2,6 @@
 #define PriceHistorySummary_H 
 
 #include "common/Item.h"
-#include "common/InflationCategory.h"
 #include <vector>
 #include "processor.pb.h"
 
@@ -21,8 +20,7 @@ public:
         double minPrice = 0.0,
         double maxPrice = 0.0,
         double currentPrice = 0.0,
-        bool isUnitPrice = false,
-        InflationCategory category = InflationCategory::NORMAL
+        bool isUnitPrice = false
     );
 
 //TODO: Make these private and add getters
@@ -43,8 +41,6 @@ public:
     double _sixMonthInflationRate = 0.0;
     double _threeMonthInflationRate = 0.0;
     double _oneMonthInflationRate = 0.0;
-
-    InflationCategory _category;
 };
 
 #endif

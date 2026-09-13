@@ -13,8 +13,7 @@ PriceHistorySummary::PriceHistorySummary(
     double minPrice,
     double maxPrice,
     double currentPrice,
-    bool isUnitPrice,
-    InflationCategory category
+    bool isUnitPrice
 ) :
     _description(description),
     _code(code),
@@ -24,7 +23,6 @@ PriceHistorySummary::PriceHistorySummary(
     _maxPrice(maxPrice),
     _currentPrice(currentPrice),
     _isUnitPrice(isUnitPrice),
-    _category(category),
     _liftimeInflationRate(liftimeInflationRate),
     _oneYearInflationRate(oneYearInflationRate),
     _sixMonthInflationRate(sixMonthInflationRate),

@@ -29,7 +29,6 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS proto/processor.proto)
 
 set(COMMON_SOURCES
     src/common/PriceHistorySummary.cpp
-    src/common/InflationCategory.cpp
     ${PROTO_SRCS}
 )
 

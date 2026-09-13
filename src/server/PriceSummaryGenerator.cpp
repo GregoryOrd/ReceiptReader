@@ -39,32 +39,6 @@ double PriceSummaryGenerator::calculateInflationRate(InflationRatePeriod period,
     return inflationRate;
 }
 
-InflationCategory PriceSummaryGenerator::calculateCategory(
-    const std::vector<Item>& timestampSortedItems,
-    double liftimeInflationRate,
-    double oneYearInflationRate,
-    double sixMonthInflationRate,
-    double threeMonthInflationRate,
-    double oneMonthInflationRate
-)
-{
-    InflationCategory cat;
-    if(threeMonthInflationRate <= 2.0) 
-    {
-        cat = InflationCategory::LOW;
-    } 
-    else if(threeMonthInflationRate <= 4.0) 
-    {
-        cat = InflationCategory::NORMAL;
-    } 
-    else 
-    {
-        cat = InflationCategory::HIGH;
-    }
-
-    return cat;
-}
-
 std::vector<PriceHistorySummary> PriceSummaryGenerator::generateSummaries(const std::string& code,
                                                 const std::string& priceMin,
                                                 const std::string& priceMax,
@@ -147,15 +121,7 @@ PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& ti
         timestampSortedItems[0].price,
         timestampSortedItems[0].price,
         timestampSortedItems.back().price,
-        timestampSortedItems[0].isUnitPrice,
-        calculateCategory(
-            timestampSortedItems,
-            liftimeInflationRate,
-            oneYearInflationRate,
-            sixMonthInflationRate,
-            threeMonthInflationRate,
-            oneMonthInflationRate
-        )
+        timestampSortedItems[0].isUnitPrice
     );
 }
 
@@ -165,10 +131,14 @@ PriceHistorySummary PriceSummaryGenerator::fromProto(const receiptreaderproto::P
         proto.code(),
         proto.timestampfirst(),
         proto.timestamplast(),
+        proto.liftimeinflationrate(),
+        proto.oneyearinflationrate(),
+        proto.sixmonthinflationrate(),
+        proto.threemonthinflationrate(),
+        proto.onemonthinflationrate(),
         proto.minprice(),
         proto.maxprice(),
         proto.currentprice(),
-        proto.isunitprice(),
-        inflationCatFromProto(proto.category())
+        proto.isunitprice()
     );
 }
