@@ -10,6 +10,7 @@ PriceHistorySummary::PriceHistorySummary(
     double sixMonthInflationRate,
     double threeMonthInflationRate,
     double oneMonthInflationRate,
+    int timesPurchased,
     double minPrice,
     double maxPrice,
     double currentPrice,
@@ -27,7 +28,8 @@ PriceHistorySummary::PriceHistorySummary(
     _oneYearInflationRate(oneYearInflationRate),
     _sixMonthInflationRate(sixMonthInflationRate),
     _threeMonthInflationRate(threeMonthInflationRate),
-    _oneMonthInflationRate(oneMonthInflationRate)
+    _oneMonthInflationRate(oneMonthInflationRate),
+    _timesPurchased(timesPurchased)
 {
 
 }

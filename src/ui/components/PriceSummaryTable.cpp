@@ -4,16 +4,18 @@
 #include "ui/components/NumericTableWidgetItem.h"
 #include <QMessageBox>
 
-const int NUM_COLS = 9;
+const int NUM_COLS = 10;
+
 const int CODE_COL = 0;
 const int DESC_COL = 1;
 const int PRICE_COL = 2;
 const int DATE_COL = 3;
-const int LIFETIME_INFLATION_COL = 4;
-const int ONE_YEAR_INFLATION_COL = 5;
-const int SIX_MONTH_INFLATION_COL = 6;
-const int THREE_MONTH_INFLATION_COL = 7;
-const int ONE_MONTH_INFLATION_COL = 8;
+const int TIMES_PURCHASED_COL = 4;
+const int LIFETIME_INFLATION_COL = 5;
+const int ONE_YEAR_INFLATION_COL = 6;
+const int SIX_MONTH_INFLATION_COL = 7;
+const int THREE_MONTH_INFLATION_COL = 8;
+const int ONE_MONTH_INFLATION_COL = 9;
 
 PriceSummaryTable::PriceSummaryTable(ServerClient* serverClient) 
     : QTableWidget(nullptr), m_serverClient(serverClient)
@@ -29,6 +31,7 @@ PriceSummaryTable::PriceSummaryTable(ServerClient* serverClient)
     _sixMnthHdr = std::make_unique<QTableWidgetItem>("6 Month Inflation Rate");
     _threeMnthHdr = std::make_unique<QTableWidgetItem>("3 Month Inflation Rate");
     _oneMnthHdr = std::make_unique<QTableWidgetItem>("1 Month Inflation Rate");
+    _timesPurchasedHdr = std::make_unique<QTableWidgetItem>("Time Purchased");
 
     setHorizontalHeaderItem(CODE_COL, _codeHdr.get());
     setHorizontalHeaderItem(DESC_COL, _descHdr.get());
@@ -39,6 +42,7 @@ PriceSummaryTable::PriceSummaryTable(ServerClient* serverClient)
     setHorizontalHeaderItem(SIX_MONTH_INFLATION_COL, _sixMnthHdr.get());
     setHorizontalHeaderItem(THREE_MONTH_INFLATION_COL, _threeMnthHdr.get());
     setHorizontalHeaderItem(ONE_MONTH_INFLATION_COL, _oneMnthHdr.get());
+    setHorizontalHeaderItem(TIMES_PURCHASED_COL, _timesPurchasedHdr.get());
 
     setColumnWidth(CODE_COL, 150);
     setColumnWidth(DESC_COL, 150);
@@ -49,6 +53,7 @@ PriceSummaryTable::PriceSummaryTable(ServerClient* serverClient)
     setColumnWidth(SIX_MONTH_INFLATION_COL, 250);
     setColumnWidth(THREE_MONTH_INFLATION_COL, 250);
     setColumnWidth(ONE_MONTH_INFLATION_COL, 250);
+    setColumnWidth(TIMES_PURCHASED_COL, 150);
 
     setSortingEnabled(true);
 };
@@ -107,6 +112,7 @@ void PriceSummaryTable::setItems(std::vector<PriceHistorySummary> priceSummaries
         setItem(i, SIX_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps._sixMonthInflationRate));
         setItem(i, THREE_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps._threeMonthInflationRate));
         setItem(i, ONE_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps._oneMonthInflationRate));
+        setItem(i, TIMES_PURCHASED_COL, new NumericTableWidgetItem(ps._timesPurchased));
 
         colourInflationRate(i, LIFETIME_INFLATION_COL, ps._liftimeInflationRate);
         colourInflationRate(i, ONE_YEAR_INFLATION_COL, ps._oneYearInflationRate);

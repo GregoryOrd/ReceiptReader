@@ -17,6 +17,7 @@ public:
         double sixMonthInflationRate,
         double threeMonthInflationRate,
         double oneMonthInflationRate,
+        int timesPurchased,
         double minPrice = 0.0,
         double maxPrice = 0.0,
         double currentPrice = 0.0,
@@ -41,6 +42,8 @@ public:
     double _sixMonthInflationRate = 0.0;
     double _threeMonthInflationRate = 0.0;
     double _oneMonthInflationRate = 0.0;
+
+    int _timesPurchased;
 };
 
 #endif

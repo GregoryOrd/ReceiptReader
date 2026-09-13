@@ -34,6 +34,7 @@ private:
     std::unique_ptr<QTableWidgetItem> _sixMnthHdr;
     std::unique_ptr<QTableWidgetItem> _threeMnthHdr;
     std::unique_ptr<QTableWidgetItem> _oneMnthHdr;
+    std::unique_ptr<QTableWidgetItem> _timesPurchasedHdr;
 
 signals:
     void doubleClicked();

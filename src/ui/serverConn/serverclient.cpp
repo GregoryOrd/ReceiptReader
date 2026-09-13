@@ -116,6 +116,9 @@ bool ServerClient::queryItems(const std::string& code,
 
     items.clear();
     for (const auto& entry : response.query_items_response().items()) {
+
+        std::cout << "Found time purchased: " << entry.timespurchased() << " for code: " << entry.code() << " with current price: " << entry.currentprice() << std::endl;
+
         items.push_back(PriceHistorySummary(
             entry.description(),
             entry.code(),
@@ -126,6 +129,7 @@ bool ServerClient::queryItems(const std::string& code,
             entry.sixmonthinflationrate(),
             entry.threemonthinflationrate(),
             entry.onemonthinflationrate(),
+            entry.timespurchased(),
             entry.minprice(),
             entry.maxprice(),
             entry.currentprice(),

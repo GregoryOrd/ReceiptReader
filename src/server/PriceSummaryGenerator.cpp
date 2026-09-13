@@ -98,7 +98,7 @@ Item PriceSummaryGenerator::itemToCompare(InflationRatePeriod period, const std:
 
 PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& timestampSortedItems) {
     if (timestampSortedItems.empty()) {
-        return PriceHistorySummary("", "", "1970-01-01", "1970-01-01", 0.0, 0.0, 0.0, 0.0, 0.0);
+        return PriceHistorySummary("", "", "1970-01-01", "1970-01-01", 0.0, 0.0, 0.0, 0.0, 0.0, 0);
     }
 
     double liftimeInflationRate = calculateInflationRate(InflationRatePeriod::Lifetime, timestampSortedItems);
@@ -106,6 +106,8 @@ PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& ti
     double sixMonthInflationRate = calculateInflationRate(InflationRatePeriod::SixMonths, timestampSortedItems);
     double threeMonthInflationRate = calculateInflationRate(InflationRatePeriod::ThreeMonths, timestampSortedItems);
     double oneMonthInflationRate = calculateInflationRate(InflationRatePeriod::OneMonth, timestampSortedItems);
+
+    std::cout << "Returning current Price: " << timestampSortedItems.back().price << " for code: " << timestampSortedItems[0].code << " with timesPurchased: " << timestampSortedItems.size() << std::endl;
 
     //TODO: Use current value for maxPrice
     return PriceHistorySummary(
@@ -118,6 +120,7 @@ PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& ti
         sixMonthInflationRate,
         threeMonthInflationRate,
         oneMonthInflationRate,
+        timestampSortedItems.size(),
         timestampSortedItems[0].price,
         timestampSortedItems[0].price,
         timestampSortedItems.back().price,
@@ -136,6 +139,7 @@ PriceHistorySummary PriceSummaryGenerator::fromProto(const receiptreaderproto::P
         proto.sixmonthinflationrate(),
         proto.threemonthinflationrate(),
         proto.onemonthinflationrate(),
+        proto.timespurchased(),
         proto.minprice(),
         proto.maxprice(),
         proto.currentprice(),

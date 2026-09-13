@@ -136,6 +136,7 @@ bool ProtobufServer::queryItemsRequest(int clientSock, const receiptreaderproto:
         entry->set_sixmonthinflationrate(item._sixMonthInflationRate);
         entry->set_threemonthinflationrate(item._threeMonthInflationRate);
         entry->set_onemonthinflationrate(item._oneMonthInflationRate);
+        entry->set_timespurchased(item._timesPurchased);
     }
 
     return ipc::sendProtobufMessage(clientSock, response);
