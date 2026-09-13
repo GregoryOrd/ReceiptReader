@@ -57,15 +57,15 @@ MainWindow::MainWindow(QWidget* parent)
     connect(m_searchButton, &QPushButton::clicked, this, &MainWindow::search);
     layout->addWidget(m_searchButton);
 
-    m_resultsList = std::make_unique<ResultList>(m_serverClient.get());
-    layout->addWidget(m_resultsList.get());
+    m_priceSummaryTable = std::make_unique<PriceSummaryTable>(m_serverClient.get());
+    layout->addWidget(m_priceSummaryTable.get());
 
     m_graphButton = new QPushButton("Graph Selected Item");
     connect(m_graphButton, &QPushButton::clicked, this, &MainWindow::graphSelected);
     layout->addWidget(m_graphButton);
 
     m_chartView = std::make_unique<PriceChart>();
-    m_resultsList->setChartView(m_chartView.get());
+    m_priceSummaryTable->setChartView(m_chartView.get());
     layout->addWidget(m_chartView.get());
 
     connect(m_connectButton, &QPushButton::clicked, this, &MainWindow::toggleConnection);
@@ -213,10 +213,9 @@ void MainWindow::search() {
         return;
     }
 
-    m_resultsList->clear();
-    m_resultsList->addItems(priceSummaries);
+    m_priceSummaryTable->setItems(priceSummaries);
 }
 
 void MainWindow::graphSelected() {
-    m_resultsList->graphSelected();
+    m_priceSummaryTable->graphSelected();
 }

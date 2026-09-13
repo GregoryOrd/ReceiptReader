@@ -1,0 +1,42 @@
+#ifndef RESULTLIST_H
+#define RESULTLIST_H
+
+#include <QTableWidget>
+#include <QMouseEvent>
+#include "PriceChart.h"
+#include "ui/serverConn/serverclient.h"
+
+class PriceSummaryTable : public QTableWidget {
+    Q_OBJECT
+
+public:
+    PriceSummaryTable(ServerClient* serverClient);
+
+public:
+    void setChartView(PriceChart* chartView);
+    void graphSelected();
+    void colourRow(int row, const QColor& color);
+    void setItems(std::vector<PriceHistorySummary> items);
+
+private:
+    ServerClient* m_serverClient;
+    PriceChart* m_chartView;
+
+    std::unique_ptr<QTableWidgetItem> _codeHdr;
+    std::unique_ptr<QTableWidgetItem> _descHdr;
+    std::unique_ptr<QTableWidgetItem> _priceHdr;
+    std::unique_ptr<QTableWidgetItem> _dateHdr;
+    std::unique_ptr<QTableWidgetItem> _lifetimeHeader;
+    std::unique_ptr<QTableWidgetItem> _oneYearHdr;
+    std::unique_ptr<QTableWidgetItem> _sixMnthHdr;
+    std::unique_ptr<QTableWidgetItem> _threeMnthHdr;
+    std::unique_ptr<QTableWidgetItem> _oneMnthHdr;
+
+signals:
+    void doubleClicked();
+
+protected:
+    void mouseDoubleClickEvent(QMouseEvent* event) override;
+};
+
+#endif

@@ -38,8 +38,9 @@ set(GUI_SOURCES
     src/ui/mainwindow.cpp
     src/ui/serverConn/serverclient.cpp
     src/ipc/message_io.cpp
-    src/ui/components/ResultList.h
-    src/ui/components/ResultList.cpp
+    src/ui/components/PriceSummaryTable.h
+    src/ui/components/PriceSummaryTable.cpp
+    src/ui/components/NumericTableWidgetItem.cpp
     src/ui/components/PriceChart.h
     src/ui/components/PriceChart.cpp
     ${COMMON_SOURCES}

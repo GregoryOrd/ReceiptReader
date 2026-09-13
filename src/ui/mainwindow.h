@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "components/ResultList.h"
+#include "components/PriceSummaryTable.h"
 #include "components/PriceChart.h"
 #include "ui/serverConn/serverclient.h"
 
@@ -42,7 +42,7 @@ private:
     QLineEdit* m_priceMaxEdit;
     QLineEdit* m_dateStartEdit;
     QLineEdit* m_dateEndEdit;
-    std::unique_ptr<ResultList> m_resultsList;
+    std::unique_ptr<PriceSummaryTable> m_priceSummaryTable;
     QPushButton* m_searchButton;
     QPushButton* m_graphButton;
     std::unique_ptr<PriceChart> m_chartView;
