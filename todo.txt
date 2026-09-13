@@ -11,8 +11,15 @@ Features To Implement
   - Ability to show value under mouse when hovering over data points
   - More like a grafana panel would be nice
   - Perhpas a third-party charting software could be used and worked into the UI somehow
-
-
+5) Make inputs more user friendly 
+  - calendar popup to select date 
+  - drop down for item code selection
+6) Show something in chart in the case of times purchased = 1
+7) Internet lookup of item codes for deter descriptions
+8) Display prices from various stores alongside each other.
+   Will need some sort of mapping between item codes/names at different stores.
+9) User capability to consolodate errors (multiple identical decriptors with different codes)
+10) Splitting table in category would be useful (produce, meats, cheeses. frozen things)
 
 Features - Error Detection/Correction after Input
 ------------------------------------------------------
@@ -22,9 +29,11 @@ Features - Error Detection/Correction after Input
    they might actually be the same item and it was just on OCR error.
 3) Price anonamilies. Add a feature to check if the price of an item went up for a single instance and then come back down to what it previously was.
    If this is the case, it might represent an OCR error causing an the anomaly.
-4) Put commonly seen OCR errors (for example, confusing '5' with '6') into a database. When price anonamilies, or similar descriptions or items codes, are detected check if any of the commonly seen OCR 
+4) Put commonly seen OCR errors (for example, confusing '5' with '6' and/or '8') into a database. When price anonamilies, or similar descriptions or items codes, are detected check if any of the commonly seen OCR 
    errors could be present and have caused the error. Given this information, we might be able to auto correct the error, or at least suggest a correction to the user.
-
+5) If the inflation rate for a given item during a given inflation period (lifetime, 1year, 6 months, 3months, 1month) is zero, then all prices during that time range should be zero. If this is not the case, there is an 
+   inconsitency, and perhaps we can say that inconsitency is caused by an OCR error.
+6) Same decriptions with codes that are only differing by 1 or 2 digits. High probability of OCR error
 
 Features - Error Detection/Correction at Input
 -----------------------------------------------
