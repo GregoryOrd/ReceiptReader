@@ -31,7 +31,14 @@ public:
 
 private:
     double calculateInflationRate(InflationRatePeriod period, const std::vector<Item>& timestampSortedItems);
-    InflationCategory calculateCategory(const std::vector<Item>& timestampSortedItems);
+    InflationCategory calculateCategory(
+        const std::vector<Item>& timestampSortedItems,
+        double liftimeInflationRate,
+        double oneYearInflationRate,
+        double sixMonthInflationRate,
+        double threeMonthInflationRate,
+        double oneMonthInflationRate   
+    );
 
 private:
     Database* _db;

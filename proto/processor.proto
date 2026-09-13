@@ -26,6 +26,11 @@ message PriceHistorySummary {
   string timestampFirst = 7;
   string timestampLast = 8;
   InflationCategory category = 9;
+  double liftimeInflationRate = 10;
+  double oneYearInflationRate = 11;
+  double sixMonthInflationRate = 12;
+  double threeMonthInflationRate = 13;
+  double oneMonthInflationRate = 14;
 }
 
 message QueryItemsRequest {

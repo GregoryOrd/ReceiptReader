@@ -39,14 +39,15 @@ double PriceSummaryGenerator::calculateInflationRate(InflationRatePeriod period,
     return inflationRate;
 }
 
-InflationCategory PriceSummaryGenerator::calculateCategory(const std::vector<Item>& timestampSortedItems)
+InflationCategory PriceSummaryGenerator::calculateCategory(
+    const std::vector<Item>& timestampSortedItems,
+    double liftimeInflationRate,
+    double oneYearInflationRate,
+    double sixMonthInflationRate,
+    double threeMonthInflationRate,
+    double oneMonthInflationRate
+)
 {
-    double liftimeInflationRate = calculateInflationRate(InflationRatePeriod::Lifetime, timestampSortedItems);
-    double oneYearInflationRate = calculateInflationRate(InflationRatePeriod::OneYear, timestampSortedItems);
-    double sixMonthInflationRate = calculateInflationRate(InflationRatePeriod::SixMonths, timestampSortedItems);
-    double threeMonthInflationRate = calculateInflationRate(InflationRatePeriod::ThreeMonths, timestampSortedItems);
-    double oneMonthInflationRate = calculateInflationRate(InflationRatePeriod::OneMonth, timestampSortedItems);
-
     InflationCategory cat;
     if(threeMonthInflationRate <= 2.0) 
     {
@@ -123,8 +124,14 @@ Item PriceSummaryGenerator::itemToCompare(InflationRatePeriod period, const std:
 
 PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& timestampSortedItems) {
     if (timestampSortedItems.empty()) {
-        return PriceHistorySummary("", "", "1970-01-01", "1970-01-01");
+        return PriceHistorySummary("", "", "1970-01-01", "1970-01-01", 0.0, 0.0, 0.0, 0.0, 0.0);
     }
+
+    double liftimeInflationRate = calculateInflationRate(InflationRatePeriod::Lifetime, timestampSortedItems);
+    double oneYearInflationRate = calculateInflationRate(InflationRatePeriod::OneYear, timestampSortedItems);
+    double sixMonthInflationRate = calculateInflationRate(InflationRatePeriod::SixMonths, timestampSortedItems);
+    double threeMonthInflationRate = calculateInflationRate(InflationRatePeriod::ThreeMonths, timestampSortedItems);
+    double oneMonthInflationRate = calculateInflationRate(InflationRatePeriod::OneMonth, timestampSortedItems);
 
     //TODO: Use current value for maxPrice
     return PriceHistorySummary(
@@ -132,11 +139,23 @@ PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& ti
         timestampSortedItems[0].code,
         timestampSortedItems.front().timestamp,
         timestampSortedItems.back().timestamp,
+        liftimeInflationRate,
+        oneYearInflationRate,
+        sixMonthInflationRate,
+        threeMonthInflationRate,
+        oneMonthInflationRate,
         timestampSortedItems[0].price,
         timestampSortedItems[0].price,
         timestampSortedItems.back().price,
         timestampSortedItems[0].isUnitPrice,
-        calculateCategory(timestampSortedItems)
+        calculateCategory(
+            timestampSortedItems,
+            liftimeInflationRate,
+            oneYearInflationRate,
+            sixMonthInflationRate,
+            threeMonthInflationRate,
+            oneMonthInflationRate
+        )
     );
 }
 

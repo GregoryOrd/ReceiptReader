@@ -58,11 +58,16 @@ void ResultList::colourRow(int row, const QColor& color) {
 void ResultList::addItems(std::vector<PriceHistorySummary> items)
 {
     for (const auto& item : items) {
-        QString text = QString("Code: %1, Desc: %2, Price: %3, Date: %4")
+        QString text = QString("Code: %1, Desc: %2, Price: %3, Date: %4, Lifetime Inflation: %5, One-Year Inflation: %6, Six-Month Inflation: %7, Three-Month Inflation: %8, One-Month Inflation: %9")
                            .arg(QString::fromStdString(item._code))
                            .arg(QString::fromStdString(item._description))
                            .arg(item._currentPrice)
-                           .arg(QString::fromStdString(item._timestampLast));
+                           .arg(QString::fromStdString(item._timestampLast))
+                           .arg(item._liftimeInflationRate)
+                           .arg(item._oneYearInflationRate)
+                           .arg(item._sixMonthInflationRate)
+                           .arg(item._threeMonthInflationRate)
+                           .arg(item._oneMonthInflationRate);
         addItem(text);
 
         QColor rowColor;

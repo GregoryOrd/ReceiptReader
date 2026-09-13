@@ -5,6 +5,11 @@ PriceHistorySummary::PriceHistorySummary(
     std::string code,
     std::string timestampFirst,
     std::string timestampLast,
+    double liftimeInflationRate,
+    double oneYearInflationRate,
+    double sixMonthInflationRate,
+    double threeMonthInflationRate,
+    double oneMonthInflationRate,
     double minPrice,
     double maxPrice,
     double currentPrice,
@@ -19,7 +24,12 @@ PriceHistorySummary::PriceHistorySummary(
     _maxPrice(maxPrice),
     _currentPrice(currentPrice),
     _isUnitPrice(isUnitPrice),
-    _category(category)
+    _category(category),
+    _liftimeInflationRate(liftimeInflationRate),
+    _oneYearInflationRate(oneYearInflationRate),
+    _sixMonthInflationRate(sixMonthInflationRate),
+    _threeMonthInflationRate(threeMonthInflationRate),
+    _oneMonthInflationRate(oneMonthInflationRate)
 {
 
 }

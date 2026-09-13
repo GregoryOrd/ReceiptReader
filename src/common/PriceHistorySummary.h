@@ -13,6 +13,11 @@ public:
         std::string code,
         std::string timestampFirst,
         std::string timestampLast,
+        double liftimeInflationRate,
+        double oneYearInflationRate,
+        double sixMonthInflationRate,
+        double threeMonthInflationRate,
+        double oneMonthInflationRate,
         double minPrice = 0.0,
         double maxPrice = 0.0,
         double currentPrice = 0.0,
@@ -32,6 +37,12 @@ public:
 
     std::string _timestampFirst;
     std::string _timestampLast;
+
+    double _liftimeInflationRate = 0.0;
+    double _oneYearInflationRate = 0.0;
+    double _sixMonthInflationRate = 0.0;
+    double _threeMonthInflationRate = 0.0;
+    double _oneMonthInflationRate = 0.0;
 
     InflationCategory _category;
 };
