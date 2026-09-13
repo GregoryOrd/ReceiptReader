@@ -9,7 +9,6 @@ message ReceiptItem {
   bool isUnitPrice = 5;
 }
 
-//TODO: Define a enum for category and use that here
 message PriceHistorySummary {
   string code = 1;
   string description = 2;

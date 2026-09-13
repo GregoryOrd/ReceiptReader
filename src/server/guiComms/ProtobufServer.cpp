@@ -124,19 +124,19 @@ bool ProtobufServer::queryItemsRequest(int clientSock, const receiptreaderproto:
     auto* queryResponse = response.mutable_query_items_response();
     for (const auto& item : items) {
         auto* entry = queryResponse->add_items();
-        entry->set_code(item._code);
-        entry->set_description(item._description);
-        entry->set_minprice(item._minPrice);
-        entry->set_maxprice(item._maxPrice);
-        entry->set_currentprice(item._currentPrice);
-        entry->set_timestampfirst(item._timestampFirst);
-        entry->set_timestamplast(item._timestampLast);
-        entry->set_liftimeinflationrate(item._liftimeInflationRate);
-        entry->set_oneyearinflationrate(item._oneYearInflationRate);
-        entry->set_sixmonthinflationrate(item._sixMonthInflationRate);
-        entry->set_threemonthinflationrate(item._threeMonthInflationRate);
-        entry->set_onemonthinflationrate(item._oneMonthInflationRate);
-        entry->set_timespurchased(item._timesPurchased);
+        entry->set_code(item.code());
+        entry->set_description(item.description());
+        entry->set_minprice(item.minPrice());
+        entry->set_maxprice(item.maxPrice());
+        entry->set_currentprice(item.currentPrice());
+        entry->set_timestampfirst(item.timestampFirst());
+        entry->set_timestamplast(item.timestampLast());
+        entry->set_liftimeinflationrate(item.liftimeInflationRate());
+        entry->set_oneyearinflationrate(item.oneYearInflationRate());
+        entry->set_sixmonthinflationrate(item.sixMonthInflationRate());
+        entry->set_threemonthinflationrate(item.threeMonthInflationRate());
+        entry->set_onemonthinflationrate(item.oneMonthInflationRate());
+        entry->set_timespurchased(item.timesPurchased());
     }
 
     return ipc::sendProtobufMessage(clientSock, response);

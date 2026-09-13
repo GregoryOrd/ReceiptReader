@@ -111,24 +111,24 @@ void PriceSummaryTable::setItems(std::vector<PriceHistorySummary> priceSummaries
     for (int i = 0; i < priceSummaries.size(); i++) {
         const PriceHistorySummary ps = priceSummaries[i];
 
-        setItem(i, CODE_COL, new QTableWidgetItem(QString::fromStdString(ps._code)));
-        setItem(i, DESC_COL, new QTableWidgetItem(QString::fromStdString(ps._description)));
-        setItem(i, CUR_PRICE_COL, new NumericTableWidgetItem(ps._currentPrice));
-        setItem(i, MIN_PRICE_COL, new NumericTableWidgetItem(ps._minPrice));
-        setItem(i, MAX_PRICE_COL, new NumericTableWidgetItem(ps._maxPrice));
-        setItem(i, DATE_COL, new QTableWidgetItem(QString::fromStdString(ps._timestampLast)));
-        setItem(i, LIFETIME_INFLATION_COL, new NumericTableWidgetItem(ps._liftimeInflationRate));
-        setItem(i, ONE_YEAR_INFLATION_COL, new NumericTableWidgetItem(ps._oneYearInflationRate));
-        setItem(i, SIX_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps._sixMonthInflationRate));
-        setItem(i, THREE_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps._threeMonthInflationRate));
-        setItem(i, ONE_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps._oneMonthInflationRate));
-        setItem(i, TIMES_PURCHASED_COL, new NumericTableWidgetItem(ps._timesPurchased));
+        setItem(i, CODE_COL, new QTableWidgetItem(QString::fromStdString(ps.code())));
+        setItem(i, DESC_COL, new QTableWidgetItem(QString::fromStdString(ps.description())));
+        setItem(i, CUR_PRICE_COL, new NumericTableWidgetItem(ps.currentPrice()));
+        setItem(i, MIN_PRICE_COL, new NumericTableWidgetItem(ps.minPrice()));
+        setItem(i, MAX_PRICE_COL, new NumericTableWidgetItem(ps.maxPrice()));
+        setItem(i, DATE_COL, new QTableWidgetItem(QString::fromStdString(ps.timestampLast())));
+        setItem(i, LIFETIME_INFLATION_COL, new NumericTableWidgetItem(ps.liftimeInflationRate()));
+        setItem(i, ONE_YEAR_INFLATION_COL, new NumericTableWidgetItem(ps.oneYearInflationRate()));
+        setItem(i, SIX_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps.sixMonthInflationRate()));
+        setItem(i, THREE_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps.threeMonthInflationRate()));
+        setItem(i, ONE_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps.oneMonthInflationRate()));
+        setItem(i, TIMES_PURCHASED_COL, new NumericTableWidgetItem(ps.timesPurchased()));
 
-        colourInflationRate(i, LIFETIME_INFLATION_COL, ps._liftimeInflationRate);
-        colourInflationRate(i, ONE_YEAR_INFLATION_COL, ps._oneYearInflationRate);
-        colourInflationRate(i, SIX_MONTH_INFLATION_COL, ps._sixMonthInflationRate);
-        colourInflationRate(i, THREE_MONTH_INFLATION_COL, ps._threeMonthInflationRate);
-        colourInflationRate(i, ONE_MONTH_INFLATION_COL, ps._oneMonthInflationRate);
+        colourInflationRate(i, LIFETIME_INFLATION_COL, ps.liftimeInflationRate());
+        colourInflationRate(i, ONE_YEAR_INFLATION_COL, ps.oneYearInflationRate());
+        colourInflationRate(i, SIX_MONTH_INFLATION_COL, ps.sixMonthInflationRate());
+        colourInflationRate(i, THREE_MONTH_INFLATION_COL, ps.threeMonthInflationRate());
+        colourInflationRate(i, ONE_MONTH_INFLATION_COL, ps.oneMonthInflationRate());
     }
 
 }

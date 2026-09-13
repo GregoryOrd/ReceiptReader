@@ -125,7 +125,6 @@ PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& ti
         }
     }
 
-    //TODO: Use current value for maxPrice
     return PriceHistorySummary(
         timestampSortedItems[0].description,
         timestampSortedItems[0].code,

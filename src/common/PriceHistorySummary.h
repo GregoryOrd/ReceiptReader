@@ -24,8 +24,24 @@ public:
         bool isUnitPrice = false
     );
 
-//TODO: Make these private and add getters
+
 public:
+    std::string description() const;
+    std::string code() const;
+    double minPrice() const;
+    double maxPrice() const;
+    double currentPrice() const;
+    bool isUnitPrice() const;
+    std::string timestampFirst() const;
+    std::string timestampLast() const;
+    double liftimeInflationRate() const;
+    double oneYearInflationRate() const;
+    double sixMonthInflationRate() const;
+    double threeMonthInflationRate() const;
+    double oneMonthInflationRate() const;
+    int timesPurchased() const;
+
+private:
     std::string _description;
     std::string _code;
 
