@@ -1,25 +1,20 @@
 Features To Implement
 -----------------------
-1) Search result list colouring. Highlight rows in the search green or red based on if the price went up or down in the most recent entry for the item
-  - First attempt implemented, need to update algorithm
-  - Left some "TODO" tags throughout the code. Search for them and fix
-2) Other gui features or statstics could perhaps also be displayed in these rows some how to should items of interest.
-  - Perhaps the rows can be sorted based off of these price action categories.
-3) In the server's client disconnection message, print the IP and port of the client that disconnected.
-4) Improve item price charts.
+1) In the server's client disconnection message, print the IP and port of the client that disconnected.
+2) Improve item price charts.
   - More resoultion in lables on time axis
   - Ability to show value under mouse when hovering over data points
   - More like a grafana panel would be nice
   - Perhpas a third-party charting software could be used and worked into the UI somehow
-5) Make inputs more user friendly 
+3) Make inputs more user friendly 
   - calendar popup to select date 
   - drop down for item code selection
-6) Show something in chart in the case of times purchased = 1
-7) Internet lookup of item codes for deter descriptions
-8) Display prices from various stores alongside each other.
+4) Show something in chart in the case of times purchased = 1
+5) Internet lookup of item codes for deter descriptions
+6) Display prices from various stores alongside each other.
    Will need some sort of mapping between item codes/names at different stores.
-9) User capability to consolodate errors (multiple identical decriptors with different codes)
-10) Splitting table in category would be useful (produce, meats, cheeses. frozen things)
+7) User capability to consolodate errors (multiple identical decriptors with different codes)
+8) Splitting table in category would be useful (produce, meats, cheeses. frozen things)
 
 Features - Error Detection/Correction after Input
 ------------------------------------------------------
