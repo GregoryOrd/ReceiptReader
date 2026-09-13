@@ -27,7 +27,9 @@ private:
 
     std::unique_ptr<QTableWidgetItem> _codeHdr;
     std::unique_ptr<QTableWidgetItem> _descHdr;
-    std::unique_ptr<QTableWidgetItem> _priceHdr;
+    std::unique_ptr<QTableWidgetItem> _currentPriceHdr;
+    std::unique_ptr<QTableWidgetItem> _minPriceHdr;
+    std::unique_ptr<QTableWidgetItem> _maxPriceHdr;
     std::unique_ptr<QTableWidgetItem> _dateHdr;
     std::unique_ptr<QTableWidgetItem> _lifetimeHeader;
     std::unique_ptr<QTableWidgetItem> _oneYearHdr;

@@ -109,6 +109,22 @@ PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& ti
 
     std::cout << "Returning current Price: " << timestampSortedItems.back().price << " for code: " << timestampSortedItems[0].code << " with timesPurchased: " << timestampSortedItems.size() << std::endl;
 
+    double minPrice = 0.0;
+    double maxPrice = 0.0;
+    for(Item i : timestampSortedItems)
+    {
+        double itemPrice = i.price;
+        if(minPrice == 0.0 || itemPrice < minPrice)
+        {
+            minPrice = itemPrice;
+        }
+
+        if(itemPrice > maxPrice)
+        {
+            maxPrice = itemPrice;
+        }
+    }
+
     //TODO: Use current value for maxPrice
     return PriceHistorySummary(
         timestampSortedItems[0].description,
@@ -121,8 +137,8 @@ PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& ti
         threeMonthInflationRate,
         oneMonthInflationRate,
         timestampSortedItems.size(),
-        timestampSortedItems[0].price,
-        timestampSortedItems[0].price,
+        minPrice,
+        maxPrice,
         timestampSortedItems.back().price,
         timestampSortedItems[0].isUnitPrice
     );
