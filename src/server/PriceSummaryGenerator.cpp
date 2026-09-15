@@ -108,8 +108,6 @@ PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& ti
     double threeMonthInflationRate = calculateInflationRate(InflationRatePeriod::ThreeMonths, timestampSortedItems);
     double oneMonthInflationRate = calculateInflationRate(InflationRatePeriod::OneMonth, timestampSortedItems);
 
-    std::cout << "Returning current Price: " << timestampSortedItems.back().price << " for code: " << timestampSortedItems[0].code << " with timesPurchased: " << timestampSortedItems.size() << std::endl;
-
     double minPrice = 0.0;
     double maxPrice = 0.0;
     for(Item i : timestampSortedItems)
