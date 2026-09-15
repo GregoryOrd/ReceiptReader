@@ -18,12 +18,13 @@ bool Server::initialize() {
 }
 
 std::vector<PriceHistorySummary> Server::queryPriceHistorySummaries(const std::string& code,
+                                             const std::string& desc,
                                              const std::string& priceMin,
                                              const std::string& priceMax,
                                              const std::string& dateStart,
                                              const std::string& dateEnd) {  
     
-    return _summaryGenerator->generateSummaries(code, priceMin, priceMax, dateStart, dateEnd);
+    return _summaryGenerator->generateSummaries(code, desc, priceMin, priceMax, dateStart, dateEnd);
 }
 
 std::vector<Item> Server::queryItemCode(const std::string& code) {

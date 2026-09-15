@@ -28,10 +28,11 @@ message PriceHistorySummary {
 
 message QueryItemsRequest {
   string code = 1;
-  string price_min = 2;
-  string price_max = 3;
-  string date_start = 4;
-  string date_end = 5;
+  string desc = 2;
+  string price_min = 3;
+  string price_max = 4;
+  string date_start = 5;
+  string date_end = 6;
 }
 
 message QueryItemCodeRequest {

@@ -36,12 +36,19 @@ MainWindow::MainWindow(QWidget* parent)
     searchLayout->addWidget(new QLabel("Item Code:"));
     m_codeEdit = new QLineEdit;
     searchLayout->addWidget(m_codeEdit);
+
+    searchLayout->addWidget(new QLabel("Description:"));
+    m_descEdit = new QLineEdit;
+    searchLayout->addWidget(m_descEdit);
+
     searchLayout->addWidget(new QLabel("Price Min:"));
     m_priceMinEdit = new QLineEdit;
     searchLayout->addWidget(m_priceMinEdit);
+
     searchLayout->addWidget(new QLabel("Price Max:"));
     m_priceMaxEdit = new QLineEdit;
     searchLayout->addWidget(m_priceMaxEdit);
+
     layout->addLayout(searchLayout);
 
     QHBoxLayout* dateLayout = new QHBoxLayout;
@@ -203,6 +210,7 @@ void MainWindow::search() {
     std::string error;
     if (!m_serverClient->queryItems(
             m_codeEdit->text().toStdString(),
+            m_descEdit->text().toStdString(),
             m_priceMinEdit->text().toStdString(),
             m_priceMaxEdit->text().toStdString(),
             m_dateStartEdit->text().toStdString(),

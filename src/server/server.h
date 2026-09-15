@@ -18,6 +18,7 @@ public:
     bool initialize();
 
     std::vector<PriceHistorySummary> queryPriceHistorySummaries(const std::string& code,
+                                         const std::string& desc,
                                          const std::string& priceMin,
                                          const std::string& priceMax,
                                          const std::string& dateStart,

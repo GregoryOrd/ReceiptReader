@@ -20,12 +20,14 @@ public:
     void insertItem(const Item& item);
     void insertWarning(WarningType type, const std::string& code, const std::string& description, const std::string& message);
     
-    std::vector<std::string> queryDistinctItemCodes(const std::string& priceMin,
+    std::vector<std::string> queryDistinctItemCodes(const std::string& desc,
+                                         const std::string& priceMin,                                 
                                          const std::string& priceMax,
                                          const std::string& dateStart,
                                          const std::string& dateEnd);
 
     std::vector<Item> queryItems(const std::string& code="",
+                                         const std::string& desc="",
                                          const std::string& priceMin="",
                                          const std::string& priceMax="",
                                          const std::string& dateStart="",

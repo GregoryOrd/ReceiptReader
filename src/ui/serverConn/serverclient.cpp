@@ -82,6 +82,7 @@ bool ServerClient::receiveResponse(receiptreaderproto::ServerResponse& response,
 }
 
 bool ServerClient::queryItems(const std::string& code,
+                              const std::string& desc,
                               const std::string& priceMin,
                               const std::string& priceMax,
                               const std::string& dateStart,
@@ -91,6 +92,7 @@ bool ServerClient::queryItems(const std::string& code,
     receiptreaderproto::ServerRequest request;
     auto* query = request.mutable_query_items();
     query->set_code(code);
+    query->set_desc(desc);
     query->set_price_min(priceMin);
     query->set_price_max(priceMax);
     query->set_date_start(dateStart);

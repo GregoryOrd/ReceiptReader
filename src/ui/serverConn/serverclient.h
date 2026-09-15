@@ -19,6 +19,7 @@ public:
     int port() const;
 
     bool queryItems(const std::string& code,
+                    const std::string& desc,
                     const std::string& priceMin,
                     const std::string& priceMax,
                     const std::string& dateStart,

@@ -40,6 +40,7 @@ double PriceSummaryGenerator::calculateInflationRate(InflationRatePeriod period,
 }
 
 std::vector<PriceHistorySummary> PriceSummaryGenerator::generateSummaries(const std::string& code,
+                                                const std::string& desc,                                            
                                                 const std::string& priceMin,
                                                 const std::string& priceMax,
                                                 const std::string& dateStart,
@@ -47,14 +48,14 @@ std::vector<PriceHistorySummary> PriceSummaryGenerator::generateSummaries(const 
 {
     std::vector<PriceHistorySummary> summaries;
     if(!code.empty()) {
-        summaries.push_back(fromItems(_db->queryItems(code, priceMin, priceMax, dateStart, dateEnd, true)));
+        summaries.push_back(fromItems(_db->queryItems(code, desc, priceMin, priceMax, dateStart, dateEnd, true)));
     }
     else
     {
-        std::vector<std::string> codes = _db->queryDistinctItemCodes(priceMin, priceMax, dateStart, dateEnd);
+        std::vector<std::string> codes = _db->queryDistinctItemCodes(desc, priceMin, priceMax, dateStart, dateEnd);
 
         for(const auto& code : codes) {
-            summaries.push_back(fromItems(_db->queryItems(code, priceMin, priceMax, dateStart, dateEnd, true)));
+            summaries.push_back(fromItems(_db->queryItems(code, desc, priceMin, priceMax, dateStart, dateEnd, true)));
         }
     }
 

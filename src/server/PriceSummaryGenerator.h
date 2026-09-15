@@ -20,6 +20,7 @@ public:
 
 public:
     std::vector<PriceHistorySummary> generateSummaries(const std::string& code,
+                                                const std::string& desc,                                        
                                                 const std::string& priceMin,
                                                 const std::string& priceMax,
                                                 const std::string& dateStart,

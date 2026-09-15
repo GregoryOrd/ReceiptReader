@@ -38,6 +38,7 @@ private:
     QPushButton* m_processButton;
 
     QLineEdit* m_codeEdit;
+    QLineEdit* m_descEdit;
     QLineEdit* m_priceMinEdit;
     QLineEdit* m_priceMaxEdit;
     QLineEdit* m_dateStartEdit;

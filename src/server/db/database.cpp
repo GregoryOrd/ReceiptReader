@@ -13,7 +13,7 @@ static const char* warningTypeToString(Database::WarningType type) {
 
 bool Database::prepareStatement(const char* sql, sqlite3_stmt** stmt) {
     if (sqlite3_prepare_v2(db, sql, -1, stmt, nullptr) != SQLITE_OK) {
-        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << " SQL=" << sql << std::endl;
+        std::cerr << "Failed to prepare statement: (" << sql << ")" << sqlite3_errmsg(db) << " SQL=" << sql << std::endl;
         return false;
     }
     return true;
@@ -107,7 +107,8 @@ void Database::insertItem(const Item& item) {
     }
 }
 
-std::vector<std::string> Database::queryDistinctItemCodes(const std::string& priceMin,
+std::vector<std::string> Database::queryDistinctItemCodes(const std::string& desc,
+                                         const std::string& priceMin,
                                          const std::string& priceMax,
                                          const std::string& dateStart,
                                          const std::string& dateEnd)
@@ -120,6 +121,11 @@ std::vector<std::string> Database::queryDistinctItemCodes(const std::string& pri
     std::vector<std::string> conditions;
     std::vector<std::string> arguments;
 
+
+    if (!desc.empty()) {
+        conditions.push_back("description LIKE ?");
+        arguments.push_back("%" + desc + "%");
+    }
     if (!priceMin.empty()) {
         conditions.push_back("price >= ?");
         arguments.push_back(priceMin);
@@ -151,7 +157,7 @@ std::vector<std::string> Database::queryDistinctItemCodes(const std::string& pri
 
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;
+        std::cerr << "Failed to prepare statement: (" << sql.c_str() << ")" << sqlite3_errmsg(db) << std::endl;
         return codes;
     }
 
@@ -169,6 +175,7 @@ std::vector<std::string> Database::queryDistinctItemCodes(const std::string& pri
 }
 
 std::vector<Item> Database::queryItems(const std::string& code,
+                                               const std::string& desc,
                                                const std::string& priceMin,
                                                const std::string& priceMax,
                                                const std::string& dateStart,
@@ -185,6 +192,10 @@ std::vector<Item> Database::queryItems(const std::string& code,
     if (!code.empty()) {
         conditions.push_back("code LIKE ?");
         arguments.push_back("%" + code + "%");
+    }
+    if (!desc.empty()) {
+        conditions.push_back("description LIKE ?");
+        arguments.push_back("%" + desc + "%");
     }
     if (!priceMin.empty()) {
         conditions.push_back("price >= ?");
@@ -220,7 +231,7 @@ std::vector<Item> Database::queryItems(const std::string& code,
 
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(db) << std::endl;
+        std::cerr << "Failed to prepare statement (" << sql.c_str() << ") " << sqlite3_errmsg(db) << std::endl;
         return items;
     }
 

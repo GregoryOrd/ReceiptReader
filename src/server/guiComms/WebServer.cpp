@@ -304,6 +304,7 @@ bool WebServer::handleConnection(int clientSock) {
 
     if (method == "GET" && path == "/items") {
         std::string code;
+        std::string desc;
         std::string priceMin;
         std::string priceMax;
         std::string dateStart;
@@ -311,6 +312,8 @@ bool WebServer::handleConnection(int clientSock) {
         for (const auto& [key, value] : queryParams) {
             if (key == "code") {
                 code = value;
+            } else if (key == "desc") {
+                desc = value;
             } else if (key == "price_min") {
                 priceMin = value;
             } else if (key == "price_max") {
@@ -322,7 +325,7 @@ bool WebServer::handleConnection(int clientSock) {
             }
         }
 
-        auto items = m_server.queryPriceHistorySummaries(code, priceMin, priceMax, dateStart, dateEnd);
+        auto items = m_server.queryPriceHistorySummaries(code, desc, priceMin, priceMax, dateStart, dateEnd);
         std::ostringstream json;
         json << "{\"items\": [";
         for (size_t i = 0; i < items.size(); ++i) {
