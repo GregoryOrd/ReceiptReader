@@ -118,7 +118,9 @@ bool ProtobufServer::handleClient(int clientSock) {
 }
 
 bool ProtobufServer::queryItemsRequest(int clientSock, const receiptreaderproto::QueryItemsRequest& request) {
+    std::cout << "Receivied Query Items Request" << std::endl;
     std::vector<PriceHistorySummary> items = m_server.queryPriceHistorySummaries(request.code(), request.desc(), request.price_min(), request.price_max(), request.date_start(), request.date_end());
+    std::cout << "Found " << items.size() << " items for request" << std::endl;
 
     receiptreaderproto::ServerResponse response;
     auto* queryResponse = response.mutable_query_items_response();
@@ -136,6 +138,7 @@ bool ProtobufServer::queryItemsRequest(int clientSock, const receiptreaderproto:
         entry->set_sixmonthinflationrate(item.sixMonthInflationRate());
         entry->set_threemonthinflationrate(item.threeMonthInflationRate());
         entry->set_onemonthinflationrate(item.oneMonthInflationRate());
+        entry->set_latestpricechange(item.latestPriceChange());
         entry->set_timespurchased(item.timesPurchased());
     }
 

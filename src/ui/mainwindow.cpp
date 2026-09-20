@@ -10,7 +10,7 @@
 #include <QBrush>
 #include <fstream>
 
-const int INITIAL_WIDTH = 2350;
+const int INITIAL_WIDTH = 2500;
 const int INITIAL_HEIGHT = 1000;
 
 MainWindow::MainWindow(QWidget* parent)

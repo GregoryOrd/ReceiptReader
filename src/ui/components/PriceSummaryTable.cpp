@@ -4,7 +4,7 @@
 #include "ui/components/NumericTableWidgetItem.h"
 #include <QMessageBox>
 
-const int NUM_COLS = 12;
+const int NUM_COLS = 13;
 
 const int CODE_COL = 0;
 const int DESC_COL = 1;
@@ -12,12 +12,13 @@ const int CUR_PRICE_COL = 2;
 const int MIN_PRICE_COL = 3;
 const int MAX_PRICE_COL = 4;
 const int DATE_COL = 5;
-const int TIMES_PURCHASED_COL = 6;
-const int LIFETIME_INFLATION_COL = 7;
-const int ONE_YEAR_INFLATION_COL = 8;
-const int SIX_MONTH_INFLATION_COL = 9;
-const int THREE_MONTH_INFLATION_COL = 10;
-const int ONE_MONTH_INFLATION_COL = 11;
+const int LATEST_PRICE_CHANGE_COL = 6;
+const int TIMES_PURCHASED_COL = 7;
+const int LIFETIME_INFLATION_COL = 8;
+const int ONE_YEAR_INFLATION_COL = 9;
+const int SIX_MONTH_INFLATION_COL = 10;
+const int THREE_MONTH_INFLATION_COL = 11;
+const int ONE_MONTH_INFLATION_COL = 12;
 
 PriceSummaryTable::PriceSummaryTable(ServerClient* serverClient) 
     : QTableWidget(nullptr), m_serverClient(serverClient)
@@ -30,6 +31,7 @@ PriceSummaryTable::PriceSummaryTable(ServerClient* serverClient)
     _minPriceHdr = std::make_unique<QTableWidgetItem>("Min Price");
     _maxPriceHdr = std::make_unique<QTableWidgetItem>("Max Price");
     _dateHdr = std::make_unique<QTableWidgetItem>("Date");
+    _latestPriceChgHdr = std::make_unique<QTableWidgetItem>("Latest Price Change");
     _lifetimeHeader = std::make_unique<QTableWidgetItem>("Lifetime Inflation Rate");
     _oneYearHdr = std::make_unique<QTableWidgetItem>("One Year Inflation Rate");
     _sixMnthHdr = std::make_unique<QTableWidgetItem>("6 Month Inflation Rate");
@@ -43,6 +45,7 @@ PriceSummaryTable::PriceSummaryTable(ServerClient* serverClient)
     setHorizontalHeaderItem(MIN_PRICE_COL, _minPriceHdr.get());
     setHorizontalHeaderItem(MAX_PRICE_COL, _maxPriceHdr.get());
     setHorizontalHeaderItem(DATE_COL, _dateHdr.get());
+    setHorizontalHeaderItem(LATEST_PRICE_CHANGE_COL, _latestPriceChgHdr.get());
     setHorizontalHeaderItem(LIFETIME_INFLATION_COL, _lifetimeHeader.get());
     setHorizontalHeaderItem(ONE_YEAR_INFLATION_COL, _oneYearHdr.get());
     setHorizontalHeaderItem(SIX_MONTH_INFLATION_COL, _sixMnthHdr.get());
@@ -56,6 +59,7 @@ PriceSummaryTable::PriceSummaryTable(ServerClient* serverClient)
     setColumnWidth(MIN_PRICE_COL, 150);
     setColumnWidth(MAX_PRICE_COL, 150);
     setColumnWidth(DATE_COL, 150);
+    setColumnWidth(LATEST_PRICE_CHANGE_COL, 150);
     setColumnWidth(LIFETIME_INFLATION_COL, 250);
     setColumnWidth(ONE_YEAR_INFLATION_COL, 250);
     setColumnWidth(SIX_MONTH_INFLATION_COL, 250);
@@ -117,6 +121,7 @@ void PriceSummaryTable::setItems(std::vector<PriceHistorySummary> priceSummaries
         setItem(i, MIN_PRICE_COL, new NumericTableWidgetItem(ps.minPrice()));
         setItem(i, MAX_PRICE_COL, new NumericTableWidgetItem(ps.maxPrice()));
         setItem(i, DATE_COL, new QTableWidgetItem(QString::fromStdString(ps.timestampLast())));
+        setItem(i, LATEST_PRICE_CHANGE_COL, new NumericTableWidgetItem(ps.latestPriceChange()));
         setItem(i, LIFETIME_INFLATION_COL, new NumericTableWidgetItem(ps.liftimeInflationRate()));
         setItem(i, ONE_YEAR_INFLATION_COL, new NumericTableWidgetItem(ps.oneYearInflationRate()));
         setItem(i, SIX_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps.sixMonthInflationRate()));
@@ -124,6 +129,7 @@ void PriceSummaryTable::setItems(std::vector<PriceHistorySummary> priceSummaries
         setItem(i, ONE_MONTH_INFLATION_COL, new NumericTableWidgetItem(ps.oneMonthInflationRate()));
         setItem(i, TIMES_PURCHASED_COL, new NumericTableWidgetItem(ps.timesPurchased()));
 
+        colourLatestPriceChange(i, LATEST_PRICE_CHANGE_COL, ps.latestPriceChange(), ps.currentPrice());
         colourInflationRate(i, LIFETIME_INFLATION_COL, ps.liftimeInflationRate());
         colourInflationRate(i, ONE_YEAR_INFLATION_COL, ps.oneYearInflationRate());
         colourInflationRate(i, SIX_MONTH_INFLATION_COL, ps.sixMonthInflationRate());
@@ -141,6 +147,28 @@ void PriceSummaryTable::colourCell(int row, int col, QColor color)
     }
 
     cellItem->setBackground(QBrush(color));
+}
+
+void PriceSummaryTable::colourLatestPriceChange(int row, int col, double priceChange, double currentPrice)
+{
+    double prevPrice = currentPrice - priceChange;
+    double percentChange = priceChange / prevPrice;
+
+    QColor color;
+    if(percentChange <= 0.10)
+    {
+        color = QColor(Qt::green);
+    }
+    else if(percentChange <= 0.25)
+    {
+        color = QColor(Qt::yellow);
+    }
+    else
+    {
+        color = QColor(Qt::red);
+    }
+
+    colourCell(row, col, color);  
 }
 
 void PriceSummaryTable::colourInflationRate(int row, int col, double inflationRate)

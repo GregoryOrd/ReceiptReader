@@ -102,10 +102,12 @@ bool ServerClient::queryItems(const std::string& code,
         return false;
     }
 
+    std::wcout << "Receving Response" << std::endl;
     receiptreaderproto::ServerResponse response;
     if (!receiveResponse(response, error)) {
         return false;
     }
+    std::wcout << "Response Had Error" << std::endl;
 
     if (response.has_status()) {
         error = response.status().message();
@@ -131,6 +133,7 @@ bool ServerClient::queryItems(const std::string& code,
             entry.sixmonthinflationrate(),
             entry.threemonthinflationrate(),
             entry.onemonthinflationrate(),
+            entry.latestpricechange(),
             entry.timespurchased(),
             entry.minprice(),
             entry.maxprice(),

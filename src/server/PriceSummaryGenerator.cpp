@@ -47,17 +47,28 @@ std::vector<PriceHistorySummary> PriceSummaryGenerator::generateSummaries(const 
                                                 const std::string& dateEnd)
 {
     std::vector<PriceHistorySummary> summaries;
+    std::cout << "Generating summaries" << std::endl;
     if(!code.empty()) {
+        std::cout << "Generating summaries Code Not Empty" << std::endl;
         summaries.push_back(fromItems(_db->queryItems(code, desc, priceMin, priceMax, dateStart, dateEnd, true)));
     }
     else
     {
+        std::cout << "Generating summaries Code Empty" << std::endl;
         std::vector<std::string> codes = _db->queryDistinctItemCodes(desc, priceMin, priceMax, dateStart, dateEnd);
+        std::cout << "Found " << codes.size() << " distinct codes." << std::endl;
 
         for(const auto& code : codes) {
-            summaries.push_back(fromItems(_db->queryItems(code, desc, priceMin, priceMax, dateStart, dateEnd, true)));
+            std::cout << "Querying code: " << code << std::endl;
+            std::vector<Item> items = _db->queryItems(code, desc, priceMin, priceMax, dateStart, dateEnd, true);
+            std::cout << "Found " << items.size() << " items." << std::endl;
+            PriceHistorySummary summary = fromItems(items);
+            std::cout << "Got summary for " << summary.code() << std::endl;
+            summaries.push_back(summary);
+            std::cout << "Pushed back summary" << std::endl;
         }
     }
+    std::cout << "Generated " << summaries.size() << " summaries" << std::endl;
 
     return summaries;    
 }
@@ -99,7 +110,7 @@ Item PriceSummaryGenerator::itemToCompare(InflationRatePeriod period, const std:
 
 PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& timestampSortedItems) {
     if (timestampSortedItems.empty()) {
-        return PriceHistorySummary("", "", "1970-01-01", "1970-01-01", 0.0, 0.0, 0.0, 0.0, 0.0, 0);
+        return PriceHistorySummary("", "", "1970-01-01", "1970-01-01", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0);
     }
 
     double liftimeInflationRate = calculateInflationRate(InflationRatePeriod::Lifetime, timestampSortedItems);
@@ -107,6 +118,18 @@ PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& ti
     double sixMonthInflationRate = calculateInflationRate(InflationRatePeriod::SixMonths, timestampSortedItems);
     double threeMonthInflationRate = calculateInflationRate(InflationRatePeriod::ThreeMonths, timestampSortedItems);
     double oneMonthInflationRate = calculateInflationRate(InflationRatePeriod::OneMonth, timestampSortedItems);
+    
+    int numItems = timestampSortedItems.size();
+    double latestPriceChange = 0.0;
+    if(numItems >= 2)
+    {
+        Item last = timestampSortedItems[numItems - 1];
+        Item secondLast = timestampSortedItems[numItems - 2];
+        std::cout << "Last Price: " << last.price << ", Second Last Price: " << secondLast.price << std::endl;
+        latestPriceChange = last.price - secondLast.price;
+        std::cout << "Lastest Price Change: " << latestPriceChange << std::endl;
+    }
+
 
     double minPrice = 0.0;
     double maxPrice = 0.0;
@@ -134,6 +157,7 @@ PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& ti
         sixMonthInflationRate,
         threeMonthInflationRate,
         oneMonthInflationRate,
+        latestPriceChange,
         timestampSortedItems.size(),
         minPrice,
         maxPrice,
@@ -153,6 +177,7 @@ PriceHistorySummary PriceSummaryGenerator::fromProto(const receiptreaderproto::P
         proto.sixmonthinflationrate(),
         proto.threemonthinflationrate(),
         proto.onemonthinflationrate(),
+        proto.latestpricechange(),
         proto.timespurchased(),
         proto.minprice(),
         proto.maxprice(),

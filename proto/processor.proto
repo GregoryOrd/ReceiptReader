@@ -23,7 +23,8 @@ message PriceHistorySummary {
   double sixMonthInflationRate = 11;
   double threeMonthInflationRate = 12;
   double oneMonthInflationRate = 13;
-  int32 timesPurchased = 14;
+  double latestPriceChange = 14;
+  int32 timesPurchased = 15;
 }
 
 message QueryItemsRequest {

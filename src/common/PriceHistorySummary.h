@@ -17,6 +17,7 @@ public:
         double sixMonthInflationRate,
         double threeMonthInflationRate,
         double oneMonthInflationRate,
+        double latestPriceChange,
         int timesPurchased,
         double minPrice = 0.0,
         double maxPrice = 0.0,
@@ -39,6 +40,7 @@ public:
     double sixMonthInflationRate() const;
     double threeMonthInflationRate() const;
     double oneMonthInflationRate() const;
+    double latestPriceChange() const;
     int timesPurchased() const;
 
 private:
@@ -58,6 +60,7 @@ private:
     double _sixMonthInflationRate = 0.0;
     double _threeMonthInflationRate = 0.0;
     double _oneMonthInflationRate = 0.0;
+    double _latestPriceChange = 0.0;
 
     int _timesPurchased;
 };

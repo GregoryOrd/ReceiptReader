@@ -19,6 +19,7 @@ public:
 
 private:
     void colourCell(int row, int col, QColor color);
+    void colourLatestPriceChange(int row, int col, double priceChange, double currentPrice);
     void colourInflationRate(int row, int col, double inflationRate);
 
 private:
@@ -31,11 +32,13 @@ private:
     std::unique_ptr<QTableWidgetItem> _minPriceHdr;
     std::unique_ptr<QTableWidgetItem> _maxPriceHdr;
     std::unique_ptr<QTableWidgetItem> _dateHdr;
+    std::unique_ptr<QTableWidgetItem> _latestPriceChange;
     std::unique_ptr<QTableWidgetItem> _lifetimeHeader;
     std::unique_ptr<QTableWidgetItem> _oneYearHdr;
     std::unique_ptr<QTableWidgetItem> _sixMnthHdr;
     std::unique_ptr<QTableWidgetItem> _threeMnthHdr;
     std::unique_ptr<QTableWidgetItem> _oneMnthHdr;
+    std::unique_ptr<QTableWidgetItem> _latestPriceChgHdr;
     std::unique_ptr<QTableWidgetItem> _timesPurchasedHdr;
 
 signals:

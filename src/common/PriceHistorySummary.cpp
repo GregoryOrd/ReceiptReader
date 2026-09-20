@@ -10,6 +10,7 @@ PriceHistorySummary::PriceHistorySummary(
     double sixMonthInflationRate,
     double threeMonthInflationRate,
     double oneMonthInflationRate,
+    double latestPriceChange,
     int timesPurchased,
     double minPrice,
     double maxPrice,
@@ -29,9 +30,11 @@ PriceHistorySummary::PriceHistorySummary(
     _sixMonthInflationRate(sixMonthInflationRate),
     _threeMonthInflationRate(threeMonthInflationRate),
     _oneMonthInflationRate(oneMonthInflationRate),
+    _latestPriceChange(latestPriceChange),
     _timesPurchased(timesPurchased)
 {
     // Do nothing
+    std::cout << "Constructing PriceSummary with latestPriceChange: " << latestPriceChange << std::endl;
 }
 
 std::string PriceHistorySummary::description() const { return _description; }
@@ -47,4 +50,5 @@ double PriceHistorySummary::oneYearInflationRate() const { return _oneYearInflat
 double PriceHistorySummary::sixMonthInflationRate() const { return _sixMonthInflationRate; }
 double PriceHistorySummary::threeMonthInflationRate() const { return _threeMonthInflationRate; }
 double PriceHistorySummary::oneMonthInflationRate() const { return _oneMonthInflationRate; }
+double PriceHistorySummary::latestPriceChange() const { return _latestPriceChange; }
 int PriceHistorySummary::timesPurchased() const { return _timesPurchased; }
