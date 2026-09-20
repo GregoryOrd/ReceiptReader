@@ -36,7 +36,7 @@ double PriceSummaryGenerator::calculateInflationRate(InflationRatePeriod period,
     double priceChangePerYear = priceChangePerDay * 365.0;
     double inflationRate = priceChangePerYear / firstItem.price;
 
-    return inflationRate;
+    return inflationRate * 100;
 }
 
 std::vector<PriceHistorySummary> PriceSummaryGenerator::generateSummaries(const std::string& code,
