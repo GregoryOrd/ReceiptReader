@@ -66,6 +66,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Widgets Charts)
 
 if(NOT BUILD_WASM)
 
+    find_package(Qt6 REQUIRED COMPONENTS Network WebSockets)
     find_package(OpenCV REQUIRED)
     find_package(PkgConfig REQUIRED)
 
@@ -213,6 +214,7 @@ if(BUILD_SERVER AND NOT BUILD_WASM)
         src/server/ImageProcessor.cpp
         src/server/PriceSummaryGenerator.cpp
         src/server/guiComms/ProtobufServer.cpp
+        src/server/guiComms/WebSocketBridge.cpp
         src/server/guiComms/WebServer.cpp
         src/ipc/message_io.cpp
         src/server/ocr/ocr.cpp
@@ -236,6 +238,8 @@ if(BUILD_SERVER AND NOT BUILD_WASM)
     target_link_libraries(
         ReceiptReaderServer
         Qt6::Core
+        Qt6::Network
+        Qt6::WebSockets
         ${OpenCV_LIBS}
         ${TESSERACT_LIBRARIES}
         ${LEPTONICA_LIBRARIES}
@@ -271,6 +275,8 @@ if(BUILD_TESTS AND NOT BUILD_WASM)
     target_link_libraries(
         ReceiptReaderTests
         Qt6::Core
+        Qt6::Network
+        Qt6::WebSockets
         GTest::gtest_main
         GTest::gmock
         ${OpenCV_LIBS}

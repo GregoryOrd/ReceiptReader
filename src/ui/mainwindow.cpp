@@ -15,7 +15,11 @@ const int INITIAL_HEIGHT = 1000;
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
+#ifdef BUILD_WASM
+      m_serverClient(std::make_unique<ServerClient>("127.0.0.1", 52001)) {
+#else
       m_serverClient(std::make_unique<ServerClient>("127.0.0.1", 52000)) {
+#endif
     resize(INITIAL_WIDTH, INITIAL_HEIGHT);
     setWindowTitle("Receipt Reader GUI");
     QWidget* central = new QWidget;

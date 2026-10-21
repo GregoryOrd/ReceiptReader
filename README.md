@@ -1,5 +1,11 @@
 # ReceiptReader
 
+## Server connections
+The server accepts native protobuf TCP clients on port `52000`. It also listens for
+binary WebSocket messages on `127.0.0.1:52001` and forwards their bytes to that TCP
+protobuf listener. The WebSocket listener port can be changed with
+`--websocket-port`; `--port` changes the TCP protobuf port.
+
 ## Docker Container
 To be able to run the desktop GUI in the container, we need allow Docker to access our X-Server.
 To enable this we run:
