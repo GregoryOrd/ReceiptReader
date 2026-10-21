@@ -183,20 +183,25 @@ endif()
 if(TARGET protobuf::libprotobuf)
     target_link_libraries(
         ReceiptReaderGUI
+        PRIVATE
         Qt6::Core
         Qt6::Widgets
         Qt6::Charts
         protobuf::libprotobuf
-        embind
     )
 else()
     target_link_libraries(
         ReceiptReaderGUI
+        PRIVATE
         Qt6::Core
         Qt6::Widgets
         Qt6::Charts
         ${Protobuf_LIBRARIES}
     )
+endif()
+
+if(BUILD_WASM)
+    target_link_libraries(ReceiptReaderGUI PRIVATE embind)
 endif()
 
 
