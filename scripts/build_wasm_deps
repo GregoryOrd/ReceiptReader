@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# NOTE: This script such have been created when the dependencies where built for the first time,
+# however it was not, so treat these steps more as documentation and don't assume they are completly correct.
+
+# Create wasm-deps directory and download the source code for dependencies
+mkdir -p ~/wasm-deps
+cd ~/wasm-deps
+
+# Download protobuf
+# Now sure if this was a git clone or a wget of a tarball
+
+# Configure protobufi WASM build
+
+# Build protobuf WASM
+
+# Install protobuf WASM
+
+# Download qt source
+# Now sure if this was a git clone or a wget of a tarball
+
+# Make qt-6.4.2-wasm-build directory
+mkdir -p qt-6.4.2-wasm-build 
+cd qt-6.4.2-wasm-build
+
+# We first have to do a qt build for the host architecture, then do the WASM build
+# When the WASM build runs it is considered to be cross-compiled for a different architecture.
+
+# Configure qt WASM Build:
+../qt-6.4.2/configure -qt-host-path /usr/local/qt-6.4.2-host -platform wasm-emscripten -prefix /usr/local/qt-6.4.2-wasm
+
+# Build qt WASM
+cmake --build . --parallel 10
+
+# Install qt WASM
+sudo cmake --install .

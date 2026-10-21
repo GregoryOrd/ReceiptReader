@@ -1,0 +1,27 @@
+#!/bin/bash
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_DIR="${SCRIPT_DIR}/.."
+RUNTIME_DIR="${PROJECT_DIR}/development-runtime"
+WASM_BUILD_DIR="${PROJECT_DIR}/build_wasm"
+
+###########################
+###       WASM Build    ###
+###########################
+export CMAKE_CXX_COMPILER=em++
+if [ ! -d "${WASM_BUILD_DIR}" ]; then
+    mkdir -p "${WASM_BUILD_DIR}"
+fi
+cd "${WASM_BUILD_DIR}"
+
+if [ ! -d "${WASM_BUILD_DIR}" ]; then
+    mkdir -p "${WASM_BUILD_DIR}"
+fi
+
+if [ ! -f Makefile ]; then
+    emcmake cmake -S "${PROJECT_DIR}" -B "${WASM_BUILD_DIR}" "${PROJECT_DIR}"
+fi
+
+make
+
+cd "${CWD}"

@@ -17,7 +17,7 @@
 #include "server/WebServer.h"
 #include "server/server.h"
 #include "ipc/message_io.h"
-#include "processor.pb.h"
+#include "proto/processor.pb.h"
 
 namespace fs = std::filesystem;
 

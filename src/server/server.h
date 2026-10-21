@@ -3,7 +3,7 @@
 
 #include "db/database.h"
 #include "parser/parser.h"
-#include "processor.pb.h"
+#include "proto/processor.pb.h"
 #include "common/PriceHistorySummary.h"
 #include "ImageProcessor.h"
 #include "PriceSummaryGenerator.h"

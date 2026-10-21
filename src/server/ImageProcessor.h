@@ -3,7 +3,7 @@
 
 #include "common/Item.h"
 #include "db/database.h"
-#include "processor.pb.h"
+#include "proto/processor.pb.h"
 
 #include <vector>
 #include <functional>

@@ -1,0 +1,188 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CMakeDetermineSystem.cmake:228 (message)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      The target system is: Emscripten - 1 - x86
+      The host system is: Linux - 7.0.0-34-generic - x86_64
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake-3.28/Modules/CheckCXXSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/FindWrapAtomic.cmake:36 (check_cxx_source_compiles)"
+      - "/usr/share/cmake-3.28/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:36 (find_dependency)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6Core/Qt6CoreDependencies.cmake:40 (_qt_internal_find_third_party_dependencies)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6Core/Qt6CoreConfig.cmake:44 (include)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/Qt6Config.cmake:257 (find_package)"
+      - "CMakeLists.txt:58 (find_package)"
+    checks:
+      - "Performing Test HAVE_STDATOMIC"
+    directories:
+      source: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-lK8WfV"
+      binary: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-lK8WfV"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/greg/.local/opt/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/greg/.local/opt/emsdk/upstream/emscripten/cmake/Modules;/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6;/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules;/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/3rdparty/kwin"
+    buildResult:
+      variable: "HAVE_STDATOMIC"
+      cached: true
+      stdout: |
+        Change Dir: '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-lK8WfV'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_32e7c/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_32e7c.dir/build.make CMakeFiles/cmTC_32e7c.dir/build
+        gmake[1]: Entering directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-lK8WfV'
+        Building CXX object CMakeFiles/cmTC_32e7c.dir/src.cxx.o
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ -DHAVE_STDATOMIC  -std=gnu++17 -MD -MT CMakeFiles/cmTC_32e7c.dir/src.cxx.o -MF CMakeFiles/cmTC_32e7c.dir/src.cxx.o.d -o CMakeFiles/cmTC_32e7c.dir/src.cxx.o -c /home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-lK8WfV/src.cxx
+        Linking CXX executable cmTC_32e7c.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_32e7c.dir/link.txt --verbose=1
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ CMakeFiles/cmTC_32e7c.dir/src.cxx.o -o cmTC_32e7c.js 
+        gmake[1]: Leaving directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-lK8WfV'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake-3.28/Modules/CheckCXXSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/FindWrapRt.cmake:23 (check_cxx_source_compiles)"
+      - "/usr/share/cmake-3.28/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:36 (find_dependency)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6Core/Qt6CoreDependencies.cmake:40 (_qt_internal_find_third_party_dependencies)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6Core/Qt6CoreConfig.cmake:44 (include)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/Qt6Config.cmake:257 (find_package)"
+      - "CMakeLists.txt:58 (find_package)"
+    checks:
+      - "Performing Test HAVE_GETTIME"
+    directories:
+      source: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-hTR2Po"
+      binary: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-hTR2Po"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/greg/.local/opt/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/greg/.local/opt/emsdk/upstream/emscripten/cmake/Modules;/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6;/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules;/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/3rdparty/kwin"
+    buildResult:
+      variable: "HAVE_GETTIME"
+      cached: true
+      stdout: |
+        Change Dir: '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-hTR2Po'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_417ed/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_417ed.dir/build.make CMakeFiles/cmTC_417ed.dir/build
+        gmake[1]: Entering directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-hTR2Po'
+        Building CXX object CMakeFiles/cmTC_417ed.dir/src.cxx.o
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ -DHAVE_GETTIME  -std=gnu++17 -MD -MT CMakeFiles/cmTC_417ed.dir/src.cxx.o -MF CMakeFiles/cmTC_417ed.dir/src.cxx.o.d -o CMakeFiles/cmTC_417ed.dir/src.cxx.o -c /home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-hTR2Po/src.cxx
+        Linking CXX executable cmTC_417ed.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_417ed.dir/link.txt --verbose=1
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ CMakeFiles/cmTC_417ed.dir/src.cxx.o -o cmTC_417ed.js 
+        gmake[1]: Leaving directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-hTR2Po'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake-3.28/Modules/CheckCXXSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/FindWrapRt.cmake:34 (check_cxx_source_compiles)"
+      - "/usr/share/cmake-3.28/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:36 (find_dependency)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6Core/Qt6CoreDependencies.cmake:40 (_qt_internal_find_third_party_dependencies)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6Core/Qt6CoreConfig.cmake:44 (include)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/Qt6Config.cmake:257 (find_package)"
+      - "CMakeLists.txt:58 (find_package)"
+    checks:
+      - "Performing Test HAVE_SHM_OPEN_SHM_UNLINK"
+    directories:
+      source: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-rGqC7R"
+      binary: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-rGqC7R"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/greg/.local/opt/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/greg/.local/opt/emsdk/upstream/emscripten/cmake/Modules;/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6;/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules;/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/3rdparty/kwin"
+    buildResult:
+      variable: "HAVE_SHM_OPEN_SHM_UNLINK"
+      cached: true
+      stdout: |
+        Change Dir: '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-rGqC7R'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_21ad1/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_21ad1.dir/build.make CMakeFiles/cmTC_21ad1.dir/build
+        gmake[1]: Entering directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-rGqC7R'
+        Building CXX object CMakeFiles/cmTC_21ad1.dir/src.cxx.o
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ -DHAVE_SHM_OPEN_SHM_UNLINK  -std=gnu++17 -MD -MT CMakeFiles/cmTC_21ad1.dir/src.cxx.o -MF CMakeFiles/cmTC_21ad1.dir/src.cxx.o.d -o CMakeFiles/cmTC_21ad1.dir/src.cxx.o -c /home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-rGqC7R/src.cxx
+        Linking CXX executable cmTC_21ad1.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_21ad1.dir/link.txt --verbose=1
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ CMakeFiles/cmTC_21ad1.dir/src.cxx.o -o cmTC_21ad1.js 
+        gmake[1]: Leaving directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-rGqC7R'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake-3.28/Modules/CheckCXXSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules/FindEGL.cmake:128 (check_cxx_source_compiles)"
+      - "/usr/share/cmake-3.28/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:36 (find_dependency)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6Gui/Qt6GuiDependencies.cmake:41 (_qt_internal_find_third_party_dependencies)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6Gui/Qt6GuiConfig.cmake:40 (include)"
+      - "/usr/share/cmake-3.28/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:142 (find_dependency)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6Widgets/Qt6WidgetsDependencies.cmake:51 (_qt_internal_find_qt_dependencies)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6Widgets/Qt6WidgetsConfig.cmake:40 (include)"
+      - "/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/Qt6Config.cmake:257 (find_package)"
+      - "CMakeLists.txt:58 (find_package)"
+    checks:
+      - "Performing Test HAVE_EGL"
+    directories:
+      source: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-gUu5dL"
+      binary: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-gUu5dL"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/greg/.local/opt/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/greg/.local/opt/emsdk/upstream/emscripten/cmake/Modules;/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6;/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules;/usr/local/qt-6.4.2-wasm/lib/cmake/Qt6/3rdparty/kwin"
+    buildResult:
+      variable: "HAVE_EGL"
+      cached: true
+      stdout: |
+        Change Dir: '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-gUu5dL'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_ce355/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_ce355.dir/build.make CMakeFiles/cmTC_ce355.dir/build
+        gmake[1]: Entering directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-gUu5dL'
+        Building CXX object CMakeFiles/cmTC_ce355.dir/src.cxx.o
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ -DHAVE_EGL  -std=gnu++17 -MD -MT CMakeFiles/cmTC_ce355.dir/src.cxx.o -MF CMakeFiles/cmTC_ce355.dir/src.cxx.o.d -o CMakeFiles/cmTC_ce355.dir/src.cxx.o -c /home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-gUu5dL/src.cxx
+        Linking CXX executable cmTC_ce355.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ce355.dir/link.txt --verbose=1
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ CMakeFiles/cmTC_ce355.dir/src.cxx.o -o cmTC_ce355.js 
+        gmake[1]: Leaving directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-gUu5dL'
+        
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-3.31/Modules/CMakeDetermineSystem.cmake:200 (message)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      The target system is: Emscripten - 1 - x86
+      The host system is: Linux - 6.12.107+deb13-amd64 - x86_64
+...

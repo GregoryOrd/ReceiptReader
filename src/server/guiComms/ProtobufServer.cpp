@@ -1,6 +1,6 @@
 #include "ProtobufServer.h"
 #include "ipc/message_io.h"
-#include "processor.pb.h"
+#include "proto/processor.pb.h"
 #include <arpa/inet.h>
 #include <cerrno>
 #include <cstring>

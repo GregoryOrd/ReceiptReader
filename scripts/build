@@ -4,7 +4,12 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_DIR="${SCRIPT_DIR}/.."
 RUNTIME_DIR="${PROJECT_DIR}/development-runtime"
 BUILD_DIR="${PROJECT_DIR}/build"
+WASM_BUILD_DIR="${PROJECT_DIR}/build_wasm"
 
+
+###########################
+###     Desktop Build   ###
+###########################
 if [ ! -d "${BUILD_DIR}" ]; then
     mkdir -p "${BUILD_DIR}"
 fi
@@ -16,6 +21,26 @@ fi
 
 if [ ! -f Makefile ]; then
     cmake -S "${PROJECT_DIR}" -B "${BUILD_DIR}" "${PROJECT_DIR}"
+fi
+
+make
+
+
+# ###########################
+# ###       WASM Build    ###
+# ###########################
+if [ ! -d "${WASM_BUILD_DIR}" ]; then
+    mkdir -p "${WASM_BUILD_DIR}"
+fi
+cd "${WASM_BUILD_DIR}"
+
+if [ ! -d "${WASM_BUILD_DIR}" ]; then
+    mkdir -p "${WASM_BUILD_DIR}"
+fi
+
+if [ ! -f Makefile ]; then
+    emcmake cmake -S "${PROJECT_DIR}" -B "${WASM_BUILD_DIR}" "${PROJECT_DIR}"
+    # emcmake cmake -S "${PROJECT_DIR}" -B "${WASM_BUILD_DIR}" "${PROJECT_DIR}" -DProtobuf_DIR="/usr/local/lib/cmake/protobuf" -DProtobuf_LIBRARY="/usr/local/lib/libprotobuf.a" -DQt6_DIR="/usr/local/lib/cmake/Qt6" 
 fi
 
 make

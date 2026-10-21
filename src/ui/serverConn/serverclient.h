@@ -6,7 +6,7 @@
 #include <vector>
 #include "parser/parser.h"
 #include "common/PriceHistorySummary.h"
-#include "processor.pb.h"
+#include "proto/processor.pb.h"
 
 class ServerClient {
 public:

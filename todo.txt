@@ -1,3 +1,13 @@
+Use this to Build Qt
+-----------------------
+emcmake cmake \
+    -S ". \
+    -B build-wasm \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_PREFIX_PATH="/usr/local/qt-wasm"
+
+cmake --install build-wasm --prefix "/usr/local/qt-wasm
+
 Features To Implement
 -----------------------
 1) In the server's client disconnection message, print the IP and port of the client that disconnected.
@@ -16,19 +26,6 @@ Features To Implement
 7) User capability to consolodate errors (multiple identical decriptors with different codes)
 8) Splitting table in category would be useful (produce, meats, cheeses. frozen things)
 
-Features - Error Detection/Correction after Input
-------------------------------------------------------
-1) Detection of items that have only purchased once (or perhaps less than X amount of times). 
-   Since we expect most items to be purchases often, it an items has few occurences it might represent an error from the OCR.
-2) Similar description (or item code) search algorithm (triggered manually or automatically). If entries have similar enough descriptions or items codes 
-   they might actually be the same item and it was just on OCR error.
-3) Price anonamilies. Add a feature to check if the price of an item went up for a single instance and then come back down to what it previously was.
-   If this is the case, it might represent an OCR error causing an the anomaly.
-4) Put commonly seen OCR errors (for example, confusing '5' with '6' and/or '8') into a database. When price anonamilies, or similar descriptions or items codes, are detected check if any of the commonly seen OCR 
-   errors could be present and have caused the error. Given this information, we might be able to auto correct the error, or at least suggest a correction to the user.
-5) If the inflation rate for a given item during a given inflation period (lifetime, 1year, 6 months, 3months, 1month) is zero, then all prices during that time range should be zero. If this is not the case, there is an 
-   inconsitency, and perhaps we can say that inconsitency is caused by an OCR error.
-6) Same decriptions with codes that are only differing by 1 or 2 digits. High probability of OCR error
 
 Features - Error Detection/Correction at Input
 -----------------------------------------------
@@ -55,6 +52,7 @@ Features - OCR Pre-Processing
 
 Features - Configuration
 -----------------------------
+0) Add a configuration file
 1) Make the directory where the receipts.db file lives configurable
 2) Write stdout and stderr to log files instead of to the console, and make the location of these log files configurable
 
