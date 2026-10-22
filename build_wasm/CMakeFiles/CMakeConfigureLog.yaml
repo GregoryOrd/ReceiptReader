@@ -24,8 +24,8 @@ events:
     checks:
       - "Performing Test HAVE_STDATOMIC"
     directories:
-      source: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-FUNZDl"
-      binary: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-FUNZDl"
+      source: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-2JSohy"
+      binary: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-2JSohy"
     cmakeVariables:
       CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/greg/.local/opt/emsdk/upstream/emscripten/emscan-deps"
       CMAKE_CXX_FLAGS: ""
@@ -36,17 +36,17 @@ events:
       variable: "HAVE_STDATOMIC"
       cached: true
       stdout: |
-        Change Dir: '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-FUNZDl'
+        Change Dir: '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-2JSohy'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_e7aa6/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_e7aa6.dir/build.make CMakeFiles/cmTC_e7aa6.dir/build
-        gmake[1]: Entering directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-FUNZDl'
-        Building CXX object CMakeFiles/cmTC_e7aa6.dir/src.cxx.o
-        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ -DHAVE_STDATOMIC  -std=gnu++17 -MD -MT CMakeFiles/cmTC_e7aa6.dir/src.cxx.o -MF CMakeFiles/cmTC_e7aa6.dir/src.cxx.o.d -o CMakeFiles/cmTC_e7aa6.dir/src.cxx.o -c /home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-FUNZDl/src.cxx
-        Linking CXX executable cmTC_e7aa6.js
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e7aa6.dir/link.txt --verbose=1
-        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ CMakeFiles/cmTC_e7aa6.dir/src.cxx.o -o cmTC_e7aa6.js
-        gmake[1]: Leaving directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-FUNZDl'
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_e6df3/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_e6df3.dir/build.make CMakeFiles/cmTC_e6df3.dir/build
+        gmake[1]: Entering directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-2JSohy'
+        Building CXX object CMakeFiles/cmTC_e6df3.dir/src.cxx.o
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ -DHAVE_STDATOMIC  -std=gnu++17 -MD -MT CMakeFiles/cmTC_e6df3.dir/src.cxx.o -MF CMakeFiles/cmTC_e6df3.dir/src.cxx.o.d -o CMakeFiles/cmTC_e6df3.dir/src.cxx.o -c /home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-2JSohy/src.cxx
+        Linking CXX executable cmTC_e6df3.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e6df3.dir/link.txt --verbose=1
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ CMakeFiles/cmTC_e6df3.dir/src.cxx.o -o cmTC_e6df3.js
+        gmake[1]: Leaving directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-2JSohy'
         
       exitCode: 0
   -
@@ -64,8 +64,8 @@ events:
     checks:
       - "Performing Test HAVE_GETTIME"
     directories:
-      source: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-L9Cgga"
-      binary: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-L9Cgga"
+      source: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-Ep6T8l"
+      binary: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-Ep6T8l"
     cmakeVariables:
       CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/greg/.local/opt/emsdk/upstream/emscripten/emscan-deps"
       CMAKE_CXX_FLAGS: ""
@@ -76,17 +76,17 @@ events:
       variable: "HAVE_GETTIME"
       cached: true
       stdout: |
-        Change Dir: '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-L9Cgga'
+        Change Dir: '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-Ep6T8l'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_3451a/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_3451a.dir/build.make CMakeFiles/cmTC_3451a.dir/build
-        gmake[1]: Entering directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-L9Cgga'
-        Building CXX object CMakeFiles/cmTC_3451a.dir/src.cxx.o
-        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ -DHAVE_GETTIME  -std=gnu++17 -MD -MT CMakeFiles/cmTC_3451a.dir/src.cxx.o -MF CMakeFiles/cmTC_3451a.dir/src.cxx.o.d -o CMakeFiles/cmTC_3451a.dir/src.cxx.o -c /home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-L9Cgga/src.cxx
-        Linking CXX executable cmTC_3451a.js
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3451a.dir/link.txt --verbose=1
-        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ CMakeFiles/cmTC_3451a.dir/src.cxx.o -o cmTC_3451a.js
-        gmake[1]: Leaving directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-L9Cgga'
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_ccff5/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_ccff5.dir/build.make CMakeFiles/cmTC_ccff5.dir/build
+        gmake[1]: Entering directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-Ep6T8l'
+        Building CXX object CMakeFiles/cmTC_ccff5.dir/src.cxx.o
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ -DHAVE_GETTIME  -std=gnu++17 -MD -MT CMakeFiles/cmTC_ccff5.dir/src.cxx.o -MF CMakeFiles/cmTC_ccff5.dir/src.cxx.o.d -o CMakeFiles/cmTC_ccff5.dir/src.cxx.o -c /home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-Ep6T8l/src.cxx
+        Linking CXX executable cmTC_ccff5.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ccff5.dir/link.txt --verbose=1
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ CMakeFiles/cmTC_ccff5.dir/src.cxx.o -o cmTC_ccff5.js
+        gmake[1]: Leaving directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-Ep6T8l'
         
       exitCode: 0
   -
@@ -104,8 +104,8 @@ events:
     checks:
       - "Performing Test HAVE_SHM_OPEN_SHM_UNLINK"
     directories:
-      source: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-U3if9u"
-      binary: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-U3if9u"
+      source: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-FjyOJd"
+      binary: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-FjyOJd"
     cmakeVariables:
       CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/greg/.local/opt/emsdk/upstream/emscripten/emscan-deps"
       CMAKE_CXX_FLAGS: ""
@@ -116,17 +116,17 @@ events:
       variable: "HAVE_SHM_OPEN_SHM_UNLINK"
       cached: true
       stdout: |
-        Change Dir: '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-U3if9u'
+        Change Dir: '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-FjyOJd'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_b914e/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_b914e.dir/build.make CMakeFiles/cmTC_b914e.dir/build
-        gmake[1]: Entering directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-U3if9u'
-        Building CXX object CMakeFiles/cmTC_b914e.dir/src.cxx.o
-        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ -DHAVE_SHM_OPEN_SHM_UNLINK  -std=gnu++17 -MD -MT CMakeFiles/cmTC_b914e.dir/src.cxx.o -MF CMakeFiles/cmTC_b914e.dir/src.cxx.o.d -o CMakeFiles/cmTC_b914e.dir/src.cxx.o -c /home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-U3if9u/src.cxx
-        Linking CXX executable cmTC_b914e.js
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b914e.dir/link.txt --verbose=1
-        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ CMakeFiles/cmTC_b914e.dir/src.cxx.o -o cmTC_b914e.js
-        gmake[1]: Leaving directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-U3if9u'
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_27b5e/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_27b5e.dir/build.make CMakeFiles/cmTC_27b5e.dir/build
+        gmake[1]: Entering directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-FjyOJd'
+        Building CXX object CMakeFiles/cmTC_27b5e.dir/src.cxx.o
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ -DHAVE_SHM_OPEN_SHM_UNLINK  -std=gnu++17 -MD -MT CMakeFiles/cmTC_27b5e.dir/src.cxx.o -MF CMakeFiles/cmTC_27b5e.dir/src.cxx.o.d -o CMakeFiles/cmTC_27b5e.dir/src.cxx.o -c /home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-FjyOJd/src.cxx
+        Linking CXX executable cmTC_27b5e.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_27b5e.dir/link.txt --verbose=1
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ CMakeFiles/cmTC_27b5e.dir/src.cxx.o -o cmTC_27b5e.js
+        gmake[1]: Leaving directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-FjyOJd'
         
       exitCode: 0
   -
@@ -148,8 +148,8 @@ events:
     checks:
       - "Performing Test HAVE_EGL"
     directories:
-      source: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-sWS9v8"
-      binary: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-sWS9v8"
+      source: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-zc5kbV"
+      binary: "/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-zc5kbV"
     cmakeVariables:
       CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/greg/.local/opt/emsdk/upstream/emscripten/emscan-deps"
       CMAKE_CXX_FLAGS: ""
@@ -160,17 +160,17 @@ events:
       variable: "HAVE_EGL"
       cached: true
       stdout: |
-        Change Dir: '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-sWS9v8'
+        Change Dir: '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-zc5kbV'
         
-        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_f6204/fast
-        /usr/bin/gmake  -f CMakeFiles/cmTC_f6204.dir/build.make CMakeFiles/cmTC_f6204.dir/build
-        gmake[1]: Entering directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-sWS9v8'
-        Building CXX object CMakeFiles/cmTC_f6204.dir/src.cxx.o
-        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ -DHAVE_EGL  -std=gnu++17 -MD -MT CMakeFiles/cmTC_f6204.dir/src.cxx.o -MF CMakeFiles/cmTC_f6204.dir/src.cxx.o.d -o CMakeFiles/cmTC_f6204.dir/src.cxx.o -c /home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-sWS9v8/src.cxx
-        Linking CXX executable cmTC_f6204.js
-        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f6204.dir/link.txt --verbose=1
-        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ CMakeFiles/cmTC_f6204.dir/src.cxx.o -o cmTC_f6204.js
-        gmake[1]: Leaving directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-sWS9v8'
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_da3f7/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_da3f7.dir/build.make CMakeFiles/cmTC_da3f7.dir/build
+        gmake[1]: Entering directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-zc5kbV'
+        Building CXX object CMakeFiles/cmTC_da3f7.dir/src.cxx.o
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ -DHAVE_EGL  -std=gnu++17 -MD -MT CMakeFiles/cmTC_da3f7.dir/src.cxx.o -MF CMakeFiles/cmTC_da3f7.dir/src.cxx.o.d -o CMakeFiles/cmTC_da3f7.dir/src.cxx.o -c /home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-zc5kbV/src.cxx
+        Linking CXX executable cmTC_da3f7.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_da3f7.dir/link.txt --verbose=1
+        /home/greg/.local/opt/emsdk/upstream/emscripten/em++ CMakeFiles/cmTC_da3f7.dir/src.cxx.o -o cmTC_da3f7.js
+        gmake[1]: Leaving directory '/home/greg/ReceiptReader/build_wasm/CMakeFiles/CMakeScratch/TryCompile-zc5kbV'
         
       exitCode: 0
 ...

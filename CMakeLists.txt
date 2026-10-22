@@ -95,26 +95,17 @@ if(NOT BUILD_WASM)
 
 endif()
 
-# Generate protobuf sources
-if(TARGET protobuf::libprotobuf)
-    # CONFIG mode (wasm build)
-    # set(PROTOC_EXE /usr/bin/protoc)  # or wherever your native protoc lives 
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/proto)
-    protobuf_generate(
-        OUT_VAR PROTO_FILES
-        LANGUAGE cpp
-        IMPORT_DIRS proto
-        PROTOS proto/processor.proto
-        PROTOC_OUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/proto
-    )
-    
-    # protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS proto/processor.proto)
-    # set(PROTO_FILES ${PROTO_SRCS} ${PROTO_HDRS})
-else()
-    # MODULE mode (native build)
-    protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS proto/processor.proto)
-    set(PROTO_FILES ${PROTO_SRCS} ${PROTO_HDRS})
-endif()
+# Generate protobuf sources under build/proto to match includes such as
+# "proto/processor.pb.h" from the source and generated directories.
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/proto")
+protobuf_generate(
+    OUT_VAR PROTO_FILES
+    LANGUAGE cpp
+    APPEND_PATH
+    IMPORT_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/proto"
+    PROTOS "${CMAKE_CURRENT_SOURCE_DIR}/proto/processor.proto"
+    PROTOC_OUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/proto"
+)
 
 add_custom_target(ReceiptReaderProto DEPENDS ${PROTO_FILES})
 

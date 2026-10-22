@@ -117,6 +117,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named ReceiptReaderProto
+
+# Build rule for target.
+ReceiptReaderProto: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ReceiptReaderProto
+.PHONY : ReceiptReaderProto
+
+# fast build rule for target.
+ReceiptReaderProto/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ReceiptReaderProto.dir/build.make CMakeFiles/ReceiptReaderProto.dir/build
+.PHONY : ReceiptReaderProto/fast
+
+#=============================================================================
 # Target rules for targets named ReceiptReaderGUI
 
 # Build rule for target.
@@ -405,6 +418,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... ReceiptReaderGUI_autogen"
 	@echo "... ReceiptReaderGUI_autogen_timestamp_deps"
+	@echo "... ReceiptReaderProto"
 	@echo "... ReceiptReaderGUI"
 	@echo "... ReceiptReaderGUI_autogen/mocs_compilation.o"
 	@echo "... ReceiptReaderGUI_autogen/mocs_compilation.i"

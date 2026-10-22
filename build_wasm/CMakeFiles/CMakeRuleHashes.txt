@@ -1,5 +1,6 @@
 # Hashes of file build rules.
 57beb1d03f6709ff560cbcdd82e460a7 CMakeFiles/ReceiptReaderGUI_autogen
 57beb1d03f6709ff560cbcdd82e460a7 CMakeFiles/ReceiptReaderGUI_autogen_timestamp_deps
+57beb1d03f6709ff560cbcdd82e460a7 CMakeFiles/ReceiptReaderProto
 175d6dccf3d8a3b1f68282580bac3549 ReceiptReaderGUI_autogen/timestamp
 a6662625bddc2fc0fe261271e44f5ce5 proto/processor.pb.h

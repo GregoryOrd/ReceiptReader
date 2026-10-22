@@ -1,3 +1,4 @@
+/home/greg/ReceiptReader/build_wasm/CMakeFiles/ReceiptReaderProto.dir
 /home/greg/ReceiptReader/build_wasm/CMakeFiles/ReceiptReaderGUI.dir
 /home/greg/ReceiptReader/build_wasm/CMakeFiles/edit_cache.dir
 /home/greg/ReceiptReader/build_wasm/CMakeFiles/rebuild_cache.dir
