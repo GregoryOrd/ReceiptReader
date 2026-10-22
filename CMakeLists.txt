@@ -115,6 +115,9 @@ else()
     protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS proto/processor.proto)
     set(PROTO_FILES ${PROTO_SRCS} ${PROTO_HDRS})
 endif()
+
+add_custom_target(ReceiptReaderProto DEPENDS ${PROTO_FILES})
+
 set(COMMON_SOURCES
     src/common/PriceHistorySummary.cpp
     ${PROTO_FILES}
@@ -147,6 +150,7 @@ if(BUILD_GUI)
         ReceiptReaderGUI
         ${GUI_SOURCES}
     )
+    add_dependencies(ReceiptReaderGUI ReceiptReaderProto)
 
     if(BUILD_WASM)
         target_link_options(ReceiptReaderGUI PRIVATE
@@ -232,6 +236,7 @@ if(BUILD_SERVER AND NOT BUILD_WASM)
         ReceiptReaderServer
         ${SERVER_SOURCES}
     )
+    add_dependencies(ReceiptReaderServer ReceiptReaderProto)
 
     target_include_directories(
         ReceiptReaderServer
@@ -269,6 +274,7 @@ if(BUILD_TESTS AND NOT BUILD_WASM)
         ReceiptReaderTests
         ${SERVER_SOURCES}
     )
+    add_dependencies(ReceiptReaderTests ReceiptReaderProto)
 
     target_include_directories(
         ReceiptReaderTests
