@@ -112,7 +112,8 @@ protected:
     }
 
     bool sendProtobufRequest(int sock, const receiptreaderproto::ServerRequest& request, receiptreaderproto::ServerResponse& response) {
-        return ipc::sendProtobufMessage(sock, request) && ipc::receiveProtobufMessage(sock, &response);
+        std::string error;
+        return ipc::sendProtobufMessage(sock, request) && ipc::receiveProtobufMessage(sock, &response, error);
     }
 
     std::string sendHttpRequest(int sock, const std::string& method, const std::string& path, const std::string& body = "") {

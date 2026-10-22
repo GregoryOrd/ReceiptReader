@@ -46,20 +46,32 @@ bool sendProtobufMessage(int sock, const google::protobuf::MessageLite& message)
     return sendAll(sock, buffer.data(), buffer.size());
 }
 
-bool receiveProtobufMessage(int sock, google::protobuf::MessageLite* message) {
+bool receiveProtobufMessage(int sock, google::protobuf::MessageLite* message, std::string& error) {
+    error.clear();
+
     uint32_t networkLength;
     if (!recvAll(sock, &networkLength, sizeof(networkLength))) {
+        error = "Failed to receive protobuf message length.";
         return false;
     }
     uint32_t length = ntohl(networkLength);
     if (length == 0) {
-        return message->ParseFromArray(nullptr, 0);
+        if (!message->ParseFromArray(nullptr, 0)) {
+            error = "Failed to parse empty protobuf message.";
+            return false;
+        }
+        return true;
     }
     std::vector<char> buffer(length);
     if (!recvAll(sock, buffer.data(), length)) {
+        error = "Failed to receive protobuf message payload.";
         return false;
     }
-    return message->ParseFromArray(buffer.data(), length);
+    if (!message->ParseFromArray(buffer.data(), length)) {
+        error = "Failed to parse protobuf message.";
+        return false;
+    }
+    return true;
 }
 
 } // namespace ipc

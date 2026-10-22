@@ -93,8 +93,9 @@ void ProtobufServer::logAcceptedClient(const sockaddr_in& clientAddr) {
 
 bool ProtobufServer::handleClient(int clientSock) {
     receiptreaderproto::ServerRequest request;
-    if (!ipc::receiveProtobufMessage(clientSock, &request)) {
-        std::cerr << "Failed to receive request from protobuf client." << std::endl;
+    std::string error;
+    if (!ipc::receiveProtobufMessage(clientSock, &request, error)) {
+        std::cerr << "Failed to receive request from protobuf client: " << error << std::endl;
         return false;
     }
 

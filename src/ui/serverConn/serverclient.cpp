@@ -74,8 +74,7 @@ bool ServerClient::receiveResponse(receiptreaderproto::ServerResponse& response,
         return false;
     }
 
-    if (!ipc::receiveProtobufMessage(m_sock, &response)) {
-        error = "Failed to receive response from server.";
+    if (!ipc::receiveProtobufMessage(m_sock, &response, error)) {
         return false;
     }
     return true;
