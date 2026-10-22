@@ -1,3 +1,0 @@
-set(__QT_DEPLOY_TARGETS "ReceiptReaderGUI")
-set(__QT_DEPLOY_TARGET_ReceiptReaderGUI_FILE /home/greg/ReceiptReader/build_wasm/ReceiptReaderGUI.js)
-set(__QT_DEPLOY_TARGET_ReceiptReaderGUI_TYPE EXECUTABLE)

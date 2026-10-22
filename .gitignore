@@ -1,5 +1,6 @@
 # Ignore build artifacts
 build/
+build_wasm/
 
 # Ignore the env file used by docker-compose
 .env

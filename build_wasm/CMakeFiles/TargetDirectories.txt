@@ -1,6 +1,0 @@
-/home/greg/ReceiptReader/build_wasm/CMakeFiles/ReceiptReaderProto.dir
-/home/greg/ReceiptReader/build_wasm/CMakeFiles/ReceiptReaderGUI.dir
-/home/greg/ReceiptReader/build_wasm/CMakeFiles/edit_cache.dir
-/home/greg/ReceiptReader/build_wasm/CMakeFiles/rebuild_cache.dir
-/home/greg/ReceiptReader/build_wasm/CMakeFiles/ReceiptReaderGUI_autogen_timestamp_deps.dir
-/home/greg/ReceiptReader/build_wasm/CMakeFiles/ReceiptReaderGUI_autogen.dir
