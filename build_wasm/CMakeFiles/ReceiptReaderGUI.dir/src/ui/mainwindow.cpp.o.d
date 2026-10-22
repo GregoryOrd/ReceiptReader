@@ -1028,6 +1028,11 @@ CMakeFiles/ReceiptReaderGUI.dir/src/ui/mainwindow.cpp.o: \
   /usr/local/qt-6.4.2-wasm/include/QtCharts/QXYSeries \
   /usr/local/qt-6.4.2-wasm/include/QtCharts/qxyseries.h \
   /usr/local/qt-6.4.2-wasm/include/QtGui/QImage \
+  /home/greg/ReceiptReader/src/ui/MessageUtils.h \
+  /usr/local/qt-6.4.2-wasm/include/QtWidgets/QMessageBox \
+  /usr/local/qt-6.4.2-wasm/include/QtWidgets/qmessagebox.h \
+  /usr/local/qt-6.4.2-wasm/include/QtWidgets/qdialog.h \
+  /usr/local/qt-6.4.2-wasm/include/QtWidgets/qdialogbuttonbox.h \
   /usr/local/qt-6.4.2-wasm/include/QtCore/QDate \
   /usr/local/qt-6.4.2-wasm/include/QtCore/qdatetime.h \
   /usr/local/qt-6.4.2-wasm/include/QtCore/qcalendar.h \
@@ -1036,7 +1041,6 @@ CMakeFiles/ReceiptReaderGUI.dir/src/ui/mainwindow.cpp.o: \
   /usr/local/qt-6.4.2-wasm/include/QtCore/qtimezone.h \
   /usr/local/qt-6.4.2-wasm/include/QtCore/QDateTime \
   /usr/local/qt-6.4.2-wasm/include/QtWidgets/QDialog \
-  /usr/local/qt-6.4.2-wasm/include/QtWidgets/qdialog.h \
   /usr/local/qt-6.4.2-wasm/include/QtWidgets/QFileDialog \
   /usr/local/qt-6.4.2-wasm/include/QtWidgets/qfiledialog.h \
   /usr/local/qt-6.4.2-wasm/include/QtCore/qdir.h \
@@ -1062,9 +1066,6 @@ CMakeFiles/ReceiptReaderGUI.dir/src/ui/mainwindow.cpp.o: \
   /home/greg/.local/opt/emsdk/upstream/emscripten/cache/sysroot/include/c++/v1/__filesystem/u8path.h \
   /usr/local/qt-6.4.2-wasm/include/QtCore/qfile.h \
   /usr/local/qt-6.4.2-wasm/include/QtCore/qfileinfo.h \
-  /usr/local/qt-6.4.2-wasm/include/QtWidgets/QMessageBox \
-  /usr/local/qt-6.4.2-wasm/include/QtWidgets/qmessagebox.h \
-  /usr/local/qt-6.4.2-wasm/include/QtWidgets/qdialogbuttonbox.h \
   /usr/local/qt-6.4.2-wasm/include/QtCharts/QDateTimeAxis \
   /usr/local/qt-6.4.2-wasm/include/QtCharts/qdatetimeaxis.h \
   /usr/local/qt-6.4.2-wasm/include/QtCharts/QValueAxis \

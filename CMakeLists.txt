@@ -144,6 +144,7 @@ if(BUILD_GUI)
     add_dependencies(ReceiptReaderGUI ReceiptReaderProto)
 
     if(BUILD_WASM)
+        target_compile_definitions(ReceiptReaderGUI PRIVATE BUILD_WASM)
         target_link_options(ReceiptReaderGUI PRIVATE
             "-sMODULARIZE=1"
             "-sEXPORT_NAME=createQtAppInstance"

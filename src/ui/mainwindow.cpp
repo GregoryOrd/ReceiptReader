@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "MessageUtils.h"
 #include <QDate>
 #include <QDateEdit>
 #include <QDateTime>
@@ -221,7 +222,7 @@ void MainWindow::search() {
             m_dateEndEdit->text().toStdString(),
             priceSummaries,
             error)) {
-        QMessageBox::warning(this, "Query Failed", QString::fromStdString(error));
+        ui::showQueryWarning(this, QString::fromStdString(error));
         return;
     }
 

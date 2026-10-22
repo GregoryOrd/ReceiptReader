@@ -999,8 +999,9 @@ CMakeFiles/ReceiptReaderGUI.dir/src/ui/components/PriceSummaryTable.cpp.o: \
   /usr/local/protobuf-3.21.12-wasm/include/google/protobuf/map.h \
   /usr/local/protobuf-3.21.12-wasm/include/google/protobuf/map_type_handler.h \
   /usr/local/protobuf-3.21.12-wasm/include/google/protobuf/extension_set.h \
-  /home/greg/ReceiptReader/src/ui/components/NumericTableWidgetItem.h \
+  /home/greg/ReceiptReader/src/ui/MessageUtils.h \
   /usr/local/qt-6.4.2-wasm/include/QtWidgets/QMessageBox \
   /usr/local/qt-6.4.2-wasm/include/QtWidgets/qmessagebox.h \
   /usr/local/qt-6.4.2-wasm/include/QtWidgets/qdialog.h \
-  /usr/local/qt-6.4.2-wasm/include/QtWidgets/qdialogbuttonbox.h
+  /usr/local/qt-6.4.2-wasm/include/QtWidgets/qdialogbuttonbox.h \
+  /home/greg/ReceiptReader/src/ui/components/NumericTableWidgetItem.h

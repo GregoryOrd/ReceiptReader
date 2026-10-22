@@ -1,5 +1,6 @@
 #include "PriceSummaryTable.h"
 #include "common/Item.h"
+#include "ui/MessageUtils.h"
 
 #include "ui/components/NumericTableWidgetItem.h"
 #include <QMessageBox>
@@ -98,7 +99,7 @@ void PriceSummaryTable::graphSelected() {
             code.toStdString(),
             items,
             error)) {
-        QMessageBox::warning(this, "Query Failed", QString::fromStdString(error));
+        ui::showQueryWarning(this, QString::fromStdString(error));
         return;
     }
 

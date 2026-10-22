@@ -71,7 +71,7 @@ CMakeFiles/ReceiptReaderGUI_autogen_timestamp_deps: proto/processor.pb.h
 
 proto/processor.pb.h: /home/greg/ReceiptReader/proto/processor.proto
 proto/processor.pb.h: /usr/bin/protoc
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/greg/ReceiptReader/build_wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Running cpp protocol buffer compiler on proto/processor.proto"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/greg/ReceiptReader/build_wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Running cpp protocol buffer compiler on /home/greg/ReceiptReader/proto/processor.proto"
 	/usr/bin/protoc --cpp_out :/home/greg/ReceiptReader/build_wasm/proto -I /home/greg/ReceiptReader/proto /home/greg/ReceiptReader/proto/processor.proto
 
 proto/processor.pb.cc: proto/processor.pb.h
