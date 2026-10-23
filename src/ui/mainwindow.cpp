@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QPointer>
 #include <QtCharts/QDateTimeAxis>
 #include <QtCharts/QValueAxis>
 #include <QBrush>
@@ -108,7 +109,7 @@ void MainWindow::toggleConnection() {
     }
 
     if (!m_serverClient->connectToServer()) {
-        QMessageBox::warning(this, "Connection Failed", "Could not connect to ReceiptReaderServer.");
+        ui::showWarning(this, "Connection Failed", "Could not connect to ReceiptReaderServer.");
         updateConnectionStatus();
         return;
     }
@@ -118,10 +119,131 @@ void MainWindow::toggleConnection() {
 
 void MainWindow::processImage() {
     if (!m_serverClient->isConnected()) {
+#ifdef BUILD_WASM
+        ui::showWarning(this, "Not Connected", "Please connect to the server before processing an image.");
+#else
         QMessageBox::warning(this, "Not Connected", "Please connect to the server before processing an image.");
+#endif
         return;
     }
 
+#ifdef BUILD_WASM
+    auto* dialog = new QDialog(this);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setWindowTitle("Process Image");
+    QVBoxLayout* dialogLayout = new QVBoxLayout(dialog);
+
+    auto* selectButton = new QPushButton("Select Image");
+    auto* selectedFileLabel = new QLabel("No image selected");
+    dialogLayout->addWidget(selectButton);
+    dialogLayout->addWidget(selectedFileLabel);
+
+    auto* itemList = new QListWidget;
+    dialogLayout->addWidget(itemList);
+
+    auto* dateLabel = new QLabel("Receipt Date:");
+    auto* dateEdit = new QDateEdit(QDate::currentDate());
+    dateEdit->setCalendarPopup(true);
+    auto* dateLayout = new QHBoxLayout;
+    dateLayout->addWidget(dateLabel);
+    dateLayout->addWidget(dateEdit);
+    dialogLayout->addLayout(dateLayout);
+
+    auto* confirmButton = new QPushButton("Confirm");
+    auto* cancelButton = new QPushButton("Cancel");
+    confirmButton->setEnabled(false);
+    auto* buttonLayout = new QHBoxLayout;
+    buttonLayout->addWidget(confirmButton);
+    buttonLayout->addWidget(cancelButton);
+    dialogLayout->addLayout(buttonLayout);
+
+    auto foundItems = std::make_shared<std::vector<Item>>();
+    connect(selectButton, &QPushButton::clicked, dialog,
+            [this, dialog, selectButton, selectedFileLabel, itemList, confirmButton, foundItems]() {
+                auto* fileDialog = new QFileDialog(dialog, "Select Receipt Image");
+                fileDialog->setAttribute(Qt::WA_DeleteOnClose);
+                fileDialog->setFileMode(QFileDialog::ExistingFile);
+                fileDialog->setNameFilter("Images (*.png *.jpg *.jpeg *.heic)");
+                connect(fileDialog, &QFileDialog::fileSelected, dialog,
+                        [this, dialog, selectButton, selectedFileLabel, itemList,
+                         confirmButton, foundItems](const QString& fileName) {
+                if (fileName.isEmpty()) {
+                    return;
+                }
+
+                selectedFileLabel->setText(fileName);
+                itemList->clear();
+                confirmButton->setEnabled(false);
+                selectButton->setEnabled(false);
+
+                std::ifstream file(fileName.toStdString(), std::ios::binary);
+                if (!file) {
+                    selectButton->setEnabled(true);
+                    ui::showWarning(dialog, "Read Failed", "Could not open the selected image file.");
+                    return;
+                }
+                std::vector<uint8_t> imageData(
+                    (std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+                QPointer<QDialog> dialogGuard(dialog);
+                m_serverClient->processImageAsync(
+                    imageData, fileName.toStdString(), this,
+                    [dialogGuard, selectButton, itemList, confirmButton, foundItems](
+                        bool success, std::vector<Item> items, std::string error) {
+                        if (!dialogGuard) {
+                            return;
+                        }
+                        selectButton->setEnabled(true);
+                        if (!success) {
+                            ui::showWarning(dialogGuard, "Process Failed", QString::fromStdString(error));
+                            return;
+                        }
+
+                        *foundItems = std::move(items);
+                        itemList->clear();
+                        for (const auto& item : *foundItems) {
+                            itemList->addItem(
+                                QString("Code: %1, Desc: %2, Price: %3")
+                                    .arg(QString::fromStdString(item.code))
+                                    .arg(QString::fromStdString(item.description))
+                                    .arg(item.price));
+                        }
+                        confirmButton->setEnabled(!foundItems->empty());
+                    });
+                        });
+                fileDialog->open();
+            });
+
+    connect(cancelButton, &QPushButton::clicked, dialog, &QDialog::reject);
+    connect(confirmButton, &QPushButton::clicked, dialog,
+            [this, dialog, confirmButton, dateEdit, foundItems]() {
+                if (foundItems->empty()) {
+                    ui::showWarning(dialog, "Nothing to Confirm",
+                                    "No items have been processed yet.");
+                    return;
+                }
+
+                confirmButton->setEnabled(false);
+                const QString date = dateEdit->date().toString("yyyy-MM-dd");
+                QPointer<QDialog> dialogGuard(dialog);
+                m_serverClient->confirmProcessedItemsAsync(
+                    *foundItems, date.toStdString(), this,
+                    [dialogGuard, confirmButton](bool success, std::string error) {
+                        if (!dialogGuard) {
+                            return;
+                        }
+                        if (!success) {
+                            confirmButton->setEnabled(true);
+                            ui::showWarning(dialogGuard, "Confirm Failed",
+                                            QString::fromStdString(error));
+                            return;
+                        }
+                        dialogGuard->accept();
+                    });
+            });
+
+    dialog->open();
+#else
     QDialog dialog(this);
     dialog.setWindowTitle("Process Image");
     QVBoxLayout* dialogLayout = new QVBoxLayout(&dialog);
@@ -208,9 +330,31 @@ void MainWindow::processImage() {
     });
 
     dialog.exec();
+#endif
 }
 
 void MainWindow::search() {
+#ifdef BUILD_WASM
+    m_searchButton->setEnabled(false);
+    m_serverClient->queryItemsAsync(
+        m_codeEdit->text().toStdString(),
+        m_descEdit->text().toStdString(),
+        m_priceMinEdit->text().toStdString(),
+        m_priceMaxEdit->text().toStdString(),
+        m_dateStartEdit->text().toStdString(),
+        m_dateEndEdit->text().toStdString(),
+        this,
+        [this](bool success,
+               std::vector<PriceHistorySummary> priceSummaries,
+               std::string error) {
+            m_searchButton->setEnabled(m_serverClient->isConnected());
+            if (!success) {
+                ui::showQueryWarning(this, QString::fromStdString(error));
+                return;
+            }
+            m_priceSummaryTable->setItems(priceSummaries);
+        });
+#else
     std::vector<PriceHistorySummary> priceSummaries;
     std::string error;
     if (!m_serverClient->queryItems(
@@ -227,6 +371,7 @@ void MainWindow::search() {
     }
 
     m_priceSummaryTable->setItems(priceSummaries);
+#endif
 }
 
 void MainWindow::graphSelected() {

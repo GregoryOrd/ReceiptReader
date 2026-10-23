@@ -1,5 +1,7 @@
 #include "ipc/message_io.h"
 #include <arpa/inet.h>
+#include <cerrno>
+#include <cstring>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <vector>
@@ -19,11 +21,20 @@ static bool sendAll(int sock, const void* data, size_t size) {
     return true;
 }
 
-static bool recvAll(int sock, void* data, size_t size) {
+static bool recvAll(int sock, void* data, size_t size, const char* stage, std::string& error) {
     char* ptr = reinterpret_cast<char*>(data);
     while (size > 0) {
         ssize_t received = recv(sock, ptr, size, 0);
-        if (received <= 0) {
+        if (received == 0) {
+            error = std::string("Connection closed while receiving protobuf ") + stage + ".";
+            return false;
+        }
+        if (received < 0) {
+            if (errno == EINTR) {
+                continue;
+            }
+            error = std::string("Failed to receive protobuf ") + stage + ": " + strerror(errno)
+                    + " (errno " + std::to_string(errno) + ").";
             return false;
         }
         ptr += received;
@@ -50,8 +61,7 @@ bool receiveProtobufMessage(int sock, google::protobuf::MessageLite* message, st
     error.clear();
 
     uint32_t networkLength;
-    if (!recvAll(sock, &networkLength, sizeof(networkLength))) {
-        error = "Failed to receive protobuf message length.";
+    if (!recvAll(sock, &networkLength, sizeof(networkLength), "message length", error)) {
         return false;
     }
     uint32_t length = ntohl(networkLength);
@@ -63,8 +73,7 @@ bool receiveProtobufMessage(int sock, google::protobuf::MessageLite* message, st
         return true;
     }
     std::vector<char> buffer(length);
-    if (!recvAll(sock, buffer.data(), length)) {
-        error = "Failed to receive protobuf message payload.";
+    if (!recvAll(sock, buffer.data(), length, "message payload", error)) {
         return false;
     }
     if (!message->ParseFromArray(buffer.data(), length)) {

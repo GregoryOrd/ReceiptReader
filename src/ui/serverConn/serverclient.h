@@ -4,6 +4,9 @@
 #include <functional>
 #include <string>
 #include <vector>
+#ifdef BUILD_WASM
+class QObject;
+#endif
 #include "parser/parser.h"
 #include "common/PriceHistorySummary.h"
 #include "proto/processor.pb.h"
@@ -27,6 +30,32 @@ public:
                     std::vector<PriceHistorySummary>& items,
                     std::string& error) const;
 
+#ifdef BUILD_WASM
+    void queryItemsAsync(const std::string& code,
+                         const std::string& desc,
+                         const std::string& priceMin,
+                         const std::string& priceMax,
+                         const std::string& dateStart,
+                         const std::string& dateEnd,
+                         QObject* context,
+                         std::function<void(bool, std::vector<PriceHistorySummary>, std::string)> completion) const;
+
+    void queryItemCodeAsync(
+        const std::string& code,
+        QObject* context,
+        std::function<void(bool, std::vector<Item>, std::string)> completion) const;
+    void processImageAsync(
+        const std::vector<uint8_t>& imageData,
+        const std::string& filename,
+        QObject* context,
+        std::function<void(bool, std::vector<Item>, std::string)> completion) const;
+    void confirmProcessedItemsAsync(
+        const std::vector<Item>& items,
+        const std::string& date,
+        QObject* context,
+        std::function<void(bool, std::string)> completion) const;
+#endif
+
     bool queryItemCode(const std::string& code,
                     std::vector<Item>& items,
                     std::string& error) const;
@@ -47,6 +76,12 @@ public:
 private:
     bool sendRequest(const receiptreaderproto::ServerRequest& request, std::string& error) const;
     bool receiveResponse(receiptreaderproto::ServerResponse& response, std::string& error) const;
+#ifdef BUILD_WASM
+    void sendRequestAsync(
+        const receiptreaderproto::ServerRequest& request,
+        QObject* context,
+        std::function<void(bool, receiptreaderproto::ServerResponse, std::string)> completion) const;
+#endif
 
     int m_sock;
     std::string m_host;

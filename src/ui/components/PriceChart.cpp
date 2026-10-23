@@ -1,4 +1,5 @@
 #include "PriceChart.h"
+#include "ui/MessageUtils.h"
 
 #include <QMessageBox>
 #include <QLineSeries>
@@ -38,7 +39,8 @@ void PriceChart::plotItems(std::vector<Item> items, QString code)
     }
 
     if (series->count() == 0) {
-        QMessageBox::information(this, "No Graph Data", "Selected item has no valid timestamp data to graph.");
+        ui::showInformation(this, "No Graph Data",
+                            "Selected item has no valid timestamp data to graph.");
         return;
     }
 

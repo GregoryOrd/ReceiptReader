@@ -87,12 +87,25 @@ void PriceSummaryTable::setChartView(PriceChart* chartView)
 void PriceSummaryTable::graphSelected() {
     int row = currentRow();
     if (row < 0) {
-        QMessageBox::warning(this, "No Selection", "Please select an item to graph.");
+        ui::showWarning(this, "No Selection", "Please select an item to graph.");
         return;
     }
 
     QString code = item(row, CODE_COL)->text();
 
+#ifdef BUILD_WASM
+    m_serverClient->queryItemCodeAsync(
+        code.toStdString(), this,
+        [this, code](bool success, std::vector<Item> items, std::string error) {
+            if (!success) {
+                ui::showQueryWarning(this, QString::fromStdString(error));
+                return;
+            }
+            if (!items.empty()) {
+                m_chartView->plotItems(items, code);
+            }
+        });
+#else
     std::vector<Item> items;
     std::string error;
     if (!m_serverClient->queryItemCode(
@@ -108,6 +121,7 @@ void PriceSummaryTable::graphSelected() {
     }
 
     m_chartView->plotItems(items, code);
+#endif
 }
 
 void PriceSummaryTable::setItems(std::vector<PriceHistorySummary> priceSummaries)
