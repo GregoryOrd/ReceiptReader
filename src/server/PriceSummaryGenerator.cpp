@@ -1,5 +1,6 @@
 #include "PriceSummaryGenerator.h"
 
+#include <iostream>
 #include <QDateTime>
 
 PriceSummaryGenerator::PriceSummaryGenerator(Database* db) : _db(db) 
@@ -163,25 +164,5 @@ PriceHistorySummary PriceSummaryGenerator::fromItems(const std::vector<Item>& ti
         maxPrice,
         timestampSortedItems.back().price,
         timestampSortedItems[0].isUnitPrice
-    );
-}
-
-PriceHistorySummary PriceSummaryGenerator::fromProto(const receiptreaderproto::PriceHistorySummary& proto) {
-    return PriceHistorySummary(
-        proto.description(),
-        proto.code(),
-        proto.timestampfirst(),
-        proto.timestamplast(),
-        proto.liftimeinflationrate(),
-        proto.oneyearinflationrate(),
-        proto.sixmonthinflationrate(),
-        proto.threemonthinflationrate(),
-        proto.onemonthinflationrate(),
-        proto.latestpricechange(),
-        proto.timespurchased(),
-        proto.minprice(),
-        proto.maxprice(),
-        proto.currentprice(),
-        proto.isunitprice()
     );
 }

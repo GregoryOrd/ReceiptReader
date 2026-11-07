@@ -3,7 +3,6 @@
 
 #include "common/Item.h"
 #include <vector>
-#include "processor.pb.h"
 
 class PriceHistorySummary {
 public:

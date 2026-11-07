@@ -1,5 +1,40 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Kill any existing processes
-pkill -f ReceiptReaderServer
-pkill -f ReceiptReaderGUI
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+RUNTIME_DIR="${PROJECT_DIR}/development-runtime"
+BUILD_DIR="${BUILD_DIR:-${PROJECT_DIR}/build}"
+if [[ "${BUILD_DIR}" != /* ]]; then
+    BUILD_DIR="${PROJECT_DIR}/${BUILD_DIR}"
+fi
+
+stop_process() {
+    local name="$1"
+    local pid_file="${RUNTIME_DIR}/${name}.pid"
+
+    [[ -f "${pid_file}" ]] || return 0
+    local pid
+    pid="$(<"${pid_file}")"
+    if [[ ! "${pid}" =~ ^[0-9]+$ ]]; then
+        echo "Ignoring invalid PID file: ${pid_file}" >&2
+        rm -f -- "${pid_file}"
+        return 0
+    fi
+
+    if kill -0 "${pid}" 2>/dev/null; then
+        local command
+        command="$(ps -p "${pid}" -o args= || true)"
+        if [[ "${command}" == "${BUILD_DIR}/ReceiptReaderServer "* ||
+              "${command}" == "${BUILD_DIR}/ReceiptReaderGUI "* ]]; then
+            kill "${pid}"
+            echo "Stopped ${name} (PID ${pid})."
+        else
+            echo "PID ${pid} no longer belongs to ReceiptReader; leaving it untouched." >&2
+        fi
+    fi
+    rm -f -- "${pid_file}"
+}
+
+stop_process server
+stop_process desktop-gui

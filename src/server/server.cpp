@@ -38,9 +38,3 @@ std::vector<Item> Server::processImageBytes(const std::string& filename, const s
 bool Server::confirmProcessedItems(const std::vector<Item>& items) {
     return _imageProcessor->confirmProcessedItems(items);
 }
-
-bool Server::processImagesDirectory(const std::string& receiptDir,
-                                    const std::function<bool(const receiptreaderproto::ProcessProgress&)>& progressCallback,
-                                    receiptreaderproto::ProcessComplete& complete) {
-    return _imageProcessor->processImagesDirectory(receiptDir, progressCallback, complete);
-}

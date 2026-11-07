@@ -28,8 +28,6 @@ public:
 
     Item itemToCompare(InflationRatePeriod period, const std::vector<Item>& timestampSortedItems);
     PriceHistorySummary fromItems(const std::vector<Item>& timestampSortedItems);
-    PriceHistorySummary fromProto(const receiptreaderproto::PriceHistorySummary& proto);
-
 private:
     double calculateInflationRate(InflationRatePeriod period, const std::vector<Item>& timestampSortedItems);
 

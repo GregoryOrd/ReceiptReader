@@ -1,0 +1,399 @@
+openapi: 3.1.0
+info:
+  title: ReceiptReader API
+  version: 1.0.0
+  description: REST API for querying receipt item history and processing receipt images.
+servers:
+  - url: http://localhost:53000/api/v1
+    description: Local ReceiptReader server
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Check whether the API server is responding
+      responses:
+        "200":
+          description: The server is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    const: ok
+  /items:
+    get:
+      operationId: queryItems
+      summary: Search item price-history summaries
+      parameters:
+        - $ref: "#/components/parameters/code"
+        - $ref: "#/components/parameters/desc"
+        - $ref: "#/components/parameters/price_min"
+        - $ref: "#/components/parameters/price_max"
+        - $ref: "#/components/parameters/date_start"
+        - $ref: "#/components/parameters/date_end"
+      responses:
+        "200":
+          description: Matching summaries
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PriceHistorySummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /items/{code}/history:
+    get:
+      operationId: queryItemHistory
+      summary: Get the recorded prices for an item code
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Recorded purchases, ordered by timestamp
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ReceiptItem"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /receipts/process:
+    post:
+      operationId: processReceiptImage
+      summary: Process one receipt image without saving its items
+      description: Returns OCR/parser results for review. Save reviewed items with the confirmation operation.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: One supported receipt image (JPEG, PNG, or HEIC).
+      responses:
+        "200":
+          description: Parsed receipt items for review
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ReceiptItem"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "413":
+          description: Uploaded image is too large
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /receipts/confirm:
+    post:
+      operationId: confirmReceiptItems
+      summary: Save reviewed receipt items
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [date, items]
+              properties:
+                date:
+                  type: string
+                  format: date
+                items:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ReceiptItemInput"
+      responses:
+        "200":
+          description: Items saved
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, message]
+                properties:
+                  success:
+                    type: boolean
+                    const: true
+                  message:
+                    type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /receipts/batch-jobs:
+    post:
+      operationId: startBatchReceiptProcessing
+      summary: Upload and process multiple receipt images
+      description: |
+        Starts asynchronous processing of uploaded images. Unlike single-image processing,
+        batch processing saves each parsed item automatically, preserving the existing
+        directory-processing behavior. The full request must not exceed 100 MiB. Poll the
+        returned job URL for progress and completion.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [files]
+              properties:
+                files:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    format: binary
+                    description: JPEG, PNG, or HEIC receipt image.
+      responses:
+        "202":
+          description: Batch accepted
+          headers:
+            Location:
+              description: URL to poll for job progress
+              schema:
+                type: string
+                format: uri-reference
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchJob"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "413":
+          description: Upload exceeds the server's request-size limit
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /receipts/batch-jobs/{job_id}:
+    get:
+      operationId: getBatchReceiptProcessingStatus
+      summary: Get batch processing progress
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Current job state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchJob"
+        "404":
+          description: Job not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          $ref: "#/components/responses/ServerError"
+components:
+  parameters:
+    code:
+      name: code
+      in: query
+      schema:
+        type: string
+      description: Match item codes containing this value.
+    desc:
+      name: desc
+      in: query
+      schema:
+        type: string
+      description: Match descriptions containing this value.
+    price_min:
+      name: price_min
+      in: query
+      schema:
+        type: number
+      description: Minimum item price, inclusive.
+    price_max:
+      name: price_max
+      in: query
+      schema:
+        type: number
+      description: Maximum item price, inclusive.
+    date_start:
+      name: date_start
+      in: query
+      schema:
+        type: string
+        format: date
+      description: Include items on or after this date.
+    date_end:
+      name: date_end
+      in: query
+      schema:
+        type: string
+        format: date
+      description: Include items on or before this date.
+  schemas:
+    ReceiptItem:
+      type: object
+      required: [code, description, price, timestamp, is_unit_price]
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        timestamp:
+          type: string
+          description: Timestamp or date supplied by receipt parsing.
+        is_unit_price:
+          type: boolean
+    ReceiptItemInput:
+      type: object
+      required: [code, description, price]
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        is_unit_price:
+          type: boolean
+          default: false
+    PriceHistorySummary:
+      type: object
+      required:
+        - code
+        - description
+        - min_price
+        - max_price
+        - current_price
+        - is_unit_price
+        - timestamp_first
+        - timestamp_last
+        - lifetime_inflation_rate
+        - one_year_inflation_rate
+        - six_month_inflation_rate
+        - three_month_inflation_rate
+        - one_month_inflation_rate
+        - latest_price_change
+        - times_purchased
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        min_price:
+          type: number
+        max_price:
+          type: number
+        current_price:
+          type: number
+        is_unit_price:
+          type: boolean
+        timestamp_first:
+          type: string
+        timestamp_last:
+          type: string
+        lifetime_inflation_rate:
+          type: number
+          description: Lifetime annualized inflation percentage.
+        one_year_inflation_rate:
+          type: number
+          description: Annualized inflation percentage for the one-year period.
+        six_month_inflation_rate:
+          type: number
+        three_month_inflation_rate:
+          type: number
+        one_month_inflation_rate:
+          type: number
+        latest_price_change:
+          type: number
+        times_purchased:
+          type: integer
+    BatchJob:
+      type: object
+      required:
+        - job_id
+        - status
+        - processed_images
+        - total_images
+        - current_image
+        - total_items
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [queued, running, completed, failed]
+        processed_images:
+          type: integer
+        total_images:
+          type: integer
+        current_image:
+          type: string
+        total_items:
+          type: integer
+        success:
+          type: boolean
+        message:
+          type: string
+    Problem:
+      type: object
+      required: [title, status]
+      properties:
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    ServerError:
+      description: Server failed to complete the operation
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"

@@ -1,52 +1,18 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "components/PriceSummaryTable.h"
-#include "components/PriceChart.h"
-#include "ui/serverConn/serverclient.h"
-
-#include <memory>
 #include <QMainWindow>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QColor>
-#include <QListWidget>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QtCharts/QChartView>
-#include <QtCharts/QChart>
-#include <QtCharts/QLineSeries>
+#include <QUrl>
+
+class QWebEngineView;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    explicit MainWindow(QWidget* parent = nullptr);
-
-private slots:
-    void toggleConnection();
-    void processImage();
-    void search();
-    void graphSelected();
+    explicit MainWindow(const QUrl& applicationUrl, QWidget* parent = nullptr);
 
 private:
-    void updateConnectionStatus();
-
-    std::unique_ptr<ServerClient> m_serverClient;
-    QLabel* m_connectionStatusLabel;
-    QPushButton* m_connectButton;
-    QPushButton* m_processButton;
-
-    QLineEdit* m_codeEdit;
-    QLineEdit* m_descEdit;
-    QLineEdit* m_priceMinEdit;
-    QLineEdit* m_priceMaxEdit;
-    QLineEdit* m_dateStartEdit;
-    QLineEdit* m_dateEndEdit;
-    std::unique_ptr<PriceSummaryTable> m_priceSummaryTable;
-    QPushButton* m_searchButton;
-    QPushButton* m_graphButton;
-    std::unique_ptr<PriceChart> m_chartView;
+    QWebEngineView* m_webView;
 };
 
 #endif // MAINWINDOW_H

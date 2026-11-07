@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+BUILD_DIR="${BUILD_DIR:-${PROJECT_DIR}/build}"
+if [[ "${BUILD_DIR}" != /* ]]; then
+    BUILD_DIR="${PROJECT_DIR}/${BUILD_DIR}"
+fi
+RUNTIME_DIR="${PROJECT_DIR}/development-runtime"
+GUI="${BUILD_DIR}/ReceiptReaderGUI"
+
+if [[ ! -x "${GUI}" ]]; then
+    echo "ReceiptReaderGUI is not built. Run ${SCRIPT_DIR}/build first." >&2
+    exit 1
+fi
+
+mkdir -p "${RUNTIME_DIR}"
+PID_FILE="${RUNTIME_DIR}/desktop-gui.pid"
+if [[ -f "${PID_FILE}" ]]; then
+    PID="$(<"${PID_FILE}")"
+    if [[ "${PID}" =~ ^[0-9]+$ ]] && kill -0 "${PID}" 2>/dev/null; then
+        COMMAND="$(ps -p "${PID}" -o args= || true)"
+        if [[ "${COMMAND}" == "${GUI} "* ]]; then
+            echo "ReceiptReader desktop GUI is already running (PID ${PID})." >&2
+            exit 1
+        fi
+    fi
+    rm -f -- "${PID_FILE}"
+fi
+
+APP_URL="${RECEIPTREADER_URL:-http://127.0.0.1:53000/}"
+"${GUI}" --url "${APP_URL}" "$@" >"${RUNTIME_DIR}/desktop-gui.log" 2>&1 &
+GUI_PID=$!
+printf '%s\n' "${GUI_PID}" >"${PID_FILE}"
+echo "ReceiptReader desktop GUI started (PID ${GUI_PID}); log: ${RUNTIME_DIR}/desktop-gui.log"

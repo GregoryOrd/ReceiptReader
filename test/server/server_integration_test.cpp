@@ -1,64 +1,38 @@
 #include <gtest/gtest.h>
-#include <thread>
-#include <chrono>
-#include <cstring>
-#include <sstream>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <memory>
-#include <cstdlib>
-#include <cstdio>
-#include <ctime>
-#include <fstream>
-#include <filesystem>
-#include "server/ProtobufServer.h"
-#include "server/WebServer.h"
+
+#include "server/guiComms/WebServer.h"
 #include "server/server.h"
-#include "ipc/message_io.h"
-#include "processor.pb.h"
+
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+#include <chrono>
+#include <cstdlib>
+#include <ctime>
+#include <filesystem>
+#include <memory>
+#include <regex>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <thread>
 
 namespace fs = std::filesystem;
 
 class ServerIntegrationTest : public ::testing::Test {
 protected:
-    static constexpr int PROTO_PORT = 52001;
     static constexpr int HTTP_PORT = 53001;
     static inline std::unique_ptr<Server> server;
-    static inline std::unique_ptr<ProtobufServer> protobufServer;
     static inline std::unique_ptr<WebServer> webServer;
-    static inline std::thread protoThread;
     static inline std::thread webThread;
     static inline std::string dbPath;
-    static inline std::vector<std::string> tempDirs;
 
     static std::string makeTempDbPath() {
         const char* tmp = std::getenv("TMPDIR");
         if (!tmp) tmp = "/tmp";
         return std::string(tmp) + "/receipt_integration_test_" + std::to_string(std::time(nullptr)) + ".db";
-    }
-
-    static std::string makeTempReceiptDirPath() {
-        const char* tmp = std::getenv("TMPDIR");
-        if (!tmp) tmp = "/tmp";
-        std::string path = std::string(tmp) + "/receipt_integration_dir_" + std::to_string(std::time(nullptr)) + "_" + std::to_string(std::rand());
-        fs::create_directories(path);
-        tempDirs.push_back(path);
-        return path;
-    }
-
-    static bool createDummyReceiptFile(const std::string& dir) {
-        fs::path directory(dir);
-        if (!fs::exists(directory) && !fs::create_directories(directory)) {
-            return false;
-        }
-        std::ofstream out(directory / "receipt.jpg", std::ios::binary);
-        if (!out) {
-            return false;
-        }
-        out << "dummy image data";
-        return true;
     }
 
     static void SetUpTestSuite() {
@@ -68,195 +42,181 @@ protected:
         if (!server->initialize()) {
             throw std::runtime_error("Failed to initialize server database");
         }
-
-        protobufServer = std::make_unique<ProtobufServer>(PROTO_PORT, *server);
         webServer = std::make_unique<WebServer>(HTTP_PORT, *server);
-
-        protoThread = std::thread([]() { protobufServer->run(); });
         webThread = std::thread([]() { webServer->run(); });
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 
     static void TearDownTestSuite() {
-        if (protoThread.joinable()) {
-            protoThread.detach();
-        }
         if (webThread.joinable()) {
             webThread.detach();
         }
         if (!dbPath.empty()) {
             fs::remove(dbPath);
         }
-        for (const auto& dir : tempDirs) {
-            fs::remove_all(dir);
-        }
     }
 
-    int connectWithRetry(int port) const {
-        int attempts = 10;
-        while (attempts--) {
-            int sock = socket(AF_INET, SOCK_STREAM, 0);
+    int connectWithRetry() const {
+        for (int attempt = 0; attempt < 20; ++attempt) {
+            const int sock = socket(AF_INET, SOCK_STREAM, 0);
             if (sock < 0) return -1;
-            struct sockaddr_in addr{};
+            sockaddr_in addr{};
             addr.sin_family = AF_INET;
-            addr.sin_port = htons(port);
+            addr.sin_port = htons(HTTP_PORT);
             inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
-            if (connect(sock, reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr)) == 0) {
+            if (connect(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == 0) {
                 return sock;
             }
             close(sock);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
         }
         return -1;
     }
 
-    bool sendProtobufRequest(int sock, const receiptreaderproto::ServerRequest& request, receiptreaderproto::ServerResponse& response) {
-        return ipc::sendProtobufMessage(sock, request) && ipc::receiveProtobufMessage(sock, &response);
-    }
-
-    std::string sendHttpRequest(int sock, const std::string& method, const std::string& path, const std::string& body = "") {
+    std::string sendHttpRequest(const std::string& method,
+                               const std::string& path,
+                               const std::string& body = "",
+                               const std::string& contentType = "application/json") {
+        const int sock = connectWithRetry();
+        if (sock < 0) return "";
         std::ostringstream request;
         request << method << " " << path << " HTTP/1.1\r\n";
         request << "Host: 127.0.0.1:" << HTTP_PORT << "\r\n";
         request << "Connection: close\r\n";
         if (!body.empty()) {
-            request << "Content-Type: application/json\r\n";
+            request << "Content-Type: " << contentType << "\r\n";
             request << "Content-Length: " << body.size() << "\r\n";
         }
-        request << "\r\n";
-        request << body;
-        std::string req = request.str();
-        if (send(sock, req.data(), req.size(), 0) < 0) return "";
-        std::string resp;
-        char buffer[4096];
-        ssize_t n;
-        while ((n = recv(sock, buffer, sizeof(buffer), 0)) > 0) {
-            resp.append(buffer, n);
+        request << "\r\n" << body;
+        const std::string data = request.str();
+        size_t sent = 0;
+        while (sent < data.size()) {
+            const ssize_t count = send(sock, data.data() + sent, data.size() - sent, 0);
+            if (count <= 0) {
+                close(sock);
+                return "";
+            }
+            sent += static_cast<size_t>(count);
         }
-        return resp;
+        std::string response;
+        char buffer[4096];
+        ssize_t count;
+        while ((count = recv(sock, buffer, sizeof(buffer), 0)) > 0) {
+            response.append(buffer, static_cast<size_t>(count));
+        }
+        close(sock);
+        return response;
     }
 
     int parseHttpStatus(const std::string& response) const {
-        size_t pos1 = response.find(' ');
-        if (pos1 == std::string::npos) return -1;
-        size_t pos2 = response.find(' ', pos1 + 1);
-        if (pos2 == std::string::npos) return -1;
-        return std::stoi(response.substr(pos1 + 1, pos2 - pos1 - 1));
+        const size_t firstSpace = response.find(' ');
+        if (firstSpace == std::string::npos) return -1;
+        const size_t secondSpace = response.find(' ', firstSpace + 1);
+        if (secondSpace == std::string::npos) return -1;
+        return std::stoi(response.substr(firstSpace + 1, secondSpace - firstSpace - 1));
+    }
+
+    static std::string multipartBody(const std::string& field, const std::string& filename, const std::string& data) {
+        constexpr char boundary[] = "ReceiptReaderTestBoundary";
+        std::string body = "--" + std::string(boundary) + "\r\n";
+        body += "Content-Disposition: form-data; name=\"" + field + "\"; filename=\"" + filename + "\"\r\n";
+        body += "Content-Type: image/jpeg\r\n\r\n";
+        body += data;
+        body += "\r\n--" + std::string(boundary) + "--\r\n";
+        return body;
+    }
+
+    static constexpr const char* multipartContentType() {
+        return "multipart/form-data; boundary=ReceiptReaderTestBoundary";
     }
 };
 
-TEST_F(ServerIntegrationTest, ConfirmProcessedItemsProtobuf) {
-    int sock = connectWithRetry(PROTO_PORT);
-    ASSERT_GE(sock, 0);
-    receiptreaderproto::ServerRequest request;
-    auto* confirm = request.mutable_confirm_processed_items();
-    auto* item = confirm->add_items();
-    item->set_code("PROTO_CODE");
-    item->set_description("Proto Item");
-    item->set_price(9.99);
-    item->set_timestamp("2025-04-11");
-    receiptreaderproto::ServerResponse response;
-    ASSERT_TRUE(sendProtobufRequest(sock, request, response));
-    ASSERT_TRUE(response.has_status());
-    close(sock);
-}
-
-TEST_F(ServerIntegrationTest, QueryItemsProtobuf) {
-    int sock = connectWithRetry(PROTO_PORT);
-    ASSERT_GE(sock, 0);
-    receiptreaderproto::ServerRequest request;
-    auto* query = request.mutable_query_items();
-    query->set_code("PROTO_CODE");
-    query->set_price_min("");
-    query->set_price_max("");
-    query->set_date_start("");
-    query->set_date_end("");
-    receiptreaderproto::ServerResponse response;
-    ASSERT_TRUE(sendProtobufRequest(sock, request, response));
-    ASSERT_TRUE(response.has_query_items_response());
-    close(sock);
-}
-
-TEST_F(ServerIntegrationTest, ProcessImageProtobuf) {
-    int sock = connectWithRetry(PROTO_PORT);
-    ASSERT_GE(sock, 0);
-    receiptreaderproto::ServerRequest request;
-    auto* proc = request.mutable_process_image();
-    proc->set_filename("test.jpg");
-    proc->set_image_data("dGVzdA==");
-    receiptreaderproto::ServerResponse response;
-    ASSERT_TRUE(sendProtobufRequest(sock, request, response));
-    ASSERT_TRUE(response.has_process_image_response() || response.has_status());
-    close(sock);
-}
-
-TEST_F(ServerIntegrationTest, ProcessImagesProtobuf) {
-    std::string receiptDir = makeTempReceiptDirPath();
-    ASSERT_TRUE(createDummyReceiptFile(receiptDir));
-
-    int sock = connectWithRetry(PROTO_PORT);
-    ASSERT_GE(sock, 0);
-    receiptreaderproto::ServerRequest request;
-    auto* proc = request.mutable_process_images();
-    proc->set_receipt_dir(receiptDir);
-    receiptreaderproto::ServerResponse response;
-    ASSERT_TRUE(sendProtobufRequest(sock, request, response));
-    ASSERT_TRUE(response.has_complete() || response.has_progress() || response.has_status());
-    close(sock);
-}
-
-TEST_F(ServerIntegrationTest, ConfirmProcessedItemsHttp) {
-    int sock = connectWithRetry(HTTP_PORT);
-    ASSERT_GE(sock, 0);
-    std::string body = R"({"date":"2025-04-11","items":[{"code":"1","description":"HTTP Item","price":5.55,"timestamp":"2025-04-11"}]})";
-    std::string response = sendHttpRequest(sock, "POST", "/confirm_processed_items", body);
+TEST_F(ServerIntegrationTest, ConfirmItemsHttp) {
+    const std::string body = R"({"date":"2025-04-11","items":[{"code":"HTTP_CODE","description":"HTTP Item","price":5.55,"is_unit_price":false}]})";
+    const std::string response = sendHttpRequest("POST", "/api/v1/receipts/confirm", body);
     ASSERT_FALSE(response.empty());
     EXPECT_EQ(parseHttpStatus(response), 200);
-    close(sock);
+    EXPECT_NE(response.find("\"success\":true"), std::string::npos);
 }
 
-TEST_F(ServerIntegrationTest, GetItemsHttp) {
-    int sock = connectWithRetry(HTTP_PORT);
-    ASSERT_GE(sock, 0);
-    std::string response = sendHttpRequest(sock, "GET", "/items?code=000000040110");
-    ASSERT_FALSE(response.empty());
-    std::cout << response << std::endl;
-    EXPECT_EQ(parseHttpStatus(response), 200);
-    EXPECT_NE(response.find("000000040110"), std::string::npos);
-    close(sock);
-}
-
-TEST_F(ServerIntegrationTest, ProcessImageHttp) {
-    int sock = connectWithRetry(HTTP_PORT);
-    ASSERT_GE(sock, 0);
-    std::string body = R"({"filename":"test.jpg","image_data":"dGVzdA=="})";
-    std::string response = sendHttpRequest(sock, "POST", "/process_image", body);
+TEST_F(ServerIntegrationTest, GetItemsHttpReturnsFullSummary) {
+    const std::string response = sendHttpRequest("GET", "/api/v1/items?code=HTTP_CODE");
     ASSERT_FALSE(response.empty());
     EXPECT_EQ(parseHttpStatus(response), 200);
-    close(sock);
+    EXPECT_NE(response.find("\"current_price\""), std::string::npos);
+    EXPECT_NE(response.find("\"timestamp_first\""), std::string::npos);
+    EXPECT_NE(response.find("HTTP_CODE"), std::string::npos);
 }
 
-TEST_F(ServerIntegrationTest, ProcessImagesHttp) {
-    std::string receiptDir = makeTempReceiptDirPath();
-    ASSERT_TRUE(createDummyReceiptFile(receiptDir));
-
-    int sock = connectWithRetry(HTTP_PORT);
-    ASSERT_GE(sock, 0);
-    std::string body = std::string("{\"receipt_dir\":\"") + receiptDir + "\"}";
-    std::string response = sendHttpRequest(sock, "POST", "/process_images", body);
+TEST_F(ServerIntegrationTest, GetItemHistoryHttp) {
+    const std::string response = sendHttpRequest("GET", "/api/v1/items/HTTP_CODE/history");
     ASSERT_FALSE(response.empty());
     EXPECT_EQ(parseHttpStatus(response), 200);
-    close(sock);
+    EXPECT_NE(response.find("\"timestamp\""), std::string::npos);
+    EXPECT_NE(response.find("\"price\""), std::string::npos);
 }
 
-TEST_F(ServerIntegrationTest, HttpNotFound) {
-    int sock = connectWithRetry(HTTP_PORT);
-    ASSERT_GE(sock, 0);
-    std::string response = sendHttpRequest(sock, "GET", "/unknown_endpoint");
+TEST_F(ServerIntegrationTest, ProcessImageHttpAcceptsMultipartUpload) {
+    const std::string body = multipartBody("file", "test.jpg", "not-a-real-image");
+    const std::string response = sendHttpRequest("POST", "/api/v1/receipts/process", body, multipartContentType());
     ASSERT_FALSE(response.empty());
-    EXPECT_EQ(parseHttpStatus(response), 404);
-    close(sock);
+    EXPECT_EQ(parseHttpStatus(response), 200);
+    EXPECT_NE(response.find("\"items\""), std::string::npos);
+}
+
+TEST_F(ServerIntegrationTest, StartBatchProcessingHttp) {
+    std::string body = multipartBody("files", "one.jpg", "not-a-real-image");
+    constexpr char boundary[] = "ReceiptReaderTestBoundary";
+    body += "--" + std::string(boundary) + "\r\n";
+    body += "Content-Disposition: form-data; name=\"files\"; filename=\"two.jpg\"\r\n";
+    body += "Content-Type: image/jpeg\r\n\r\n";
+    body += "also-not-a-real-image";
+    body += "\r\n--" + std::string(boundary) + "--\r\n";
+    const std::string response = sendHttpRequest("POST", "/api/v1/receipts/batch-jobs", body, multipartContentType());
+    ASSERT_FALSE(response.empty());
+    EXPECT_EQ(parseHttpStatus(response), 202);
+    EXPECT_NE(response.find("\"job_id\""), std::string::npos);
+    EXPECT_NE(response.find("\"total_images\":2"), std::string::npos);
+
+    std::smatch match;
+    ASSERT_TRUE(std::regex_search(response, match, std::regex("\"job_id\":\"([^\"]+)\"")));
+    const std::string jobPath = "/api/v1/receipts/batch-jobs/" + match[1].str();
+    std::string jobResponse;
+    for (int attempt = 0; attempt < 100; ++attempt) {
+        jobResponse = sendHttpRequest("GET", jobPath);
+        if (jobResponse.find("\"status\":\"completed\"") != std::string::npos ||
+            jobResponse.find("\"status\":\"failed\"") != std::string::npos) {
+            break;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
+    EXPECT_EQ(parseHttpStatus(jobResponse), 200);
+    EXPECT_NE(jobResponse.find("\"status\":\"completed\""), std::string::npos);
+}
+
+TEST_F(ServerIntegrationTest, HealthAndNotFoundHttp) {
+    const std::string health = sendHttpRequest("GET", "/api/v1/health");
+    ASSERT_FALSE(health.empty());
+    EXPECT_EQ(parseHttpStatus(health), 200);
+    EXPECT_NE(health.find("\"status\":\"ok\""), std::string::npos);
+
+    const std::string missing = sendHttpRequest("GET", "/api/v1/unknown");
+    ASSERT_FALSE(missing.empty());
+    EXPECT_EQ(parseHttpStatus(missing), 404);
+}
+
+TEST_F(ServerIntegrationTest, ServesWebFrontend) {
+    const std::string response = sendHttpRequest("GET", "/");
+    ASSERT_FALSE(response.empty());
+    EXPECT_EQ(parseHttpStatus(response), 200);
+    EXPECT_NE(response.find("text/html"), std::string::npos);
+    EXPECT_NE(response.find("<div id=\"app\"></div>"), std::string::npos);
+}
+
+TEST_F(ServerIntegrationTest, InvalidImageUploadReturnsBadRequest) {
+    const std::string response = sendHttpRequest("POST", "/api/v1/receipts/process", R"({"filename":"test.jpg"})");
+    ASSERT_FALSE(response.empty());
+    EXPECT_EQ(parseHttpStatus(response), 400);
 }
 
 int main(int argc, char** argv) {

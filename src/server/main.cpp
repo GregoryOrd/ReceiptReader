@@ -1,23 +1,22 @@
 #include "server.h"
-#include "guiComms/ProtobufServer.h"
 #include "guiComms/WebServer.h"
-#include <atomic>
 #include <iostream>
-#include <thread>
 
 int main(int argc, char* argv[]) {
-    int protoPort = 52000;
-    int restPort = 53000;
+    int port = 53000;
     std::string dbPath = "receipts.db";
+    std::string webRoot = "web/dist";
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
         if (arg == "--port" && i + 1 < argc) {
-            protoPort = std::stoi(argv[++i]);
+            port = std::stoi(argv[++i]);
         } else if (arg == "--rest-port" && i + 1 < argc) {
-            restPort = std::stoi(argv[++i]);
+            port = std::stoi(argv[++i]);
         } else if (arg == "--db" && i + 1 < argc) {
             dbPath = argv[++i];
+        } else if (arg == "--web-root" && i + 1 < argc) {
+            webRoot = argv[++i];
         }
     }
 
@@ -27,23 +26,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    ProtobufServer protobufServer(protoPort, server);
-    WebServer webServer(restPort, server);
-    std::atomic<bool> failure{false};
-
-    std::thread protoThread([&] {
-        if (!protobufServer.run()) {
-            failure = true;
-        }
-    });
-    std::thread webThread([&] {
-        if (!webServer.run()) {
-            failure = true;
-        }
-    });
-
-    protoThread.join();
-    webThread.join();
-
-    return failure ? 1 : 0;
+    WebServer webServer(port, server, webRoot);
+    return webServer.run() ? 0 : 1;
 }

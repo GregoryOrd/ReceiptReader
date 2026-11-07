@@ -1,5 +1,7 @@
 #include "PriceHistorySummary.h"
 
+#include <iostream>
+
 PriceHistorySummary::PriceHistorySummary(
     std::string description,
     std::string code,

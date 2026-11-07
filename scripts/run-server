@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+BUILD_DIR="${BUILD_DIR:-${PROJECT_DIR}/build}"
+if [[ "${BUILD_DIR}" != /* ]]; then
+    BUILD_DIR="${PROJECT_DIR}/${BUILD_DIR}"
+fi
+RUNTIME_DIR="${PROJECT_DIR}/development-runtime"
+SERVER="${BUILD_DIR}/ReceiptReaderServer"
+WEB_ROOT="${RECEIPTREADER_WEB_ROOT:-${PROJECT_DIR}/web/dist}"
+if [[ "${WEB_ROOT}" != /* ]]; then
+    WEB_ROOT="${PROJECT_DIR}/${WEB_ROOT}"
+fi
+
+if [[ ! -x "${SERVER}" ]]; then
+    echo "ReceiptReaderServer is not built. Run ${SCRIPT_DIR}/build first." >&2
+    exit 1
+fi
+if [[ ! -f "${WEB_ROOT}/index.html" ]]; then
+    echo "The web frontend is not built. Run ${SCRIPT_DIR}/build first." >&2
+    exit 1
+fi
+
+mkdir -p "${RUNTIME_DIR}"
+PID_FILE="${RUNTIME_DIR}/server.pid"
+if [[ -f "${PID_FILE}" ]]; then
+    PID="$(<"${PID_FILE}")"
+    if [[ "${PID}" =~ ^[0-9]+$ ]] && kill -0 "${PID}" 2>/dev/null; then
+        COMMAND="$(ps -p "${PID}" -o args= || true)"
+        if [[ "${COMMAND}" == "${SERVER} "* ]]; then
+            echo "ReceiptReaderServer is already running (PID ${PID})." >&2
+            exit 1
+        fi
+    fi
+    rm -f -- "${PID_FILE}"
+fi
+
+PORT="${RECEIPTREADER_PORT:-53000}"
+DB_PATH="${RECEIPTREADER_DB:-${PROJECT_DIR}/receipts.db}"
+cd "${PROJECT_DIR}"
+"${SERVER}" --port "${PORT}" --db "${DB_PATH}" --web-root "${WEB_ROOT}" "$@" \
+    >"${RUNTIME_DIR}/server.log" 2>&1 &
+SERVER_PID=$!
+printf '%s\n' "${SERVER_PID}" >"${PID_FILE}"
+echo "ReceiptReaderServer started (PID ${SERVER_PID}); log: ${RUNTIME_DIR}/server.log"
+echo "The default UI address is http://localhost:${PORT}/."

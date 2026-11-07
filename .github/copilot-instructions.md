@@ -1,12 +1,13 @@
 # Copilot Onboarding Instructions for ReceiptReader
 
 ## Summary
-ReceiptReader is a C++ Qt-based receipt scanning application with a desktop GUI (`ReceiptReaderGUI`) and a backend server (`ReceiptReaderServer`). It uses OpenCV, Tesseract OCR, Leptonica, Protobuf, SQLite, and Qt6. The repo includes unit/integration tests under `test/` and a protobuf schema at `proto/processor.proto`.
+ReceiptReader has a C++ backend (`ReceiptReaderServer`), a Vue browser UI, and a thin Qt WebEngine desktop wrapper (`ReceiptReaderGUI`). The REST API is described in `docs/openapi.yaml`; both browser and desktop use the same frontend. The backend uses OpenCV, Tesseract OCR, Leptonica, SQLite, and Qt6. Tests are under `test/`.
 
 ## Repository Type and Key Technologies
 - C++ project with CMake build system
-- Qt6 for GUI (`src/ui/`)
-- Protobuf for IPC message formats
+- Vue 3 + TypeScript + Vite for the browser UI (`web/`)
+- REST/JSON API with an OpenAPI contract
+- Qt6 WebEngineWidgets for the desktop webview (`src/ui/`)
 - OpenCV + Tesseract + Leptonica for OCR/image processing
 - SQLite for database storage
 - GoogleTest for test coverage
@@ -14,10 +15,10 @@ ReceiptReader is a C++ Qt-based receipt scanning application with a desktop GUI 
 
 ## Key Files and Layout
 - `CMakeLists.txt` — top-level CMake configuration, builds GUI, server, and tests
-- `proto/processor.proto` — protobuf schema used by `protobuf_generate_cpp`
-- `src/ui/` — Qt desktop application entrypoint and UI clients
-- `src/server/` — server entrypoint, HTTP & protobuf backend, OCR, parser, and database logic
-- `src/ipc/message_io.*` — protobuf socket utilities
+- `docs/openapi.yaml` — REST API contract
+- `web/` — Vue frontend and generated API types
+- `src/ui/` — Qt WebEngine desktop wrapper
+- `src/server/` — REST server, OCR, parser, and database logic
 - `test/` — GTest test suites for OCR, parser, database, and integration
 - `docker-compose.yaml` — Docker dev container configuration for GUI + host X11
 - `setup-container.sh` — sample container bootstrap script
@@ -28,19 +29,19 @@ ReceiptReader is a C++ Qt-based receipt scanning application with a desktop GUI 
 - `cmake` >= 3.16 (validated with 3.28.3)
 - `make` (GNU Make 4.3 validated)
 - `pkg-config` (1.8.1 validated)
-- Qt6 development packages (`Qt6::Core`, `Qt6::Widgets`, `Qt6::Charts`)
+- Qt6 development packages (`Qt6::Core`, `Qt6::Widgets`, `Qt6::WebEngineWidgets`)
 - OpenCV development packages
 - `tesseract` + `lept` development packages
-- `protobuf` + `protoc` development packages
 - `gtest` development packages
 - `sqlite3` development package
+- Node.js and npm
 
 ### Recommended local build commands
 1. From repository root:
-   - `mkdir -p build && cd build`
-   - `cmake ..`
-   - `cmake --build . -- -j4`
-2. Always rebuild after changing CMake, `proto/processor.proto`, or source files.
+   - `cd web && npm ci && npm run build`
+   - `cd .. && cmake -S . -B build`
+   - `cmake --build build -- -j4`
+2. The server serves the built UI from `web/dist`; run it from the repository root or pass `--web-root`.
 
 ### Run tests
 - `cd build && ctest --output-on-failure`
@@ -56,22 +57,20 @@ ReceiptReader is a C++ Qt-based receipt scanning application with a desktop GUI 
 - The host must allow X11 access for GUI apps: `xhost +local:docker`
 - Use `connect-to-container.sh` to attach to the running container shell
 
-## Known Current Validation State
-- A clean CMake config and build were validated successfully.
-- Running `ctest --output-on-failure` in a clean build directory produced a failing test:
-  - `ReceiptReaderTests` has one currently failing test: `DatabaseTest.DuplicateItemKeepsHighestPrice`
-- The failing test appears to be an existing repository issue, not a build-environment failure.
+## Current Validation Notes
+- The Vue build regenerates TypeScript API types from `docs/openapi.yaml`.
+- C++ configuration requires Qt6 WebEngineWidgets; check that package availability before interpreting CMake configuration failures.
 
 ## Best Practices for Code Changes
 - Prefer local CMake builds and tests over blind edits.
-- If changing protobuf messages, regenerate C++ sources by rerunning `cmake ..` in the build directory.
-- Validate both GUI and server/IPC behavior if editing shared logic in `src/ipc/`, `src/server/`, or `proto/`.
+- If changing the API, update `docs/openapi.yaml` and regenerate types with `cd web && npm run generate:api`.
+- Validate REST server and frontend behavior when changing `src/server/guiComms/` or `web/`.
 - Do not assume a CI workflow exists; local `cmake`/`ctest` validation is the main feedback loop.
 - Trust these instructions. Search only if the instructions are incomplete, a dependency is missing, or repository behavior differs from what is documented.
 
 ## Recommended Search Targets When Needed
 - Source of main executables: `src/ui/main.cpp`, `src/server/main.cpp`
-- Protobuf generated sources: `build/processor.pb.cc`, `build/processor.pb.h` (generated by CMake)
+- OpenAPI-generated frontend types: `web/src/openapi.d.ts`
 - Test entrypoint: `test/server/server_integration_test.cpp`
 - Docker helper scripts: `docker-compose.yaml`, `setup-container.sh`, `connect-to-container.sh`
 

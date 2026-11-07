@@ -3,14 +3,13 @@
 
 #include "db/database.h"
 #include "parser/parser.h"
-#include "processor.pb.h"
 #include "common/PriceHistorySummary.h"
 #include "ImageProcessor.h"
 #include "PriceSummaryGenerator.h"
 
-#include <functional>
 #include <string>
 #include <vector>
+#include <memory>
 
 class Server {
 public:
@@ -28,9 +27,6 @@ public:
 
     std::vector<Item> processImageBytes(const std::string& filename, const std::string& imageData);
     bool confirmProcessedItems(const std::vector<Item>& items);
-    bool processImagesDirectory(const std::string& receiptDir,
-                                const std::function<bool(const receiptreaderproto::ProcessProgress&)>& progressCallback,
-                                receiptreaderproto::ProcessComplete& complete);
 
 private:
     std::unique_ptr<Database> _db;

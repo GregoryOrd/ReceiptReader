@@ -1,15 +1,18 @@
-#/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_DIR="${SCRIPT_DIR}/.."
-RUNTIME_DIR="${PROJECT_DIR}/development-runtime"
-BUILD_DIR="${PROJECT_DIR}/build"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+BUILD_DIR="${BUILD_DIR:-${PROJECT_DIR}/build}"
+if [[ "${BUILD_DIR}" != /* ]]; then
+    BUILD_DIR="${PROJECT_DIR}/${BUILD_DIR}"
+fi
+TESTS="${BUILD_DIR}/ReceiptReaderTests"
 
-CWD="$(pwd)"
-cd "${RUNTIME_DIR}"
+if [[ ! -x "${TESTS}" ]]; then
+    echo "ReceiptReaderTests is not built. Run ${SCRIPT_DIR}/build first." >&2
+    exit 1
+fi
 
-source "${SCRIPT_DIR}/stop"
-
-"${BUILD_DIR}/ReceiptReaderTests" $@
-
-cd "${CWD}"
+cd "${PROJECT_DIR}"
+"${TESTS}" "$@"

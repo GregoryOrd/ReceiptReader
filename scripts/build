@@ -1,23 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_DIR="${SCRIPT_DIR}/.."
-RUNTIME_DIR="${PROJECT_DIR}/development-runtime"
-BUILD_DIR="${PROJECT_DIR}/build"
-
-if [ ! -d "${BUILD_DIR}" ]; then
-    mkdir -p "${BUILD_DIR}"
-fi
-cd "${BUILD_DIR}"
-
-if [ ! -d "${RUNTIME_DIR}" ]; then
-    mkdir -p "${RUNTIME_DIR}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+BUILD_DIR="${BUILD_DIR:-${PROJECT_DIR}/build}"
+if [[ "${BUILD_DIR}" != /* ]]; then
+    BUILD_DIR="${PROJECT_DIR}/${BUILD_DIR}"
 fi
 
-if [ ! -f Makefile ]; then
-    cmake -S "${PROJECT_DIR}" -B "${BUILD_DIR}" "${PROJECT_DIR}"
-fi
+cd "${PROJECT_DIR}/web"
+npm ci
 
-make
-
-cd "${CWD}"
+cmake -S "${PROJECT_DIR}" -B "${BUILD_DIR}"
+cmake --build "${BUILD_DIR}" --parallel "${JOBS:-$(nproc)}"
