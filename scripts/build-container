@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+IMAGE="${1:-receipt-reader}"
+
+if [[ "$#" -gt 1 ]]; then
+    echo "Usage: $0 [image-tag]" >&2
+    exit 2
+fi
+
+#if [[ -n "${CONTAINER_ENGINE:-}" ]]; then
+#    ENGINE="${CONTAINER_ENGINE}"
+#elif command -v docker >/dev/null 2>&1; then
+#    ENGINE="docker"
+#elif command -v podman >/dev/null 2>&1; then
+#    ENGINE="podman"
+#else
+#    echo "Neither Docker nor Podman was found. Install one or set CONTAINER_ENGINE." >&2
+#    exit 1
+#fi
+
+ENGINE="podman"
+if ! command -v "${ENGINE}" >/dev/null 2>&1; then
+    echo "Container engine '${ENGINE}' was not found." >&2
+    exit 1
+fi
+
+exec "${ENGINE}" build --tag "${IMAGE}" "${PROJECT_DIR}"

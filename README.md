@@ -32,9 +32,12 @@ The desktop wrapper connects to an already-running server; it does not start one
 ## Docker
 
 Build the container image and start the web application/API server with persistent
-database storage:
+database storage. The build script uses Docker when available, otherwise Podman;
+set `CONTAINER_ENGINE` to select an engine explicitly. An optional image tag defaults
+to `receipt-reader`:
 
-    docker build -t receipt-reader .
+    ./scripts/build-container
+    # or: ./scripts/build-container receipt-reader:latest
     docker run --detach --name receipt-reader \
       --publish 53000:53000 \
       --volume receipt-reader-data:/data \
