@@ -1,0 +1,11 @@
+.git
+.gitignore
+.github
+build
+development-runtime
+web/node_modules
+web/dist
+receipts.db
+*.db
+*.db-shm
+*.db-wal

@@ -29,6 +29,22 @@ The server listens on all network interfaces so a phone on the same LAN can open
 use LAN access on a trusted network and do not expose the server to the public internet.
 The desktop wrapper connects to an already-running server; it does not start one.
 
+## Docker
+
+Build the container image and start the web application/API server with persistent
+database storage:
+
+    docker build -t receipt-reader .
+    docker run --detach --name receipt-reader \
+      --publish 53000:53000 \
+      --volume receipt-reader-data:/data \
+      receipt-reader
+
+Open `http://localhost:53000/`. Set `RECEIPTREADER_PORT` to change the server port
+(and publish that same container port). This image runs the server and serves the
+web UI; the Qt desktop webview is not included. As with the non-container setup,
+the API has no authentication, so expose it only on a trusted network.
+
 ## Docker Container
 To be able to run the desktop GUI in the container, we need allow Docker to access our X-Server.
 To enable this we run:
