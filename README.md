@@ -32,16 +32,20 @@ The desktop wrapper connects to an already-running server; it does not start one
 ## Docker
 
 Build the container image and start the web application/API server with persistent
-database storage. The build script uses Docker when available, otherwise Podman;
-set `CONTAINER_ENGINE` to select an engine explicitly. An optional image tag defaults
-to `receipt-reader`:
+database storage. The build script uses Docker when available, otherwise Podman.
+An optional image tag defaults to `receipt-reader`:
 
     ./scripts/build-container
     # or: ./scripts/build-container receipt-reader:latest
-    docker run --detach --name receipt-reader \
-      --publish 53000:53000 \
-      --volume receipt-reader-data:/data \
-      receipt-reader
+
+The Podman launcher uses a named data volume and defaults to port `53000`:
+
+    ./scripts/run-container
+    # or: ./scripts/run-container receipt-reader:latest
+
+Set `RECEIPTREADER_PORT` to use a different host and container port. The container
+name and data volume can be changed with `RECEIPTREADER_CONTAINER_NAME` and
+`RECEIPTREADER_DATA_VOLUME`.
 
 Open `http://localhost:53000/`. Set `RECEIPTREADER_PORT` to change the server port
 (and publish that same container port). This image runs the server and serves the

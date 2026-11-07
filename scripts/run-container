@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+IMAGE="${1:-receipt-reader}"
+if [[ "$#" -gt 1 ]]; then
+    echo "Usage: $0 [image-tag]" >&2
+    exit 2
+fi
+
+if ! command -v podman >/dev/null 2>&1; then
+    echo "Podman was not found." >&2
+    exit 1
+fi
+
+PORT="${RECEIPTREADER_PORT:-53000}"
+CONTAINER_NAME="${RECEIPTREADER_CONTAINER_NAME:-receipt-reader}"
+DATA_VOLUME="${RECEIPTREADER_DATA_VOLUME:-receipt-reader-data}"
+
+exec podman run --detach \
+    --name "${CONTAINER_NAME}" \
+    --publish "${PORT}:${PORT}" \
+    --volume "${DATA_VOLUME}:/data" \
+    --env "RECEIPTREADER_PORT=${PORT}" \
+    "${IMAGE}"
